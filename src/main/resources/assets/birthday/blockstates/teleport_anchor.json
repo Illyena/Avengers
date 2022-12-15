@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "birthday:block/teleport_anchor"
+    }
+  }
+}

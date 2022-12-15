@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "birthday",
+  "version": "${version}",
+
+  "name": "Happy Birthday!",
+  "description": "Happy Birthday, Papa!",
+  "authors": [
+    "Illyena",
+    "SpiderBrat"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/Illyena/gilding-birthday-robert"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/birthday/cake.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "illyena.gilding.GildingInit"
+    ],
+    "client": [
+      "illyena.gilding.GildingClientInit",
+      "illyena.gilding.birthday.BirthdayClientInitializer"
+    ],
+    "mm:early_risers": [
+      "illyena.gilding.GildingEarlyRiser"
+    ]
+  },
+  "mixins": [
+    "birthday.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
