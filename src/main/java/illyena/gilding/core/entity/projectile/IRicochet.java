@@ -3,7 +3,11 @@ package illyena.gilding.core.entity.projectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
@@ -56,6 +60,15 @@ public interface IRicochet {
 
     abstract boolean getBlockHit();
 
+    public abstract DataTracker getDataTracker();
+
+    public abstract TrackedData<Byte> getRicochet();
+
+    abstract int getHangTime();
+
+    public abstract void setHangTime(int value);
+
+
 
     static PersistentProjectileEntity getProjectile (PersistentProjectileEntity projectile) {
         if (projectile instanceof IRicochet) {
@@ -64,8 +77,22 @@ public interface IRicochet {
         return null;
     }
 
+    static void tick(PersistentProjectileEntity projectile) {
+        int i = ((IRicochet)getProjectile(projectile)).getDataTracker().get((((IRicochet)getProjectile(projectile)).getRicochet()));
+        if (i > 0 && ((IRicochet)getProjectile(projectile)).getRicochetHitEntities().size() > 0 && !projectile.isOnGround()) {
+            ((IRicochet)getProjectile(projectile)).setHangTime(((IRicochet)getProjectile(projectile)).getHangTime() + 1);
+            if (((IRicochet)getProjectile(projectile)).getHangTime() > 90) {
+                projectile.setNoClip(false);
+                projectile.setNoGravity(false);
+                boolean bl = MathHelper.sign(projectile.getVelocity().getY()) == -1;
+                projectile.setVelocity(projectile.getVelocity().multiply(-0.01, bl ? 1 : -1.0, -0.01));
+            }
+
+        }
+    }
+
     static void ricochet(PersistentProjectileEntity projectile, LivingEntity entity) {
-        float k = 0.1f; //1.0f; //todo velocity multiplier
+        float k = 0.1f; //1.0f; todo velocity multiplier
         LivingEntity nextTarget = nextRicochetTarget(projectile, entity);
         Vec3d nextTargetPos = nextTarget.getPos();
         Vec3d vec3d = new Vec3d(nextTargetPos.x - projectile.getPos().x, nextTargetPos.y - projectile.getPos().y, nextTargetPos.z - projectile.getPos().z);
@@ -88,6 +115,10 @@ public interface IRicochet {
             projectile.setNoGravity(false);
             projectile.setVelocity(projectile.getVelocity().multiply(-0.01, -0.1, -0.01));
         }
+    }
+
+    static void onBlockHit(PersistentProjectileEntity projectile, BlockHitResult blockHitResult) {
+        ((IRicochet)getProjectile(projectile)).setHangTime(0);
     }
 
 }

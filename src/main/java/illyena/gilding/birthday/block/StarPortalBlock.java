@@ -10,6 +10,8 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -17,6 +19,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +40,8 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class StarPortalBlock  extends BlockWithEntity {
    public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
@@ -122,7 +128,6 @@ public class StarPortalBlock  extends BlockWithEntity {
                } else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
                    GildingInit.LOGGER.error("PORTAL" );
                   if (!world.isClient) {
-//                       EntityType.COW.spawn(((ServerWorld) world), null, null, null, pos, SpawnReason.COMMAND, true, false);
                        StarPortalBlockEntity.tryTeleportingEntity((ServerWorld)world, pos, state, player, blockEntity);
                    }
                    return ActionResult.CONSUME;
@@ -274,7 +279,11 @@ public class StarPortalBlock  extends BlockWithEntity {
     public static ItemStack getItemStack(@Nullable DyeColor color) {
         return new ItemStack(get(color));
     }
-} //todo change particles to stars
+}
+//todo change particles to stars
+//todo implement dragon egg teleporting
+//todo onUse with Dye
+//todo onUse with Items
 
 
-//todo currently breaks with survival fist
+

@@ -10,9 +10,7 @@ import illyena.gilding.core.entity.projectile.IRicochet;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -23,6 +21,7 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.LlamaEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -45,6 +44,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     private int bounces;
     private List<Entity> ricochetHitEntities = Lists.newArrayListWithCapacity(bounces);
     private int remainingBounces;
+    private int hangTime;
 
     private boolean dealtDamage;
     private boolean blockHit;
@@ -82,7 +82,13 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             this.dealtDamage = true;
         }
 
-        ILoyalty.tick(this);
+        if (!this.getLoyalty().equals(0)) {
+            ILoyalty.tick(this);
+        }
+        if (!this.getRicochet().equals(0) && !ILoyalty.shouldReturn(this)) {
+            IRicochet.tick(this);
+        }
+
         super.tick();
     }
 
@@ -141,6 +147,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
         this.blockHit = true;
+        IRicochet.onBlockHit(this, blockHitResult);
         super.onBlockHit(blockHitResult);
     }
 
@@ -156,6 +163,10 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
     public boolean getBlockHit() {return this.blockHit;}
 
+    public int getHangTime() {return this.hangTime;}
+
+    public void setHangTime(int value) {this.hangTime = value;}
+
 
     public int getInGroundTime() {return this.inGroundTime;}
 
@@ -166,6 +177,8 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     public DataTracker getDataTracker() {return dataTracker;}
 
     public TrackedData<Byte> getLoyalty() {return LOYALTY;}
+
+    public TrackedData<Byte> getRicochet() {return RICOCHET;}
 
     public int getReturnTimer() {return this.returnTimer;}
 
@@ -189,3 +202,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 }
+//todo Zombie pick up
+//todo Sounds
+//todo stops rendering outside of ~2 chunks

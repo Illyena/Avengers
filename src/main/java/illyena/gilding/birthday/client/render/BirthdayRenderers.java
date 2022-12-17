@@ -3,7 +3,6 @@ package illyena.gilding.birthday.client.render;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.client.render.blockentity.StarPortalBlockEntityRenderer;
 import illyena.gilding.birthday.client.render.blockentity.TeleportAnchorBlockEntityRenderer;
-//import illyena.gilding.birthday.client.render.blockentity.TestBlockEntityRenderer;
 import illyena.gilding.birthday.client.render.entity.CapShieldEntityRenderer;
 import illyena.gilding.birthday.entity.BirthdayEntities;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;

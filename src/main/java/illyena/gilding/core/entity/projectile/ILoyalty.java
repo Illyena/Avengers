@@ -101,13 +101,16 @@ public interface ILoyalty {
     }
 
     public static boolean shouldReturn(PersistentProjectileEntity projectile) {
+        int i = ((ILoyalty) getProjectile(projectile)).getDataTracker().get((((ILoyalty) getProjectile(projectile)).getLoyalty()));
+        if (i > 0) {
             ((ILoyalty) getProjectile(projectile)).setWait(((ILoyalty) getProjectile(projectile)).getWait() + 1);
             int delay = 90 / ((ILoyalty) getProjectile(projectile)).getDataTracker().get((((ILoyalty) getProjectile(projectile)).getLoyalty()));
             if (projectile instanceof IRicochet && ((IRicochet) projectile).getRemainingBounces() == 0) return true;
-            else if (projectile instanceof  IRicochet && !((IRicochet) projectile).getBlockHit()) {
-                return ((ILoyalty)getProjectile(projectile)).getWait() > delay + 30 * ((ILoyalty)getProjectile(projectile)).getDataTracker().get(((ILoyalty)getProjectile(projectile)).getLoyalty());
+            else if (projectile instanceof IRicochet && !((IRicochet) projectile).getBlockHit()) {
+                return ((ILoyalty) getProjectile(projectile)).getWait() > delay + 30 * ((ILoyalty) getProjectile(projectile)).getDataTracker().get(((ILoyalty) getProjectile(projectile)).getLoyalty());
 
             } else return ((ILoyalty) getProjectile(projectile)).getWait() > delay;
+        } else return false;
     }
 
 

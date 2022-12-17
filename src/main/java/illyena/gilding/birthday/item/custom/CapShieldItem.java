@@ -12,6 +12,7 @@ import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
@@ -92,7 +93,12 @@ public class CapShieldItem extends Item implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-    }
+        if (Screen.hasControlDown()) {
+
+        } else {
+            tooltip.add(Text.translatable("Press R to release."));
+        }
+    } //todo tooltip
 
     public boolean canRepair(ItemStack stack, ItemStack ingredient) {
         return ingredient.isIn(ItemTags.PLANKS) || super.canRepair(stack, ingredient);

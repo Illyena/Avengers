@@ -3,6 +3,7 @@
     "key.gilding.throw": "Throw",
     "itemGroup.birthday.birthday_group":   "Happy Birthday!  Here's some stuff.",
     "item.birthday.cap_shield":     "Captain America's Shield",
-    "block.birthday.star_portal_block": "Portal Shulker",
+    "block.birthday.star_portal_block": "Portal Box",
+    "block.birthday.teleport_anchor": "Teleport Anchor",
     "enchantment.gilding.ricochet": "Ricochet"
 }

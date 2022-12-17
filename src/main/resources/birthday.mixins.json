@@ -4,10 +4,9 @@
   "package": "illyena.gilding.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "gilding.block.FlowableFluidAccessor",
     "birthday.worldgen.EndCityGeneratorMixin",
+    "gilding.block.FlowableFluidAccessor",
     "gilding.block.FlowableFluidMixin",
-    "gilding.enchantment.EnchantmentTargetMixin",
     "gilding.enchantment.LoyaltyEnchantmentMixin",
     "gilding.enchantment.PowerEnchantmentMixin",
     "gilding.enchantment.PunchEnchantmentMixin"

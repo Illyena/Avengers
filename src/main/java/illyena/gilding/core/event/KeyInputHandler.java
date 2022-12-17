@@ -25,7 +25,7 @@ public class KeyInputHandler {
 
     public static void register() {
         throwing = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                KEY_TROW, InputUtil.Type.KEYSYM, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, KEY_CATEGORY_GILDING
+                KEY_TROW, InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, KEY_CATEGORY_GILDING
         ));
         registerKeyInputs();
     }

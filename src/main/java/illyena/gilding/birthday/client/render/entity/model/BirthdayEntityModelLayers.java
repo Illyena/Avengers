@@ -18,8 +18,9 @@ public class BirthdayEntityModelLayers {
 
         EntityModelLayerRegistry.registerModelLayer(CAP_SHIELD_MODEL_LAYER, CapShieldEntityModel::getTexturedModelData);
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register(((atlasTexture, registry) -> {
-            registry.register(new Identifier(MOD_ID, "entity/cap_shield_base"));
-            registry.register(new Identifier(MOD_ID, "entity/cap_shield_base_nopattern"));
+//            registry.register(new Identifier(MOD_ID, "entity/cap_shield_base"));
+//            registry.register(new Identifier(MOD_ID, "entity/cap_shield_base_nopattern"));
+            registry.register(new Identifier(MOD_ID, "entity/cap_shield"));
         }));
 
 

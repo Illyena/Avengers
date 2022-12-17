@@ -31,7 +31,7 @@ public class GildingInit implements ModInitializer {
 //		GildedInitializer.initialize();
 //		IcingInitializer.initialize();
 //		VerdureInitializer.initialize();
-		BirthdayInitializer.initialize();
+
 
 
 	}

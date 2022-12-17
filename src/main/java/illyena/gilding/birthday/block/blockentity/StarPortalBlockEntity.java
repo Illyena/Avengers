@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static illyena.gilding.birthday.BirthdayInitializer.LOGGER;
@@ -224,32 +225,22 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    public boolean suffocates() { return this.animationStage == AnimationStage.CLOSED; } //todo
+    public boolean suffocates() { return this.animationStage == AnimationStage.CLOSED; }
 
     public void onOpen(PlayerEntity player) {
         if (!player.isSpectator()) {
-            if (this.viewerCount < 0) {
-                this.viewerCount = 0;
-            }
+            this.world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, this.pos);
+            this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
 
-            ++this.viewerCount;
-            this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), 1, this.viewerCount);
-            if (this.viewerCount == 1) {
-                this.world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, this.pos);
-                this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
-            }
         }
 
     } // todo
 
     public void onClose(PlayerEntity player) {
         if (!player.isSpectator()) {
-            --this.viewerCount;
-            this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), 1, this.viewerCount);
-            if (this.viewerCount <= 0) {
-                this.world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, this.pos);
-                this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
-            }
+            this.world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, this.pos);
+            this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
+
         }
     } //todo
 
@@ -341,8 +332,7 @@ public class StarPortalBlockEntity extends BlockEntity {
                    });
  */
                     for (StructurePiece piece : pieces) {
-                        BlockPos blockPos = getBlockInBox(world, Box.from(piece.getBoundingBox()), BirthdayBlocks.TELEPORT_ANCHOR); // BirthdayBlocks.TELEPORT_ANCHOR);//todo
-//                           LOGGER.info("getBlockInBox result " + blockPos); //todo LOGGER
+                        BlockPos blockPos = getBlockInBox(world, Box.from(piece.getBoundingBox()), BirthdayBlocks.TELEPORT_ANCHOR);
                         if (blockPos != null) {
                             LOGGER.debug("TeleportAnchor found at {}", blockPos);
                             teleportAnchor = blockPos;

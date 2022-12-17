@@ -4,12 +4,13 @@ import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.block.blockentity.TeleportAnchorBlockEntity;
 import illyena.gilding.core.block.util.FluidFlowsThrough;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -32,7 +33,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return (context.isHolding(BirthdayBlocks.TELEPORT_ANCHOR.asItem()) || context.isHolding(BirthdayBlocks.STAR_PORTAL_BLOCK.asItem())) ? VoxelShapes.fullCube() : VoxelShapes.empty();
-    } //todo change #isHolding to [] ACTIVATING_ITEMS
+    }
 
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
@@ -129,5 +130,5 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
             }
 
         }
-    }//todo add timer
-} //todo currently gets blown up by tnt
+    }
+}

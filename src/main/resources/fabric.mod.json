@@ -20,19 +20,22 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "illyena.gilding.GildingInit"
+      "illyena.gilding.GildingInit",
+      "illyena.gilding.birthday.BirthdayInitializer"
     ],
     "client": [
       "illyena.gilding.GildingClientInit",
       "illyena.gilding.birthday.BirthdayClientInitializer"
     ],
-    "mm:early_risers": [
+    "mm:early_risers":[
       "illyena.gilding.GildingEarlyRiser"
     ]
   },
   "mixins": [
     "birthday.mixins.json"
   ],
+
+  "accessWidener": "gilding.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.14.6",
