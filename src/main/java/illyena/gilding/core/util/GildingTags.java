@@ -2,6 +2,7 @@ package illyena.gilding.core.util;
 
 import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.BirthdayInitializer;
+import net.fabricmc.fabric.api.mininglevel.v1.FabricMineableTags;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tag.StructureTags;
@@ -19,13 +20,16 @@ public class GildingTags {
     }
 
     public static class GildingBlockTags{
-        private static TagKey<Block> createTag(String name) {
-            return TagKey.of(Registry.BLOCK_KEY, new Identifier(SUPER_MOD_ID, name));
+        private static TagKey<Block> createTag(String modId, String name) {
+            return TagKey.of(Registry.BLOCK_KEY, new Identifier(modId, name));
         }
 
         private static TagKey<Block> createCommonTag(String name) {
             return TagKey.of(Registry.BLOCK_KEY, new Identifier("c", name));
         }
+
+        public static final TagKey<Block> MAGIC_MINEABLE = createTag(SUPER_MOD_ID,"mineable/magic");
+
     }
     public static class GildingItemTags{
         private static TagKey<Item> createTag(String name) {

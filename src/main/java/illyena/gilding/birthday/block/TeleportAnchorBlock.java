@@ -3,6 +3,7 @@ package illyena.gilding.birthday.block;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.block.blockentity.TeleportAnchorBlockEntity;
 import illyena.gilding.core.block.util.FluidFlowsThrough;
+import illyena.gilding.core.particle.GildingParticles;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -11,7 +12,6 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityProvider, FluidFlowsThrough {
     public TeleportAnchorBlock(Settings settings) {
         super(settings);
-        this.setDefaultState((BlockState)this.stateManager.getDefaultState().with(WATERLOGGED, false).with(WATER_LEVEL, 0).with(FLUID_FALL, false));
+        this.setDefaultState(this.stateManager.getDefaultState().with(WATERLOGGED, false).with(WATER_LEVEL, 0).with(FLUID_FALL, false));
     }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -126,9 +126,11 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
                     g = (double)(random.nextFloat() * 2.0F * (float)l);
                 }
 
-                world.addParticle(ParticleTypes.PORTAL, d, e, f, g, h, k);
+                world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);
             }
 
         }
     }
-}
+} //todo player standing on
+//todo shadow?
+//todo outlineBox can be seen with fist

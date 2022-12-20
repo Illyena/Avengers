@@ -3,42 +3,39 @@ package illyena.gilding.birthday.block;
 import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.block.blockentity.StarPortalBlockEntity;
+import illyena.gilding.core.particle.GildingParticles;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.block.entity.*;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
-import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,10 +43,10 @@ import java.util.List;
 public class StarPortalBlock  extends BlockWithEntity {
    public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
    @Nullable
-   private final DyeColor color;
+   public DyeColor color;
 
    private static VoxelShape getHeadShape(BlockState state, BlockView world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);;
+        BlockEntity blockEntity = world.getBlockEntity(pos);
         return blockEntity instanceof StarPortalBlockEntity ? VoxelShapes.cuboid(((StarPortalBlockEntity)blockEntity).getHeadBoundingBox(state)) : VoxelShapes.empty();
     }
 
@@ -90,105 +87,177 @@ public class StarPortalBlock  extends BlockWithEntity {
        return shape;
    }
 
-    protected StarPortalBlock(Settings settings) {
+    protected StarPortalBlock(@Nullable DyeColor color, Settings settings) {
         super(settings);
-        this.color = null;
-        this.setDefaultState((BlockState)((BlockState)this.stateManager.getDefaultState()).with(FACING, Direction.UP));
+        this.color = color;
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.UP));
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new StarPortalBlockEntity(pos, state); }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new StarPortalBlockEntity(this.color, pos, state); }
 
     @Nullable
     @Override
     public <T extends BlockEntity>BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return checkType(type, BirthdayBlockEntities.STAR_PORTAL_BLOCK_ENTITY, StarPortalBlockEntity::tick);
-//        return checkType(type, BirthdayBlockEntities.STAR_PORTAL_BLOCK_ENTITY, world.isClient ? StarPortalBlockEntity::clientTick : StarPortalBlockEntity::serverTick);
     }
 
     @Override
     public BlockRenderType getRenderType(BlockState state) { return BlockRenderType.ENTITYBLOCK_ANIMATED; }
 
-
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
        if (player.isSpectator()) {
            return ActionResult.CONSUME;
        } else {
-          if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity) {
-            GildingInit.LOGGER.warn("hit" + hitResult.getPos());
-            GildingInit.LOGGER.warn("HEAD" + " x: " + blockEntity.getHeadBoundingBox(state).offset(pos).getMin(Direction.Axis.X) + " - " + blockEntity.getHeadBoundingBox(state).offset(pos).getMax(Direction.Axis.X)
-                    + " y: " + blockEntity.getHeadBoundingBox(state).offset(pos).getMin(Direction.Axis.Y) + " - " + blockEntity.getHeadBoundingBox(state).offset(pos).getMax(Direction.Axis.Y)
-                    + " z: " + blockEntity.getHeadBoundingBox(state).offset(pos).getMin(Direction.Axis.Z) + " - " + blockEntity.getHeadBoundingBox(state).offset(pos).getMax(Direction.Axis.Z));
+           if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity) {
+               ItemStack stack = player.getStackInHand(hand);
+               Box headBox = blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos);
 
-
-            if (blockEntity.animationStage == StarPortalBlockEntity.AnimationStage.CLOSED || blockEntity.animationStage == StarPortalBlockEntity.AnimationStage.CLOSING) {
-                   blockEntity.animationStage = StarPortalBlockEntity.AnimationStage.OPENING;
-                   return ActionResult.CONSUME;
-               } else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
-                   GildingInit.LOGGER.error("PORTAL" );
-                  if (!world.isClient) {
-                       StarPortalBlockEntity.tryTeleportingEntity((ServerWorld)world, pos, state, player, blockEntity);
+               if ((blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.OPENED || !headBox.contains(hitResult.getPos()))
+                       && stack.getItem() instanceof DyeItem dyeItem && dyeItem.getColor() != this.color) {
+                   blockEntity.getWorld().playSound(player, pos, SoundEvents.ITEM_DYE_USE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                   if (!world.isClient()) {
+                       BlockState newState = StarPortalBlock.get(dyeItem.getColor()).getDefaultState().with(FACING, state.get(FACING));
+                       world.setBlockState(pos, newState);
+                       stack.decrement(1);
                    }
-                   return ActionResult.CONSUME;
-               } else {
-                   blockEntity.animationStage = StarPortalBlockEntity.AnimationStage.CLOSING;
-                   return ActionResult.CONSUME;
+                   return ActionResult.success(player.world.isClient);
                }
-
-           } else return ActionResult.PASS;
+               else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
+                        && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
+                   if (!world.isClient()) {
+                       if (stack.isEmpty()) {
+                           StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, player, blockEntity);
+                       } else {
+                           ItemStack stack2 = stack.split(1);
+                           ItemEntity itemEntity = player.dropStack(stack2);
+                           StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
+                       }
+                   }
+                   return ActionResult.success(player.world.isClient);
+               }
+           }
+           return ActionResult.PASS;
        }
+
+    }
+
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        if (!entity.hasVehicle()
+                && !entity.hasPassengers()
+                && entity.canUsePortals()
+                && world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity
+                && blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
+                && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).intersects(entity.getBoundingBox())) {
+            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, entity, blockEntity);
+        }
+    }
+
+    public void onProjectileHit(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile) {
+        BlockPos pos = hit.getBlockPos();
+        if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity
+               && blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
+               && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).intersects(projectile.getBoundingBox())) {
+           StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, projectile, blockEntity);
+        }
+
+    }
+
+    public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+ //       this.teleport(state, world, pos); //todo test
+    }
+
+    private void teleport(BlockState state, World world, BlockPos pos) {
+        WorldBorder worldBorder = world.getWorldBorder();
+        for(int i = 0; i < 1000; ++i) {
+            BlockPos blockPos = pos.add(world.random.nextInt(16) - world.random.nextInt(16), world.random.nextInt(8) - world.random.nextInt(8), world.random.nextInt(16) - world.random.nextInt(16));
+            Direction direction = this.getAttachDirection(world, pos, blockPos);
+            if (world.getBlockState(blockPos).isAir() && worldBorder.contains(blockPos) && direction != null) {
+                if (world.isClient) {
+                    for(int j = 0; j < 128; ++j) {
+                        double d = world.random.nextDouble();
+                        float f = (world.random.nextFloat() - 0.5F) * 0.2F;
+                        float g = (world.random.nextFloat() - 0.5F) * 0.2F;
+                        float h = (world.random.nextFloat() - 0.5F) * 0.2F;
+                        double e = MathHelper.lerp(d, blockPos.getX(), pos.getX()) + (world.random.nextDouble() - 0.5) + 0.5;
+                        double k = MathHelper.lerp(d, blockPos.getY(), pos.getY()) + world.random.nextDouble() - 0.5;
+                        double l = MathHelper.lerp(d, blockPos.getZ(), pos.getZ()) + (world.random.nextDouble() - 0.5) + 0.5;
+                        world.addParticle(ParticleTypes.PORTAL, e, k, l, f, g, h);
+                    }
+                } else {
+                    world.setBlockState(blockPos, state.with(FACING, direction.getOpposite()), Block.NOTIFY_LISTENERS);
+                    world.removeBlock(pos, false);
+                }
+                return;
+            }
+        }
+
+    }
+
+    private Direction getAttachDirection(World world , BlockPos startPos, BlockPos pos) {
+        Direction[] directions = Direction.values();
+        for (Direction direction : directions) {
+            BlockPos blockPos2 = pos.offset(direction);
+            BlockState blockState2 = world.getBlockState(blockPos2);
+            Block block2 = blockState2.getBlock();
+            VoxelShape shape2 = block2.getSidesShape(blockState2, world, blockPos2);
+            boolean bl = (!(blockState2.isAir()) && Block.isFaceFullSquare(shape2.getFace(direction.getOpposite()), direction.getOpposite()) && blockPos2 != startPos);
+            if (bl) {
+                return direction;
+            }
+        }
+       return null;
     }
 
     public static boolean canOpen(BlockState state, World world, BlockPos pos, StarPortalBlockEntity blockEntity) {
         if (blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.CLOSED) {
             return true;
         } else {
-            Box box = ShulkerEntity.calculateBoundingBox((Direction)state.get(FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6);
+            Box box = ShulkerEntity.calculateBoundingBox(state.get(FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6);
             return world.isSpaceEmpty(box);
         }
     }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return (BlockState)this.getDefaultState().with(FACING, ctx.getSide());
+        return this.getDefaultState().with(FACING, ctx.getSide());
     }
 
-/*    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity) {
-            if (!world.isClient && player.isCreative() && !starPortalBlockEntity.isEmpty()) {
-                ItemStack itemStack = getItemStack(this.getColor());
-                blockEntity.setStackNbt(itemStack);
-                if (starPortalBlockEntity.hasCustomName()) {
-                    itemStack.setCustomName(starPortalBlockEntity.getCustomName());
-                }
+    public PistonBehavior getPistonBehavior(BlockState state) { return PistonBehavior.BLOCK; }
 
-                ItemEntity itemEntity = new ItemEntity(world, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, itemStack);
-                itemEntity.setToDefaultPickupDelay();
-                world.spawnEntity(itemEntity);
-            } else {
-                starPortalBlockEntity.checkLootInteraction(player);
-            }
-        }
-
-        super.onBreak(world, pos, state, player);
-    }*/ //todo john suggests teleporting to exit location
-
-
-    public PistonBehavior getPistonBehavior(BlockState state) { return PistonBehavior.NORMAL; } //todo
-
-/*    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof StarPortalBlockEntity ? VoxelShapes.cuboid(((StarPortalBlockEntity)blockEntity).getBoundingBox(state)) : VoxelShapes.fullCube();
-    }
-*/
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if(blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity){
             return starPortalBlockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED ? getOpenShape(state, world, pos) : VoxelShapes.cuboid(starPortalBlockEntity.getBoundingBox(state));
         } else return VoxelShapes.fullCube();
     }
+
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (!world.isClient && player.isCreative() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {
+            if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity) {
+                ItemStack itemStack = new ItemStack(this);
+                BlockPos exitPortalPos = blockEntity.getExitPortalPos();
+                NbtCompound nbt;
+                if (exitPortalPos != null) {
+                    nbt = new NbtCompound();
+                    nbt.put("ExitPortal", NbtHelper.fromBlockPos(exitPortalPos));
+                    BlockItem.setBlockEntityNbt(itemStack, BirthdayBlockEntities.STAR_PORTAL_BLOCK_ENTITY, nbt);
+                }
+                if (blockEntity.getExactTeleport()) {
+                    nbt = new NbtCompound();
+                    nbt.putBoolean("ExactTeleport", true);
+                }
+                nbt = new NbtCompound();
+                itemStack.setSubNbt("BlockStateTag", nbt);
+                ItemEntity itemEntity = new ItemEntity(world, (double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), itemStack);
+                itemEntity.setToDefaultPickupDelay();
+                world.spawnEntity(itemEntity);
+            }
+        }
+   }
+
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -197,12 +266,12 @@ public class StarPortalBlock  extends BlockWithEntity {
 
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return (BlockState)state.with(FACING, rotation.rotate((Direction)state.get(FACING)));
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
     }
 
     @Override
     public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation((Direction)state.get(FACING)));
+        return state.rotate(mirror.getRotation(state.get(FACING)));
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -226,7 +295,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                     g = (double)(random.nextFloat() * 2.0F * (float)l);
                 }
 
-                world.addParticle(ParticleTypes.PORTAL, d, e, f, g, h, k);
+                world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);
             }
 
         }
@@ -253,25 +322,25 @@ public class StarPortalBlock  extends BlockWithEntity {
             return BirthdayBlocks.STAR_PORTAL_BLOCK;
         } else {
             return switch (dyeColor) {
-                case WHITE -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case ORANGE -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case MAGENTA -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case LIGHT_BLUE -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case YELLOW -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case LIME -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case PINK -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case GRAY -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case LIGHT_GRAY -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case CYAN -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case PURPLE -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case BLUE -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case BROWN -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case GREEN -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case RED -> BirthdayBlocks.STAR_PORTAL_BLOCK;
-                case BLACK -> BirthdayBlocks.STAR_PORTAL_BLOCK;
+                case WHITE -> BirthdayBlocks.WHITE_STAR_PORTAL_BLOCK;
+                case ORANGE -> BirthdayBlocks.ORANGE_STAR_PORTAL_BLOCK;
+                case MAGENTA -> BirthdayBlocks.MAGENTA_STAR_PORTAL_BLOCK;
+                case LIGHT_BLUE -> BirthdayBlocks.LIGHT_BLUE_STAR_PORTAL_BLOCK;
+                case YELLOW -> BirthdayBlocks.YELLOW_STAR_PORTAL_BLOCK;
+                case LIME -> BirthdayBlocks.LIME_STAR_PORTAL_BLOCK;
+                case PINK -> BirthdayBlocks.PINK_STAR_PORTAL_BLOCK;
+                case GRAY -> BirthdayBlocks.GRAY_STAR_PORTAL_BLOCK;
+                case LIGHT_GRAY -> BirthdayBlocks.LIGHT_GRAY_STAR_PORTAL_BLOCK;
+                case CYAN -> BirthdayBlocks.CYAN_STAR_PORTAL_BLOCK;
+                case PURPLE -> BirthdayBlocks.PURPLE_STAR_PORTAL_BLOCK;
+                case BLUE -> BirthdayBlocks.BLUE_STAR_PORTAL_BLOCK;
+                case BROWN -> BirthdayBlocks.BROWN_STAR_PORTAL_BLOCK;
+                case GREEN -> BirthdayBlocks.GREEN_STAR_PORTAL_BLOCK;
+                case RED -> BirthdayBlocks.RED_STAR_PORTAL_BLOCK;
+                case BLACK -> BirthdayBlocks.BLACK_STAR_PORTAL_BLOCK;
             };
         }
-    } //todo colored star portals
+    }
 
     @Nullable
     public  DyeColor getColor() { return  this.color; }
@@ -280,10 +349,6 @@ public class StarPortalBlock  extends BlockWithEntity {
         return new ItemStack(get(color));
     }
 }
-//todo change particles to stars
-//todo implement dragon egg teleporting
-//todo onUse with Dye
-//todo onUse with Items
 
 
 

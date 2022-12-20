@@ -4,6 +4,7 @@ import illyena.gilding.birthday.BirthdayInitializer;
 import illyena.gilding.core.enchantment.GildingEnchantments;
 import illyena.gilding.core.item.util.GildingItemGroups;
 import illyena.gilding.core.networking.GildingPackets;
+import illyena.gilding.core.particle.GildingParticles;
 import illyena.gilding.core.util.GildingCalendar;
 import illyena.gilding.core.util.GildingTags;
 import net.fabricmc.api.ModInitializer;
@@ -24,7 +25,7 @@ public class GildingInit implements ModInitializer {
 //		BlockSources.setBlockSources();
 		GildingItemGroups.callGildingItemGroups();
 		GildingEnchantments.callEnchantments();
-//		GildingHeightmapType.callHeightmapTypes();
+		GildingParticles.callGildingParticles();
 
 		GildingPackets.registerC2SPackets();
 

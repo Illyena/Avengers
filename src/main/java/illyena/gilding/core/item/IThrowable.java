@@ -1,6 +1,5 @@
 package illyena.gilding.core.item;
 
-import illyena.gilding.birthday.entity.projectile.CapShieldEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -54,7 +53,7 @@ public interface IThrowable {
                             }
 
                             if (playerEntity.getAbilities().creativeMode) {
-                                projectile.pickupType = CapShieldEntity.PickupPermission.CREATIVE_ONLY;
+                                projectile.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
                             }
                             world.spawnEntity(projectile);
                             world.playSoundFromEntity((PlayerEntity) null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F); //todo sound

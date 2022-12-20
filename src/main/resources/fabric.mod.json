@@ -27,6 +27,9 @@
       "illyena.gilding.GildingClientInit",
       "illyena.gilding.birthday.BirthdayClientInitializer"
     ],
+    "fabric-datagen": [
+      "illyena.gilding.core.util.data.GildingDataGeneration"
+    ],
     "mm:early_risers":[
       "illyena.gilding.GildingEarlyRiser"
     ]

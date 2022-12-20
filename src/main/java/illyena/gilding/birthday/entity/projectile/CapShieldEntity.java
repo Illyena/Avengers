@@ -1,37 +1,29 @@
 package illyena.gilding.birthday.entity.projectile;
 
 import com.google.common.collect.Lists;
-import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.entity.BirthdayEntities;
 import illyena.gilding.birthday.item.BirthdayItems;
 import illyena.gilding.core.enchantment.GildingEnchantmentHelper;
 import illyena.gilding.core.entity.projectile.ILoyalty;
 import illyena.gilding.core.entity.projectile.IRicochet;
-import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.passive.LlamaEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -63,6 +55,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         this.capShieldStack = new ItemStack(BirthdayItems.CAP_SHIELD);
         this.capShieldStack = stack.copy();
         this.bounces = GildingEnchantmentHelper.getRicochet(this.capShieldStack) * 2;
+        this.remainingBounces = this.bounces;
         this.blockHit = false;
         this.dataTracker.set(RICOCHET, (byte)GildingEnchantmentHelper.getRicochet(stack));
         this.dataTracker.set(LOYALTY, (byte) EnchantmentHelper.getLoyalty(stack));
@@ -139,7 +132,9 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
                 this.onHit(livingEntity);
             }
         }
-        IRicochet.onEntityHit(this, entity);
+        if (entity instanceof LivingEntity) {
+            IRicochet.onEntityHit(this, entity);
+        }
         this.playSound(soundEvent, 1.0f, 1.0f);
 
     }
@@ -202,6 +197,5 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 }
-//todo Zombie pick up
 //todo Sounds
-//todo stops rendering outside of ~2 chunks
+//todo game crashes when cap shield hits end crystal

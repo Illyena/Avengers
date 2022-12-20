@@ -4,15 +4,14 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import illyena.gilding.birthday.entity.projectile.CapShieldEntity;
 import illyena.gilding.core.item.IThrowable;
+import illyena.gilding.core.item.util.GildingToolMaterials;
+import illyena.gilding.core.util.GildingTags;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
@@ -20,27 +19,21 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.tag.ItemTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends Item implements IThrowable {
-    //todo CLEAN
-    public CapShieldItem(Settings settings) {
-        super(settings);
+public class CapShieldItem extends MiningToolItem implements IThrowable {
+    public CapShieldItem(FabricItemSettings settings) {
+        super(3, -2.0f, GildingToolMaterials.MAGIC, GildingTags.GildingBlockTags.MAGIC_MINEABLE, settings);
         //shield
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
         //trident
@@ -93,15 +86,12 @@ public class CapShieldItem extends Item implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        if (Screen.hasControlDown()) {
+        tooltip.add(Text.translatable("press Throw (default R) while blocking to release."));
+    }
 
-        } else {
-            tooltip.add(Text.translatable("Press R to release."));
-        }
-    } //todo tooltip
-
-    public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-        return ingredient.isIn(ItemTags.PLANKS) || super.canRepair(stack, ingredient);
+    @Override
+    public float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
+        return state.isIn(GildingTags.GildingBlockTags.MAGIC_MINEABLE) ? this.miningSpeed + 6.0f : 1.0f;
     }
 
     public static DyeColor getColor(ItemStack stack) {
@@ -154,4 +144,4 @@ public class CapShieldItem extends Item implements IThrowable {
         return f;
     }
 
-} //todo CLEAN
+}

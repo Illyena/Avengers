@@ -1,6 +1,7 @@
 package illyena.gilding.birthday.block.blockentity;
 
 import com.mojang.datafixers.util.Pair;
+import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.block.BirthdayBlocks;
 import illyena.gilding.birthday.block.StarPortalBlock;
 import illyena.gilding.birthday.structure.StarLabStructure;
@@ -15,10 +16,13 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.mob.PiglinBrain;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -42,35 +46,32 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static illyena.gilding.birthday.BirthdayInitializer.LOGGER;
 
 public class StarPortalBlockEntity extends BlockEntity {
-    public long age;
     private int teleportCooldown;
     private final int requiredPlayerRange = 4;
-    private int viewerCount;
     public AnimationStage animationStage;
     private float animationProgress;
     private float prevAnimationProgress;
     private float pulseProgress;
     private float prevPulseProgress;
     @Nullable
-    private final DyeColor cachedColor;
+    public DyeColor cachedColor;
     @Nullable
     private BlockPos exitPortalPos;
     private boolean exactTeleport;
 
-    public StarPortalBlockEntity(@Nullable DyeColor color, BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
+    public StarPortalBlockEntity(@Nullable DyeColor color, BlockPos pos, BlockState state) {
+        super(BirthdayBlockEntities.STAR_PORTAL_BLOCK_ENTITY, pos, state);
         this.animationStage = StarPortalBlockEntity.AnimationStage.CLOSED;
         this.cachedColor = color;
     }
 
     public StarPortalBlockEntity(BlockPos pos, BlockState state) {
-        this(null, BirthdayBlockEntities.STAR_PORTAL_BLOCK_ENTITY ,pos, state);
+        this(null, pos, state);
     }
 
     public Box getBoundingBox(BlockState state) {
@@ -88,9 +89,8 @@ public class StarPortalBlockEntity extends BlockEntity {
         return box.offset(direction.getOffsetX() * offset , direction.getOffsetY() * offset, direction.getOffsetZ() * offset);
     }
 
-/*    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        nbt.putLong("Age", this.age);
         if (this.exitPortalPos != null) {
             nbt.put("ExitPortal", NbtHelper.fromBlockPos(this.exitPortalPos));
         }
@@ -98,72 +98,35 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (this.exactTeleport) {
             nbt.putBoolean("ExactTeleport", true);
         }
-
     }
-*/
-/*
+
+
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        this.age = nbt.getLong("Age");
         if (nbt.contains("ExitPortal", 10)) {
             BlockPos blockPos = NbtHelper.toBlockPos(nbt.getCompound("ExitPortal"));
             if (World.isValid(blockPos)) {
                 this.exitPortalPos = blockPos;
             }
         }
-
         this.exactTeleport = nbt.getBoolean("ExactTeleport");
     }
-*/
+
 
     public static void tick(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
-        StarPortalBlock block = (StarPortalBlock)state.getBlock();
         if (blockEntity.isPlayerInRange(world, pos) && StarPortalBlock.canOpen(state, world, pos, blockEntity)) {
-            blockEntity.animationStage = AnimationStage.OPENING;
-        } else { blockEntity.animationStage = AnimationStage.CLOSING; }
-
+            if (blockEntity.getAnimationStage() != AnimationStage.OPENED) {
+                blockEntity.animationStage = AnimationStage.OPENING;
+            }
+        } else if (blockEntity.getAnimationStage() != AnimationStage.CLOSED){
+            blockEntity.animationStage = AnimationStage.CLOSING;
+        }
         blockEntity.updateAnimation(world, pos, state);
         blockEntity.updatePulse(world, pos, state);
-
         if (blockEntity.needsCooldownBeforeTeleporting()) {
             --blockEntity.teleportCooldown;
         }
     }
-
-/*
-    public static void clientTick(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
-        blockEntity.updateAnimation(world, pos, state);
-        blockEntity.updatePulse(world, pos, state);
-        ++blockEntity.age;
-        if (blockEntity.needsCooldownBeforeTeleporting()) {
-            --blockEntity.teleportCooldown;
-        }
-
-    }
-
-    public static void serverTick(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
-        boolean bl = blockEntity.isRecentlyGenerated();
-        boolean bl2 = blockEntity.needsCooldownBeforeTeleporting();
-        ++blockEntity.age;
-        if (bl2) {
-            --blockEntity.teleportCooldown;
-        } else {
-            List<Entity> list = world.getEntitiesByClass(Entity.class, new Box(pos), StarPortalBlockEntity::canTeleport);
-            if (!list.isEmpty()) {
-                tryTeleportingEntity(world, pos, state, (Entity)list.get(world.random.nextInt(list.size())), blockEntity);
-            }
-
-            if (blockEntity.age % 2400L == 0L) {
-                startTeleportCooldown(world, pos, state, blockEntity);
-            }
-        }
-
-        if (bl != blockEntity.isRecentlyGenerated() || bl2 != blockEntity.needsCooldownBeforeTeleporting()) {
-            markDirty(world, pos, state);
-        }
-
-    }
-*/
 
     private void updatePulse(World world, BlockPos pos, BlockState state) {
         this.prevPulseProgress = this.pulseProgress;
@@ -183,6 +146,7 @@ public class StarPortalBlockEntity extends BlockEntity {
                     this.animationStage = AnimationStage.OPENED;
                     this.animationProgress = 1.0F;
                     updateNeighborStates(world, pos, state);
+                    onOpen(world, pos);
                 }
                 this.pushEntities(world, pos, state);
             }
@@ -192,6 +156,7 @@ public class StarPortalBlockEntity extends BlockEntity {
                     this.animationStage = AnimationStage.CLOSED;
                     this.animationProgress = 0.0F;
                     updateNeighborStates(world, pos, state);
+                    onClose(world, pos);
                 }
             }
             case OPENED -> this.animationProgress = 1.0F;
@@ -217,7 +182,7 @@ public class StarPortalBlockEntity extends BlockEntity {
             if (!list.isEmpty()) {
                 for (Entity entity : list) {
                     if (entity.getPistonBehavior() != PistonBehavior.IGNORE) {
-                        entity.move(MovementType.SHULKER_BOX, new Vec3d((box.getXLength() + 0.01) * (double) direction.getOffsetX(), (box.getYLength() + 0.01) * (double) direction.getOffsetY(), (box.getZLength() + 0.01) * (double) direction.getOffsetZ()));
+                        entity.move(MovementType.SHULKER_BOX, new Vec3d((box.getXLength() + 0.0) * (double) direction.getOffsetX(), (box.getYLength() + 0.0) * (double) direction.getOffsetY(), (box.getZLength() + 0.0) * (double) direction.getOffsetZ()));
                     }
                 }
 
@@ -227,22 +192,24 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public boolean suffocates() { return this.animationStage == AnimationStage.CLOSED; }
 
-    public void onOpen(PlayerEntity player) {
-        if (!player.isSpectator()) {
-            this.world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, this.pos);
-            this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
-
+    public void onOpen(World world, BlockPos pos) {
+        PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
+        if (player != null && !player.isSpectator()) {
+            world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, pos);
+            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            PiglinBrain.onGuardedBlockInteracted(player, true);
         }
 
-    } // todo
+    }
 
-    public void onClose(PlayerEntity player) {
-        if (!player.isSpectator()) {
-            this.world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, this.pos);
-            this.world.playSound((PlayerEntity)null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, this.world.random.nextFloat() * 0.1F + 0.9F);
+    public void onClose(World world, BlockPos pos) {
+        PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
+        if (player != null && !player.isSpectator()) {
+            world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
+            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
 
         }
-    } //todo
+    }
 
     public BlockEntityUpdateS2CPacket toUpdatePacket() { return  BlockEntityUpdateS2CPacket.create(this); }
 
@@ -250,7 +217,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     /** teleporting */
     public static boolean canTeleport(Entity entity) {
-        return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasPortalCooldownn();
+        return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasPortalCooldown();
     }
 
     public boolean needsCooldownBeforeTeleporting() {
@@ -260,7 +227,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
         if (!world.isClient) {
             blockEntity.teleportCooldown = 40;
-            world.addSyncedBlockEvent(pos, state.getBlock(), 2, 0);
+            world.addSyncedBlockEvent(pos, state.getBlock(), 1, 0);
             markDirty(world, pos, state);
         }
     }
@@ -323,14 +290,6 @@ public class StarPortalBlockEntity extends BlockEntity {
                 List<StructureStart> list = world.getStructureAccessor().getStructureStarts(world.getChunk(structurePos).getPos(), structure -> structure instanceof StarLabStructure);
                 if (!list.isEmpty()) {
                     List<StructurePiece> pieces = list.get(0).getChildren();
-/*                   pieces.forEach((instance) -> {
-                       BlockPos blockPos = getBlockInBox(world, Box.from(instance.getBoundingBox()), BirthdayBlocks.TELEPORT_POINT);
-                       if (blockPos != null) {
-                           BirthdayInitializer.LOGGER.debug("TeleportAnchor found at {}", blockPos);
-                           teleportAnchor.set(blockPos);
-                       }
-                   });
- */
                     for (StructurePiece piece : pieces) {
                         BlockPos blockPos = getBlockInBox(world, Box.from(piece.getBoundingBox()), BirthdayBlocks.TELEPORT_ANCHOR);
                         if (blockPos != null) {
@@ -342,7 +301,7 @@ public class StarPortalBlockEntity extends BlockEntity {
                 }
             }
         }
-        return teleportAnchor; // != null ? teleportAnchor : pos;
+        return teleportAnchor;
     }
 
     private static BlockPos getBlockInBox(World world, Box box, Block block) {
@@ -395,7 +354,7 @@ public class StarPortalBlockEntity extends BlockEntity {
             }
         }
 
-        return  blockPos; // == null ? pos : blockPos;
+        return  blockPos;
     }
 
     private static void createPlatform(ServerWorld world, BlockPos pos) {
@@ -416,99 +375,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-/*
-    private static BlockPos findBestPortalExitPos(World world, BlockPos pos) {
-        BlockPos blockPos = findExitPortalPos(world, pos.add(0, 2, 0), 5, false);
-        LOGGER.debug("Best exit position for portal at {} is {}", pos, blockPos);
-        return blockPos.up();
-    }
-
-    private static BlockPos setupExitPortalLocation(ServerWorld world, BlockPos pos) {
-        Vec3d vec3d = findTeleportLocation(world, pos);
-        WorldChunk worldChunk = getChunk(world, vec3d);
-        BlockPos blockPos = findPortalPosition(worldChunk);
-        if (blockPos == null) {
-            blockPos = new BlockPos(vec3d.x + 0.5, 75.0, vec3d.z + 0.5);
-            LOGGER.debug("Failed to find a suitable block to teleport to, spawning an island on {}", blockPos);
-            ((ConfiguredFeature) EndConfiguredFeatures.END_ISLAND.value()).generate(world, world.getChunkManager().getChunkGenerator(), Random.create(blockPos.asLong()), blockPos);
-        } else {
-            LOGGER.debug("Found suitable block to teleport to: {}", blockPos);
-        }
-
-        blockPos = findExitPortalPos(world, blockPos, 16, true);
-        return blockPos;
-    }
-
-    private static BlockPos findExitPortalPos(BlockView world, BlockPos pos, int searchRadius, boolean force) {
-        BlockPos blockPos = null;
-
-        for(int i = -searchRadius; i <= searchRadius; ++i) {
-            for(int j = -searchRadius; j <= searchRadius; ++j) {
-                if (i != 0 || j != 0 || force) {
-                    for(int k = world.getTopY() - 1; k > (blockPos == null ? world.getBottomY() : blockPos.getY()); --k) {
-                        BlockPos blockPos2 = new BlockPos(pos.getX() + i, k, pos.getZ() + j);
-                        BlockState blockState = world.getBlockState(blockPos2);
-                        if (blockState.isFullCube(world, blockPos2) && (force || !blockState.isOf(Blocks.BEDROCK))) {
-                            blockPos = blockPos2;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return blockPos == null ? pos : blockPos;
-    }
-
-    @Nullable
-    private static BlockPos findPortalPosition(WorldChunk chunk) {
-        ChunkPos chunkPos = chunk.getPos();
-        BlockPos blockPos = new BlockPos(chunkPos.getStartX(), 30, chunkPos.getStartZ());
-        int i = chunk.getHighestNonEmptySectionYOffset() + 16 - 1;
-        BlockPos blockPos2 = new BlockPos(chunkPos.getEndX(), i, chunkPos.getEndZ());
-        BlockPos blockPos3 = null;
-        double d = 0.0;
-        Iterator var8 = BlockPos.iterate(blockPos, blockPos2).iterator();
-
-        while(true) {
-            BlockPos blockPos4;
-            double e;
-            do {
-                BlockPos blockPos5;
-                BlockPos blockPos6;
-                do {
-                    BlockState blockState;
-                    do {
-                        do {
-                            if (!var8.hasNext()) {
-                                return blockPos3;
-                            }
-
-                            blockPos4 = (BlockPos)var8.next();
-                            blockState = chunk.getBlockState(blockPos4);
-                            blockPos5 = blockPos4.up();
-                            blockPos6 = blockPos4.up(2);
-                        } while(!blockState.isOf(Blocks.END_STONE));
-                    } while(chunk.getBlockState(blockPos5).isFullCube(chunk, blockPos5));
-                } while(chunk.getBlockState(blockPos6).isFullCube(chunk, blockPos6));
-
-                e = blockPos4.getSquaredDistanceFromCenter(0.0, 0.0, 0.0);
-            } while(blockPos3 != null && !(e < d));
-
-            blockPos3 = blockPos4;
-            d = e;
-        }
-    }
-
-    private static boolean isChunkEmpty(ServerWorld world, Vec3d pos) {
-        return getChunk(world, pos).getHighestNonEmptySectionYOffset() <= world.getBottomY();
-    }
-
-    private static WorldChunk getChunk(World world, Vec3d pos) {
-        return world.getChunk(MathHelper.floor(pos.x / 16.0), MathHelper.floor(pos.z / 16.0));
-    }
-*/
-
     private static boolean isAirOrFluid(BlockState blockState) {
         return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
     }
@@ -518,66 +384,20 @@ public class StarPortalBlockEntity extends BlockEntity {
         this.exitPortalPos = pos;
     }
 
+    @Nullable
+    public  BlockPos getExitPortalPos() { return this.exitPortalPos; }
+
+    public boolean getExactTeleport() { return this.exactTeleport; }
+
     public boolean onSyncedBlockEvent(int type, int data) {
-/*        if (type == 1) {
-            this.viewerCount = data;
-            if (data == 0) {
-                this.animationStage = AnimationStage.CLOSING;
-                updateNeighborStates(this.getWorld(), this.pos, this.getCachedState());
-            }
-
-            if (data == 1) {
-                this.animationStage = AnimationStage.OPENING;
-                updateNeighborStates(this.getWorld(), this.pos, this.getCachedState());
-            }
-
-            return true;
-        } else {
-            return super.onSyncedBlockEvent(type, data);
-        }
- */
-
-        if (type == 2) {
+        if (type == 1) {
             this.teleportCooldown = 40;
             return  true;
         } else return super.onSyncedBlockEvent(type, data);
-    } //todo
-
-/*
-    public boolean onSyncedBlockEvent(int type, int data) {
-        if (type == 1) {
-            this.teleportCooldown = 40;
-            return true;
-        } else {
-            return super.onSyncedBlockEvent(type, data);
-        }
     }
-
-    public boolean onSyncedBlockEvent(int type, int data) {
-        if (type == 1) {
-            this.viewerCount = data;
-            if (data == 0) {
-                this.animationStage = StarPortalBlockEntity.AnimationStage.CLOSING;
-                updateNeighborStates(this.getWorld(), this.pos, this.getCachedState());
-            }
-
-            if (data == 1) {
-                this.animationStage = StarPortalBlockEntity.AnimationStage.OPENING;
-                updateNeighborStates(this.getWorld(), this.pos, this.getCachedState());
-            }
-
-            return true;
-        } else {
-            return super.onSyncedBlockEvent(type, data);
-        }
-    }
-*/
-
 
 
     /** for rendering */
-
-
 
     public float getAnimationProgress(float delta) {
         return MathHelper.lerp(delta, this.prevAnimationProgress, this.animationProgress);

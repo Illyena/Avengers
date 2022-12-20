@@ -3,6 +3,7 @@ package illyena.gilding.birthday.entity;
 import illyena.gilding.birthday.entity.projectile.CapShieldEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,7 @@ public class BirthdayEntities {
     }
 
     private static <T extends Entity> EntityType<T> registerPersistentProjectile(String id, FabricEntityTypeBuilder<T> builder) {
-        return Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, id), builder.trackRangeBlocks(4).trackedUpdateRate(20).build());
+        return Registry.register(Registry.ENTITY_TYPE, new Identifier(MOD_ID, id), builder.dimensions(EntityDimensions.fixed(0.75f,0.75f)).build());
     }
 
     public static final EntityType<CapShieldEntity> CAP_SHIELD_ENTITY_TYPE = registerPersistentProjectile("cap_shield_entity",
