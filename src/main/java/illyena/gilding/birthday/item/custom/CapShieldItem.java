@@ -1,11 +1,12 @@
 package illyena.gilding.birthday.item.custom;
 
+//import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShield;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import illyena.gilding.birthday.entity.projectile.CapShieldEntity;
 import illyena.gilding.core.item.IThrowable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
-import illyena.gilding.core.util.GildingTags;
+import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
@@ -33,7 +34,7 @@ import java.util.List;
 
 public class CapShieldItem extends MiningToolItem implements IThrowable {
     public CapShieldItem(FabricItemSettings settings) {
-        super(3, -2.0f, GildingToolMaterials.MAGIC, GildingTags.GildingBlockTags.MAGIC_MINEABLE, settings);
+        super(3, -2.0f, GildingToolMaterials.MAGIC, GildingBlockTagGenerator.MAGIC_MINEABLE, settings);
         //shield
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
         //trident
@@ -49,16 +50,9 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
         }
     }
 
-    public UseAction getUseAction(ItemStack stack) {
-        //shield
-        return UseAction.BLOCK;
-        //trident
-//        return UseAction.SPEAR;
-    }
+    public UseAction getUseAction(ItemStack stack) { return UseAction.BLOCK; }
 
-    public int getMaxUseTime(ItemStack stack) {
-        return 72000;
-    }
+    public int getMaxUseTime(ItemStack stack) { return 72000; }
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
@@ -91,7 +85,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
     @Override
     public float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
-        return state.isIn(GildingTags.GildingBlockTags.MAGIC_MINEABLE) ? this.miningSpeed + 6.0f : 1.0f;
+        return state.isIn(GildingBlockTagGenerator.MAGIC_MINEABLE) ? this.miningSpeed + 6.0f : 1.0f;
     }
 
     public static DyeColor getColor(ItemStack stack) {
@@ -144,4 +138,9 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
         return f;
     }
 
+//    @Override
+    public int getCoolDownTicks() { return 100; }
+
+//    @Override
+    public boolean supportsBanner() { return false; }
 }

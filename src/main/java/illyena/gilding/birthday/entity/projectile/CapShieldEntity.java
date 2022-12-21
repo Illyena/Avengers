@@ -100,7 +100,9 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         }
         Entity owner = this.getOwner();
 
-        if (isOwner(entity) && this.random.nextInt(this.dataTracker.get(RICOCHET) * 2 - 1) > 0) {
+        if (isOwner(entity)
+                && this.dataTracker.get(RICOCHET) > 0
+                && this.random.nextInt(this.dataTracker.get(RICOCHET) * 2 - 1) > 0) {
             return;
         }
 

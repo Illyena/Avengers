@@ -1,5 +1,7 @@
 package illyena.gilding.birthday.block;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.block.blockentity.StarPortalBlockEntity;
@@ -8,7 +10,9 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -39,58 +43,61 @@ import net.minecraft.world.border.WorldBorder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class StarPortalBlock  extends BlockWithEntity {
-   public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
-   @Nullable
-   public DyeColor color;
+    private static final Map<DyeColor, StarPortalBlock> STAR_PORTAL_BLOCKS = Maps.newIdentityHashMap();
+    public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
+    @Nullable
+    public DyeColor color;
 
-   private static VoxelShape getHeadShape(BlockState state, BlockView world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof StarPortalBlockEntity ? VoxelShapes.cuboid(((StarPortalBlockEntity)blockEntity).getHeadBoundingBox(state)) : VoxelShapes.empty();
+    private static VoxelShape getHeadShape(BlockState state, BlockView world, BlockPos pos) {
+         BlockEntity blockEntity = world.getBlockEntity(pos);
+         return blockEntity instanceof StarPortalBlockEntity ? VoxelShapes.cuboid(((StarPortalBlockEntity)blockEntity).getHeadBoundingBox(state)) : VoxelShapes.empty();
+     }
+
+    private static VoxelShape getOpenShape(BlockState state, BlockView world, BlockPos pos) {
+        VoxelShape shape = VoxelShapes.empty();
+        switch (state.get(FACING)) {
+            case UP -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 1.0, 0.25, 1.0));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 1.0, 0.0, 1.0, 1.5, 1.0));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+            case DOWN -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.75, 0.0, 1.0, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, -0.5, 0.0, 1.0, 0.0, 1.0));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+            case NORTH -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.75, 1.0, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, -0.5, 1.0, 1.0, 0.0));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+            case SOUTH -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 1.0, 1.0, 0.25));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0, 0.0, 1.0, 1.0, 1.0, 1.5));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+            case WEST -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.75, 0.0, 0.0, 1.0, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(-0.5, 0.0, 0.0, 0.0, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+            case EAST -> {
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 0.25, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, VoxelShapes.cuboid(1.0, 0.0, 0.0, 1.5, 1.0, 1.0));
+                shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
+            }
+        }
+        return shape;
     }
-
-   private static VoxelShape getOpenShape(BlockState state, BlockView world, BlockPos pos) {
-       VoxelShape shape = VoxelShapes.empty();
-       switch (state.get(FACING)) {
-           case UP -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 1.0, 0.25, 1.0));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 1.0, 0.0, 1.0, 1.5, 1.0));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-           case DOWN -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.75, 0.0, 1.0, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, -0.5, 0.0, 1.0, 0.0, 1.0));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-           case NORTH -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.75, 1.0, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, -0.5, 1.0, 1.0, 0.0));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-           case SOUTH -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 1.0, 1.0, 0.25));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0, 0.0, 1.0, 1.0, 1.0, 1.5));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-           case WEST -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.75, 0.0, 0.0, 1.0, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(-0.5, 0.0, 0.0, 0.0, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-           case EAST -> {
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(0.0, 0.0, 0.0, 0.25, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, VoxelShapes.cuboid(1.0, 0.0, 0.0, 1.5, 1.0, 1.0));
-               shape = VoxelShapes.union(shape, getHeadShape(state, world, pos));
-           }
-       }
-       return shape;
-   }
 
     protected StarPortalBlock(@Nullable DyeColor color, Settings settings) {
         super(settings);
         this.color = color;
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.UP));
+        STAR_PORTAL_BLOCKS.put(color, this);
     }
 
     @Nullable
@@ -107,39 +114,39 @@ public class StarPortalBlock  extends BlockWithEntity {
     public BlockRenderType getRenderType(BlockState state) { return BlockRenderType.ENTITYBLOCK_ANIMATED; }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
-       if (player.isSpectator()) {
-           return ActionResult.CONSUME;
-       } else {
-           if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity) {
-               ItemStack stack = player.getStackInHand(hand);
-               Box headBox = blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos);
+        if (player.isSpectator()) {
+            return ActionResult.CONSUME;
+        } else {
+            if (world.getBlockEntity(pos) instanceof StarPortalBlockEntity blockEntity) {
+                ItemStack stack = player.getStackInHand(hand);
+                Box headBox = blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos);
 
-               if ((blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.OPENED || !headBox.contains(hitResult.getPos()))
-                       && stack.getItem() instanceof DyeItem dyeItem && dyeItem.getColor() != this.color) {
-                   blockEntity.getWorld().playSound(player, pos, SoundEvents.ITEM_DYE_USE, SoundCategory.PLAYERS, 1.0f, 1.0f);
-                   if (!world.isClient()) {
-                       BlockState newState = StarPortalBlock.get(dyeItem.getColor()).getDefaultState().with(FACING, state.get(FACING));
-                       world.setBlockState(pos, newState);
-                       stack.decrement(1);
-                   }
-                   return ActionResult.success(player.world.isClient);
-               }
-               else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
-                        && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
-                   if (!world.isClient()) {
-                       if (stack.isEmpty()) {
-                           StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, player, blockEntity);
-                       } else {
-                           ItemStack stack2 = stack.split(1);
-                           ItemEntity itemEntity = player.dropStack(stack2);
-                           StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
-                       }
-                   }
-                   return ActionResult.success(player.world.isClient);
-               }
-           }
-           return ActionResult.PASS;
-       }
+                if ((blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.OPENED || !headBox.contains(hitResult.getPos()))
+                        && stack.getItem() instanceof DyeItem dyeItem && dyeItem.getColor() != this.color) {
+                    blockEntity.getWorld().playSound(player, pos, SoundEvents.ITEM_DYE_USE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                    if (!world.isClient()) {
+                        BlockState newState = StarPortalBlock.get(dyeItem.getColor()).getDefaultState().with(FACING, state.get(FACING));
+                        world.setBlockState(pos, newState);
+                        stack.decrement(1);
+                    }
+                    return ActionResult.success(player.world.isClient);
+                }
+                else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
+                         && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
+                    if (!world.isClient()) {
+                        if (stack.isEmpty()) {
+                            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, player, blockEntity);
+                        } else {
+                            ItemStack stack2 = stack.split(1);
+                            ItemEntity itemEntity = player.dropStack(stack2);
+                            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
+                        }
+                    }
+                    return ActionResult.success(player.world.isClient);
+                }
+            }
+            return ActionResult.PASS;
+        }
 
     }
 
@@ -348,6 +355,12 @@ public class StarPortalBlock  extends BlockWithEntity {
     public static ItemStack getItemStack(@Nullable DyeColor color) {
         return new ItemStack(get(color));
     }
+
+    public static Iterable<StarPortalBlock> getAll() {
+        return Iterables.unmodifiableIterable(STAR_PORTAL_BLOCKS.values());
+    }
+
+
 }
 
 
