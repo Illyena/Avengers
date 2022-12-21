@@ -17,6 +17,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
@@ -67,6 +68,23 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         this.dataTracker.startTracking(RICOCHET, (byte) 0);
         this.dataTracker.startTracking(LOYALTY, (byte) 0);
         this.dataTracker.startTracking(ENCHANTED, false);
+    }
+
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        if (nbt.contains("Cap_Shield", 10)) {
+            this.capShieldStack = ItemStack.fromNbt(nbt.getCompound("Cap_Shield"));
+        }
+
+        this.dealtDamage = nbt.getBoolean("DealtDamage");
+        this.dataTracker.set(LOYALTY, (byte)EnchantmentHelper.getLoyalty(this.capShieldStack));
+        this.dataTracker.set(RICOCHET, (byte)GildingEnchantmentHelper.getRicochet(this.capShieldStack));
+    }
+
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        nbt.put("Cap_Shield", this.capShieldStack.writeNbt(new NbtCompound()));
+        nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
     @Override
@@ -200,4 +218,3 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     }
 }
 //todo Sounds
-//todo game crashes when cap shield hits end crystal
