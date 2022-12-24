@@ -17,13 +17,6 @@ public class GildingClientInit implements ClientModInitializer {
 //        IcingClientInitializer.initializeIcingClient();
 //        VerdureClientInitializer.initializeVerdureClient();
 
-        // todo FOR TESTING
-/**
- * for testing resource pack creation
- * remove prior to use
- */
- //       GildingPreInit.RESOURCE_PACK.dump();
-
         GildingParticles.registerParticles();
 
         GildingPackets.registerS2CPackets();

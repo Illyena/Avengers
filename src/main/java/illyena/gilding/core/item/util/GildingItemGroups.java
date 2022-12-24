@@ -16,7 +16,7 @@ public class GildingItemGroups {
     }
 
     private static ItemGroup registerItemGroup(String modId, String name, Item item) {
-//        LangJson.setItemGroupLang(modId, name); //todo LangGen
+//        LangJson.setItemGroupLang(modId, name);
         return FabricItemGroupBuilder.build(new Identifier(modId, name), () -> new ItemStack(item));
     }
 

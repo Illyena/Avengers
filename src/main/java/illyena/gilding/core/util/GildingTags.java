@@ -19,27 +19,6 @@ public class GildingTags {
         GildingInit.LOGGER.info("Registering Tags for " + SUPER_MOD_NAME + " Mod.");
     }
 
-    public static class GildingBlockTags{
-        private static TagKey<Block> createTag(String modId, String name) {
-            return TagKey.of(Registry.BLOCK_KEY, new Identifier(modId, name));
-        }
-
-        private static TagKey<Block> createCommonTag(String name) {
-            return TagKey.of(Registry.BLOCK_KEY, new Identifier("c", name));
-        }
-
-        public static final TagKey<Block> MAGIC_MINEABLE = createTag(SUPER_MOD_ID,"mineable/magic");
-
-    }
-    public static class GildingItemTags{
-        private static TagKey<Item> createTag(String name) {
-            return TagKey.of(Registry.ITEM_KEY, new Identifier(SUPER_MOD_ID, name));
-        }
-
-        private static TagKey<Item> createCommonTag(String name) {
-            return TagKey.of(Registry.ITEM_KEY, new Identifier("c", name));
-        }
-    }
     public static interface GildingStructureTags extends StructureTags {
         private static TagKey<Structure> createTag(String modId, String name) {
             return TagKey.of(Registry.STRUCTURE_KEY, new Identifier(modId, name));

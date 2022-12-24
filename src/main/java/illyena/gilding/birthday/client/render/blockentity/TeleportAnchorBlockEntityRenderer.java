@@ -59,8 +59,8 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
         float f = 20.0f;
         float g = 0.0005f / (f / 100.0f); // first value somehow dependent on difference between float[]s? or perhaps closeness to 0.0f //todo adjust timing value
         float h = (entity.age % f + tickDelta) / f;
-        float[] first = getRgbColor(1); // newYears [0.9764706, 0.5019608, 0.11372549]
-        float[] second = getRgbColor(2); // newYears [0.11372549, 0.11372549, 0.12941177]
+        float[] first = getRgbColor(1);
+        float[] second = getRgbColor(2);
         float[] beamColor = first;
 
         switch (beamColors) {
@@ -90,8 +90,8 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
         float f = 10.0f;
         float g = 0.002f / (f / 100.0f); //todo adjust timing value
         float h = ((entity.age % f) + tickDelta) / f;
-        float[] first = getRgbColor(1);// [0.6901961, 0.18039216, 0.14901961]
-        float[] second = getRgbColor(2);// [0.36862746, 0.4862745, 0.08627451]
+        float[] first = getRgbColor(1);
+        float[] second = getRgbColor(2);
         float[] dark = new float[] {0.0f, 0.0f, 0.0f};
         float [] beamColor = dark;
 

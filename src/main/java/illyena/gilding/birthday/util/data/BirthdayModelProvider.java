@@ -30,7 +30,6 @@ public class BirthdayModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-//        registerStarPortal(blockStateModelGenerator, BirthdayBlocks.BLACK_STAR_PORTAL_BLOCK);
         modelList.forEach((block) -> registerBlockModels(blockStateModelGenerator, block));
 
     }
@@ -39,8 +38,6 @@ public class BirthdayModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
 
     }
-
-
 
     public static void registerBlockModels(BlockStateModelGenerator modelGenerator, Block block) {
         if (block instanceof StarPortalBlock) {
@@ -68,8 +65,6 @@ public class BirthdayModelProvider extends FabricModelProvider {
 
     public static void registerTeleportAnchor(BlockStateModelGenerator modelGenerator, Block block) {
         Identifier blockModelId = new Identifier("minecraft", "entity/end_portal");
-
-
         Identifier identifier = TELEPORT_ANCHOR_BLOCK_MODEL.upload(block, new TextureMap().put(TextureKey.PARTICLE, blockModelId), modelGenerator.modelCollector);
         modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, identifier));
         TELEPORT_ANCHOR_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.ALL, blockModelId), modelGenerator.modelCollector);

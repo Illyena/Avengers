@@ -1,11 +1,9 @@
 package illyena.gilding;
 
-import illyena.gilding.birthday.BirthdayInitializer;
 import illyena.gilding.core.enchantment.GildingEnchantments;
 import illyena.gilding.core.item.util.GildingItemGroups;
 import illyena.gilding.core.networking.GildingPackets;
 import illyena.gilding.core.particle.GildingParticles;
-import illyena.gilding.core.util.GildingCalendar;
 import illyena.gilding.core.util.GildingTags;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;

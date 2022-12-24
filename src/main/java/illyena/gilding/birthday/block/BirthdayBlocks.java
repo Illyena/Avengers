@@ -82,4 +82,3 @@ public class BirthdayBlocks {
             Rarity.EPIC, true, DROPS_NOTHING, null);
 
 }
-//todo lang

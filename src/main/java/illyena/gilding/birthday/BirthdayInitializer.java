@@ -4,6 +4,7 @@ import illyena.gilding.birthday.block.BirthdayBlocks;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.entity.BirthdayEntities;
 import illyena.gilding.birthday.item.BirthdayItems;
+import illyena.gilding.birthday.painting.BirthdayPaintings;
 import illyena.gilding.birthday.structure.BirthdayStructures;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public class BirthdayInitializer implements ModInitializer {
         BirthdayItems.registerItems();
         BirthdayEntities.registerRobertEntities();
         BirthdayStructures.registerBirthdayStructures();
+        BirthdayPaintings.callPaintings();
 
 
     }

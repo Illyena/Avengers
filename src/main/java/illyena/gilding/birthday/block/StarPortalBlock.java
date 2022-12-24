@@ -357,7 +357,6 @@ public class StarPortalBlock  extends BlockWithEntity {
         return Iterables.unmodifiableIterable(STAR_PORTAL_BLOCKS.values());
     }
 
-
 }
 
 

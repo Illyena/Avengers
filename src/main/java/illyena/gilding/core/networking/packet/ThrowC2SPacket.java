@@ -26,9 +26,6 @@ public class ThrowC2SPacket {
 
         if (!stack.isEmpty() && stack.getItem() instanceof IThrowable item) {
             item.onThrow(stack, player.world, player, player.getItemUseTimeLeft());
-            if (stack.isUsedOnRelease()) {
-//                player.tickActiveItemStack(); //todo
-            }
             player.clearActiveItem();
         }
     }

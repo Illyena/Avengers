@@ -95,7 +95,7 @@ public abstract class EndCityGeneratorMixin {
 
                 addPiece(pieces, createPiece(manager, piece, new BlockPos(-2, 8, -2), "fat_tower_top", blockRotation, true));
 
-                if (!this.starPlatformGenerated ) { //&& random.nextInt(2) == 0) {
+                if (!this.starPlatformGenerated && random.nextInt(2) == 0) {
                     int height = buildHeight - piece.getCenter().getY();
                     this.starPlatformGenerated = true;
                     addPiece(pieces, createPiece(manager, piece, new BlockPos(0, height, 0), "star_platform", blockRotation, true));
@@ -106,5 +106,5 @@ public abstract class EndCityGeneratorMixin {
         };
     }
 
-} //todo CLEAN unfinished
+} //todo UNSAFE OVERWRITE
 
