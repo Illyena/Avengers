@@ -2,24 +2,21 @@ package illyena.gilding.birthday.block;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.block.blockentity.StarPortalBlockEntity;
 import illyena.gilding.core.particle.GildingParticles;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.*;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
@@ -42,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 
 public class StarPortalBlock  extends BlockWithEntity {
@@ -172,7 +168,7 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
- //       this.teleport(state, world, pos); //todo test
+        this.teleport(state, world, pos);
     }
 
     private void teleport(BlockState state, World world, BlockPos pos) {
@@ -262,6 +258,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                 world.spawnEntity(itemEntity);
             }
         }
+        super.onBreak(world, pos, state, player);
    }
 
 

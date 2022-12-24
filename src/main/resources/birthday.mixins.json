@@ -5,10 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "birthday.worldgen.EndCityGeneratorMixin",
-    "fabric_shield_lib.LivingEntityAccessor",
-    "fabric_shield_lib.LivingEntityMixin",
-    "fabric_shield_lib.PlayerEntityMixin",
-    "fabric_shield_lib.ShieldItemMixin",
+    "birthday.entity.PlayerEntityMixin",
     "gilding.block.FlowableFluidAccessor",
     "gilding.block.FlowableFluidMixin",
     "gilding.enchantment.LoyaltyEnchantmentMixin",
@@ -16,7 +13,6 @@
     "gilding.enchantment.PunchEnchantmentMixin"
   ],
   "client": [
-    "fabric_shield_lib.RendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

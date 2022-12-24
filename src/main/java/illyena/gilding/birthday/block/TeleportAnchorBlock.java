@@ -131,6 +131,4 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
 
         }
     }
-} //todo player standing on
-//todo shadow?
-//todo outlineBox can be seen with fist
+}
