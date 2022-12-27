@@ -25,7 +25,7 @@ public class GildingBlockTagGenerator extends FabricTagProvider<Block> {
     public static final TagKey<Block> FEATURES_CANNOT_REPLACE       = TagKey.of(Registry.BLOCK_KEY, new Identifier(SUPER_MOD_ID, "features_cannot_replace"));
     public static final TagKey<Block> GEODE_INVALID_BLOCKS          = TagKey.of(Registry.BLOCK_KEY, new Identifier(SUPER_MOD_ID, "geode_invalid_blocks"));
 
-    protected GildingBlockTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.BLOCK); }
+    protected GildingBlockTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.BLOCK, "block/"); }
 
     @Override
     protected void generateTags() {

@@ -3,6 +3,7 @@ package illyena.gilding.birthday.block.blockentity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
@@ -14,6 +15,7 @@ import net.minecraft.world.event.BlockPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.GameEventListener;
+import org.jetbrains.annotations.Nullable;
 
 public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventListener {
     public long age;
@@ -60,7 +62,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
         return this.createNbt();
     }
 
-    private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
+    public static void startTeleportCooldown(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
         if (!world.isClient) {
             blockEntity.age = 0;
             world.addSyncedBlockEvent(pos, state.getBlock(), 1, 0);
@@ -90,8 +92,8 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     }
 
     @Override
-    public boolean listen(ServerWorld world, GameEvent.Message event) {
-        if (this.isRemoved()) {
+    public boolean listen(World world, GameEvent event, @Nullable Entity entity, BlockPos pos) {
+/*        if (this.isRemoved()) {
             return false;
         } else {
             if (event.getEvent() == GameEvent.TELEPORT) {
@@ -99,7 +101,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
                 return true;
             }
         }
-
+*/
         return false;
     }
 

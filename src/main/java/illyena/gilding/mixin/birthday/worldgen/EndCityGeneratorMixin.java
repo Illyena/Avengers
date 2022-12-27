@@ -1,26 +1,19 @@
 package illyena.gilding.mixin.birthday.worldgen;
 
-import illyena.gilding.GildingInit;
 import net.minecraft.structure.EndCityGenerator;
+import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePiece;
-import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 
 @Mixin(EndCityGenerator.class)
@@ -38,7 +31,7 @@ public abstract class EndCityGeneratorMixin {
     static List<Pair<BlockRotation, BlockPos>> FAT_TOWER_BRIDGE_ATTACHMENTS;
 
     @Shadow
-    static EndCityGenerator.Piece createPiece(StructureTemplateManager structureTemplateManager, EndCityGenerator.Piece lastPiece, BlockPos relativePosition, String template, BlockRotation rotation, boolean ignoreAir) {
+    static EndCityGenerator.Piece createPiece(StructureManager structureTemplateManager, EndCityGenerator.Piece lastPiece, BlockPos relativePosition, String template, BlockRotation rotation, boolean ignoreAir) {
         return null;
     }
 
@@ -48,7 +41,7 @@ public abstract class EndCityGeneratorMixin {
     }
 
     @Shadow
-    static boolean createPart(StructureTemplateManager manager, EndCityGenerator.Part piece, int depth, EndCityGenerator.Piece parent, BlockPos pos, List<StructurePiece> pieces, Random random) {
+    static boolean createPart(StructureManager manager, EndCityGenerator.Part piece, int depth, EndCityGenerator.Piece parent, BlockPos pos, List<StructurePiece> pieces, Random random) {
         return false;
     }
 
@@ -75,8 +68,8 @@ public abstract class EndCityGeneratorMixin {
                 this.starPlatformGenerated = false;
             }
 
-            public boolean create(StructureTemplateManager manager, int depth, EndCityGenerator.Piece root, BlockPos pos, List<StructurePiece> pieces, Random random) {
-                BlockRotation blockRotation = root.method_41626().getRotation();
+            public boolean create(StructureManager manager, int depth, EndCityGenerator.Piece root, BlockPos pos, List<StructurePiece> pieces, Random random) {
+                BlockRotation blockRotation = ((SimpleStructurePieceAccessor)root).getPlacementData().getRotation();
                 EndCityGenerator.Piece piece = addPiece(pieces, createPiece(manager, root, new BlockPos(-3, 4, -3), "fat_tower_base", blockRotation, true));
                 piece = addPiece(pieces, createPiece(manager, piece, new BlockPos(0, 4, 0), "fat_tower_middle", blockRotation, true));
 

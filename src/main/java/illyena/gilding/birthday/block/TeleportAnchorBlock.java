@@ -16,7 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -24,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityProvider, FluidFlowsThrough {
     public TeleportAnchorBlock(Settings settings) {
@@ -97,7 +98,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
 
     @Nullable
     @Override
-    public <T extends BlockEntity> GameEventListener getGameEventListener(ServerWorld world, T blockEntity) {
+    public <T extends BlockEntity> GameEventListener getGameEventListener(World world, T blockEntity) {
         if (blockEntity instanceof TeleportAnchorBlockEntity teleportAnchorBlockEntity) {
             return teleportAnchorBlockEntity;
         } else {

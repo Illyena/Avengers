@@ -1,6 +1,6 @@
 package illyena.gilding.birthday.painting;
 
-import net.minecraft.entity.decoration.painting.PaintingVariant;
+import  net.minecraft.entity.decoration.painting.PaintingMotive;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -11,10 +11,10 @@ public class BirthdayPaintings {
         LOGGER.info("Registering Paintings for " + MOD_NAME);
     }
 
-    private static PaintingVariant registerPainting(String name, PaintingVariant paintingVariant) {
-        return Registry.register(Registry.PAINTING_VARIANT, new Identifier(MOD_ID, name), paintingVariant);
+    private static PaintingMotive registerPainting(String name, PaintingMotive paintingVariant) {
+        return Registry.register(Registry.PAINTING_MOTIVE, new Identifier(MOD_ID, name), paintingVariant);
     }
 
-    public static final PaintingVariant CAPTAIN = registerPainting("captain", new PaintingVariant(32,32));
+    public static final PaintingMotive CAPTAIN = registerPainting("captain", new PaintingMotive(32,32));
 
 }

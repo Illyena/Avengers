@@ -3,6 +3,7 @@ package illyena.gilding.birthday;
 import illyena.gilding.birthday.block.BirthdayBlocks;
 import illyena.gilding.birthday.block.blockentity.BirthdayBlockEntities;
 import illyena.gilding.birthday.entity.BirthdayEntities;
+import illyena.gilding.birthday.event.BirthdayEvents;
 import illyena.gilding.birthday.item.BirthdayItems;
 import illyena.gilding.birthday.painting.BirthdayPaintings;
 import illyena.gilding.birthday.structure.BirthdayStructures;
@@ -25,6 +26,7 @@ public class BirthdayInitializer implements ModInitializer {
         BirthdayEntities.registerRobertEntities();
         BirthdayStructures.registerBirthdayStructures();
         BirthdayPaintings.callPaintings();
+        BirthdayEvents.registerEvents();
 
 
     }

@@ -1,22 +1,26 @@
 package illyena.gilding.birthday.block.blockentity;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import illyena.gilding.GildingInit;
 import illyena.gilding.birthday.block.BirthdayBlocks;
 import illyena.gilding.birthday.block.StarPortalBlock;
 import illyena.gilding.birthday.structure.StarLabStructure;
+import illyena.gilding.core.event.TeleportCallback;
 import illyena.gilding.core.util.GildingTags;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.command.argument.RegistryPredicateArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
-import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.PiglinBrain;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +29,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -32,21 +37,31 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.*;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.StructurePresence;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.chunk.placement.ConcentricRingsStructurePlacement;
+import net.minecraft.world.gen.chunk.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.gen.chunk.placement.StructurePlacement;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.gen.feature.StructureFeature;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static illyena.gilding.birthday.BirthdayInitializer.LOGGER;
 
@@ -217,7 +232,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     /** teleporting */
     public static boolean canTeleport(Entity entity) {
-        return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasPortalCooldown();
+        return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasNetherPortalCooldown();
     }
 
     public boolean needsCooldownBeforeTeleporting() {
@@ -257,9 +272,10 @@ public class StarPortalBlockEntity extends BlockEntity {
                 } else {
                     entity3 = entity.getRootVehicle();
                 }
-                entity3.resetPortalCooldown();
+                entity3.resetNetherPortalCooldown();
                 entity3.teleport((double)teleportPoint.getX() + 0.5, (double)teleportPoint.getY() + 1, (double)teleportPoint.getZ() + 0.5);
-                world.emitGameEvent(entity3, GameEvent.TELEPORT, teleportPoint);
+     //           world.emitGameEvent(entity3, GameEvent.TELEPORT, teleportPoint);
+                TeleportCallback.TELEPORT_EVENT.invoker().teleport(world, entity3, teleportPoint);
             }
 
             startTeleportCooldown(world, pos, state, blockEntity);
@@ -268,7 +284,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public static BlockPos findTeleportLocation(ServerWorld world, BlockPos pos) {
         BlockPos teleportPoint = pos;
-        TagKey<Structure> tag = GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO;
+        TagKey<ConfiguredStructureFeature<?,?>> tag = GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO;
 
         BlockPos structurePos = world.locateStructure(tag, pos, 100, false);
         if (structurePos == null) {
@@ -283,11 +299,11 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
-            Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
-            if (pair != null && pair.getSecond().value() instanceof StarLabStructure labStructure) {
-                List<StructureStart> list = world.getStructureAccessor().getStructureStarts(world.getChunk(structurePos).getPos(), structure -> structure instanceof StarLabStructure);
+            Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
+            if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure labStructure) {
+                List<StructureStart> list = world.getStructureAccessor().getStructureStarts(ChunkSectionPos.from(pair.getFirst()), pair.getSecond().value());
                 if (!list.isEmpty()) {
                     List<StructurePiece> pieces = list.get(0).getChildren();
                     for (StructurePiece piece : pieces) {
@@ -361,11 +377,11 @@ public class StarPortalBlockEntity extends BlockEntity {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
-            Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
-            if (pair != null && pair.getSecond().value() instanceof StarLabStructure labStructure) {
-                List<StructureStart> list = world.getStructureAccessor().getStructureStarts(world.getChunk(pos).getPos(), structure -> structure instanceof StarLabStructure);
+            Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
+            if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure labStructure) {
+                List<StructureStart> list = world.getStructureAccessor().getStructureStarts(ChunkSectionPos.from(pair.getFirst()), pair.getSecond().value());
                 if (!list.isEmpty()) {
                     List<StructurePiece> pieces = list.get(0).getChildren();
                     BlockBox box = pieces.get(0).getBoundingBox();

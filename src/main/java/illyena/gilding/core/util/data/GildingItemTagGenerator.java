@@ -12,7 +12,7 @@ import static illyena.gilding.GildingInit.SUPER_MOD_ID;
 public class GildingItemTagGenerator extends FabricTagProvider<Item> {
     public static final TagKey<Item> SHIELDS = TagKey.of(Registry.ITEM_KEY, new Identifier(SUPER_MOD_ID, "shields"));
 
-    public GildingItemTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.ITEM); }
+    public GildingItemTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.ITEM, "item/"); }
 
     @Override
     protected void generateTags() {

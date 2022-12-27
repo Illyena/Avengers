@@ -27,7 +27,9 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.ItemTags;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -109,7 +111,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        tooltip.add(Text.translatable("press Throw (default R) while blocking to release."));
+        tooltip.add(new LiteralText("press Throw (default R) while blocking to release."));
     }
 
     @Override

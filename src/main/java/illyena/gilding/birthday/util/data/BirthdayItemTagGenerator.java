@@ -14,7 +14,7 @@ import static illyena.gilding.birthday.BirthdayInitializer.MOD_ID;
 public class BirthdayItemTagGenerator extends FabricTagProvider<Item> {
     public static final TagKey<Item> SHIELDS = TagKey.of(Registry.ITEM_KEY, new Identifier(MOD_ID, "shields"));
 
-    public BirthdayItemTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.ITEM); }
+    public BirthdayItemTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.ITEM, "item/"); }
 
     @Override
     protected void generateTags() {

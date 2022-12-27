@@ -27,7 +27,7 @@ public class BirthdayBlockTagGenerator extends FabricTagProvider<Block> {
     public static final TagKey<Block> GEODE_INVALID_BLOCKS          = TagKey.of(Registry.BLOCK_KEY, new Identifier(MOD_ID, "geode_invalid_blocks"));
 
     public BirthdayBlockTagGenerator(FabricDataGenerator dataGenerator) {
-        super(dataGenerator, Registry.BLOCK);
+        super(dataGenerator, Registry.BLOCK, "blocks/");
     }
 
     @Override
