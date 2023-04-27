@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "avengers:block/teleport_anchor"
+    }
+  }
+}

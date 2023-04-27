@@ -1,7 +1,6 @@
 package illyena.gilding.core.util;
 
 import illyena.gilding.GildingInit;
-import illyena.gilding.birthday.BirthdayInitializer;
 import net.minecraft.tag.ConfiguredStructureFeatureTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#avengers:needs_tool_level_5",
+      "required": false
+    }
+  ]
+}

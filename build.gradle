@@ -76,7 +76,7 @@ loom {
 			runDir "build/datagen"
 		}
 	}
-	accessWidenerPath = file("src/main/resources/gilding.accesswidener")
+	accessWidenerPath = file("src/main/resources/avengers.accesswidener")
 
 }
 
