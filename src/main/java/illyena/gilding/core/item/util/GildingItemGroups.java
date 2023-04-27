@@ -1,7 +1,7 @@
 package illyena.gilding.core.item.util;
 
 import illyena.gilding.GildingInit;
-import illyena.gilding.avengers.AvengersInit;
+import illyena.gilding.birthday.BirthdayInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -26,6 +26,6 @@ public class GildingItemGroups {
 
 //    public static final ItemGroup VERDURE = registerItemGroup(VerdureInitializer.MOD_ID, "verdure_group", Items.FLOWERING_AZALEA);
 
-    public static final ItemGroup AVENGERS = registerItemGroup(AvengersInit.MOD_ID, "avengers_group", Items.CAKE);
+    public static final ItemGroup BIRTHDAY = registerItemGroup(BirthdayInitializer.MOD_ID, "birthday_group", Items.CAKE);
 
 }

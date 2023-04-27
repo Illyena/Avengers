@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#gilding:geode_invalid_blocks",
-      "required": false
-    }
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#gilding:guarded_by_piglins",
-      "required": false
-    }
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#gilding:dragon_immune",
-      "required": false
-    }
-  ]
-}
