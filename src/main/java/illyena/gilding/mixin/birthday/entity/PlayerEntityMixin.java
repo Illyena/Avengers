@@ -1,6 +1,6 @@
 package illyena.gilding.mixin.birthday.entity;
 
-import illyena.gilding.birthday.item.custom.CapShieldItem;
+import illyena.gilding.avengers.item.custom.CapShieldItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

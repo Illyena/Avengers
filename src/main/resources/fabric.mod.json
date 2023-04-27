@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "birthday",
+  "id": "avengers",
   "version": "${version}",
 
-  "name": "Happy Birthday!",
+  "name": "Avengers Assemble",
   "description": "Happy Birthday, Papa!",
   "authors": [
     "Illyena",
@@ -11,21 +11,21 @@
   ],
   "contact": {
     "homepage": "",
-    "sources": "https://github.com/Illyena/gilding-birthday-robert"
+    "sources": "https://github.com/Illyena/Birthdya.git"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/birthday/cake.png",
+  "icon": "cap_shield.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
       "illyena.gilding.GildingInit",
-      "illyena.gilding.birthday.BirthdayInitializer"
+      "illyena.gilding.avengers.AvengersInit"
     ],
     "client": [
       "illyena.gilding.GildingClientInit",
-      "illyena.gilding.birthday.BirthdayClientInitializer"
+      "illyena.gilding.avengers.AvengersClientInit"
     ],
     "fabric-datagen": [
       "illyena.gilding.core.util.data.GildingDataGeneration"
@@ -35,10 +35,10 @@
     ]
   },
   "mixins": [
-    "birthday.mixins.json"
+    "avengers.mixins.json"
   ],
 
-  "accessWidener": "gilding.accesswidener",
+  "accessWidener": "avengers.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.14.6",

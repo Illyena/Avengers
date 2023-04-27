@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#gilding:wither_immune",
+      "required": false
+    }
+  ]
+}

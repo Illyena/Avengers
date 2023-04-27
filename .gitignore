@@ -8,3 +8,4 @@
 /src/main/resources/data/birthday/structures/platform.nbt
 /src/main/resources/data/birthday/structures/star_lab/platform_sans_structure_void_blocks.nbt
 /src/main/resources/assets/birthday/textures/entity/cap_shield_base_nopattern.png
+/src/main/generated/.cache/
