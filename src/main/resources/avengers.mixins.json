@@ -1,18 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "illyena.gilding.mixin",
+  "package": "illyena.gilding.avengers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "birthday.worldgen.SimpleStructurePieceAccessor",
-    "birthday.worldgen.StructureFeatureAccessor",
-    "birthday.entity.PlayerEntityMixin",
-    "birthday.worldgen.EndCityGeneratorMixin",
-    "gilding.block.FlowableFluidAccessor",
-    "gilding.block.FlowableFluidMixin",
-    "gilding.enchantment.LoyaltyEnchantmentMixin",
-    "gilding.enchantment.PowerEnchantmentMixin",
-    "gilding.enchantment.PunchEnchantmentMixin"
+    "PlayerEntityMixin",
+    "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
   ],

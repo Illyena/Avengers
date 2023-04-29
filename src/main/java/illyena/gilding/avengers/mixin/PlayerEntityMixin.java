@@ -1,4 +1,4 @@
-package illyena.gilding.mixin.birthday.entity;
+package illyena.gilding.avengers.mixin;
 
 import illyena.gilding.avengers.item.custom.CapShieldItem;
 import net.minecraft.entity.LivingEntity;
@@ -36,3 +36,4 @@ public class PlayerEntityMixin {
         }
     }
 }
+//todo generify

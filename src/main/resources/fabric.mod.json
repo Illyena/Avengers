@@ -10,11 +10,11 @@
     "SpiderBrat"
   ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/Illyena/Birthdya.git"
+    "sources": "https://github.com/Illyena/Avengers.git",
+    "issues": "https://github.com/Illyena/Avengers/issues"
   },
 
-  "license": "CC0-1.0",
+  "license": "Apache-2.0",
   "icon": "cap_shield.png",
 
   "environment": "*",
@@ -28,10 +28,7 @@
       "illyena.gilding.avengers.AvengersClientInit"
     ],
     "fabric-datagen": [
-      "illyena.gilding.core.util.data.GildingDataGeneration"
-    ],
-    "mm:early_risers":[
-      "illyena.gilding.GildingEarlyRiser"
+      "illyena.gilding.avengers.AvengersDataGeneration"
     ]
   },
   "mixins": [

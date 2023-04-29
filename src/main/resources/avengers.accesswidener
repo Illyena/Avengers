@@ -1,8 +1,5 @@
 accessWidener   v2  named
 
-# throwable enchantment target
-extendable class net/minecraft/enchantment/EnchantmentTarget
-
 # structure additions from structurized-reborn
 accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
 mutable field net/minecraft/structure/pool/StructurePool elementCounts Ljava/util/List;

@@ -102,7 +102,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
         }
 */
         return false;
-    }
+    } //todo
 
     public boolean shouldDrawSide(Direction direction) {
         return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
@@ -110,11 +110,8 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
 
     public int getDrawnSidesCount() {
         int i = 0;
-        Direction[] var2 = Direction.values();
-        int var3 = var2.length;
 
-        for (int var4 = 0; var4 < var3; ++var4) {
-            Direction direction = var2[var4];
+        for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
 

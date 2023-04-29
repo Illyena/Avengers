@@ -1,7 +1,7 @@
 package illyena.gilding.avengers.block;
 
 import illyena.gilding.avengers.block.blockentity.StarPortalBlockEntity;
-import illyena.gilding.avengers.item.custom.BlockItemWithGlint;
+import illyena.gilding.core.item.BlockItemWithGlint;
 import illyena.gilding.avengers.util.data.AvengersLootTableProvider;
 import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -45,7 +45,7 @@ public class AvengersBlocks {
 
     private static StarPortalBlock registerStarPortalBlock(DyeColor color) {
 
-        return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance((state) -> { return 15; })
+        return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(state -> 15)
                 .suffocates((((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
                     if (!(blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity)) {

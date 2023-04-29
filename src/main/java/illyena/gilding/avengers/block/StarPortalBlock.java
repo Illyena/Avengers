@@ -253,7 +253,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                 }
                 nbt = new NbtCompound();
                 itemStack.setSubNbt("BlockStateTag", nbt);
-                ItemEntity itemEntity = new ItemEntity(world, (double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), itemStack);
+                ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                 itemEntity.setToDefaultPickupDelay();
                 world.spawnEntity(itemEntity);
             }
@@ -293,10 +293,10 @@ public class StarPortalBlock  extends BlockWithEntity {
                 int l = random.nextInt(2) * 2 - 1;
                 if (random.nextBoolean()) {
                     f = (double)pos.getZ() + 0.5 + 0.25 * (double)l;
-                    k = (double)(random.nextFloat() * 2.0F * (float)l);
+                    k = random.nextFloat() * 2.0F * (float)l;
                 } else {
                     d = (double)pos.getX() + 0.5 + 0.25 * (double)l;
-                    g = (double)(random.nextFloat() * 2.0F * (float)l);
+                    g = random.nextFloat() * 2.0F * (float)l;
                 }
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);

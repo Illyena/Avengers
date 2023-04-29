@@ -50,9 +50,9 @@ public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1.0F))
                         .with(ItemEntry.builder(drop)
-                                .apply(CopyNbtLootFunction.builder((LootNbtProvider) ContextLootNbtProvider.BLOCK_ENTITY)
+                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
                                         .withOperation("ExitPortal", "BlockEntityTag.ExitPortal"))
-                                .apply(CopyNbtLootFunction.builder((LootNbtProvider) ContextLootNbtProvider.BLOCK_ENTITY)
+                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
                                         .withOperation("ExactTeleport", "BlockEntityTag.ExactTeleport"))));
     }
 

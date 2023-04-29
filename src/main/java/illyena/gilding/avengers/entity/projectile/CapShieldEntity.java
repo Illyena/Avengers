@@ -29,8 +29,8 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class CapShieldEntity extends PersistentProjectileEntity implements IRicochet, ILoyalty {
-    private static final TrackedData<Byte> RICOCHET;
-    private static final TrackedData<Byte> LOYALTY;
+    private static final TrackedData<Integer> RICOCHET;
+    private static final TrackedData<Integer> LOYALTY;
     private static final TrackedData<Boolean> ENCHANTED;
     private ItemStack capShieldStack;
 
@@ -58,15 +58,15 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         this.bounces = GildingEnchantmentHelper.getRicochet(this.capShieldStack) * 2;
         this.remainingBounces = this.bounces;
         this.blockHit = false;
-        this.dataTracker.set(RICOCHET, (byte)GildingEnchantmentHelper.getRicochet(stack));
-        this.dataTracker.set(LOYALTY, (byte) EnchantmentHelper.getLoyalty(stack));
+        this.dataTracker.set(RICOCHET, GildingEnchantmentHelper.getRicochet(stack));
+        this.dataTracker.set(LOYALTY, EnchantmentHelper.getLoyalty(stack));
         this.dataTracker.set(ENCHANTED, stack.hasGlint());
     }
 
     protected void initDataTracker() {
         super.initDataTracker();
-        this.dataTracker.startTracking(RICOCHET, (byte) 0);
-        this.dataTracker.startTracking(LOYALTY, (byte) 0);
+        this.dataTracker.startTracking(RICOCHET, 0);
+        this.dataTracker.startTracking(LOYALTY, 0);
         this.dataTracker.startTracking(ENCHANTED, false);
     }
 
@@ -77,8 +77,8 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         }
 
         this.dealtDamage = nbt.getBoolean("DealtDamage");
-        this.dataTracker.set(LOYALTY, (byte)EnchantmentHelper.getLoyalty(this.capShieldStack));
-        this.dataTracker.set(RICOCHET, (byte)GildingEnchantmentHelper.getRicochet(this.capShieldStack));
+        this.dataTracker.set(LOYALTY, EnchantmentHelper.getLoyalty(this.capShieldStack));
+        this.dataTracker.set(RICOCHET, GildingEnchantmentHelper.getRicochet(this.capShieldStack));
     }
 
     public void writeCustomDataToNbt(NbtCompound nbt) {
@@ -110,7 +110,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
-            long l = (long) this.random.nextInt(i/2 +2);
+            long l = this.random.nextInt(i/2 +2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
         if(entity instanceof LivingEntity livingEntity) {
@@ -124,7 +124,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             return;
         }
 
-        DamageSource damageSource = DamageSource.thrownProjectile(this, (Entity)(owner == null ? this : owner));
+        DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
 
@@ -191,9 +191,9 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
     public DataTracker getDataTracker() {return dataTracker;}
 
-    public TrackedData<Byte> getLoyalty() {return LOYALTY;}
+    public TrackedData<Integer> getLoyalty() {return LOYALTY;}
 
-    public TrackedData<Byte> getRicochet() {return RICOCHET;}
+    public TrackedData<Integer> getRicochet() {return RICOCHET;}
 
     public int getReturnTimer() {return this.returnTimer;}
 
@@ -205,15 +205,13 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
 
     @Override
-    public ItemStack asItemStack() {
-        return this.capShieldStack.copy();
-    }
+    public ItemStack asItemStack() { return this.capShieldStack.copy(); }
 
-    public boolean isEnchanted() {return (Boolean)this.dataTracker.get(ENCHANTED);}
+    public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
     static {
-        RICOCHET = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BYTE);
-        LOYALTY = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BYTE);
+        RICOCHET = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);
+        LOYALTY = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 }

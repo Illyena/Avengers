@@ -1,7 +1,7 @@
 package illyena.gilding.avengers.client.render.blockentity;
 
 import illyena.gilding.avengers.block.blockentity.TeleportAnchorBlockEntity;
-import illyena.gilding.core.util.GildingCalendar;
+import illyena.gilding.core.util.time.GildingCalendar;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -26,7 +26,7 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
     public void render(TeleportAnchorBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.isRecentlyGenerated()) {
             float g = entity.getRecentlyGeneratedBeamHeight(tickDelta);
-            double d = (double) entity.getWorld().getTopY();
+            double d = entity.getWorld().getTopY();
             g = MathHelper.sin(g * 3.1415927F);
             int k = MathHelper.floor((double) g * d);
             long l = entity.getWorld().getTime();
@@ -99,7 +99,7 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
             case stage_1 -> {
                 float red = first[0] * (1.0F - h) + dark[0] * (h);
                 float green = first[1] * (1.0F - h) + dark[1] * (h);
-                float blue = first[2] * (1.0F - h) + dark[2] * (h);;
+                float blue = first[2] * (1.0F - h) + dark[2] * (h);
                 beamColor = new float[]{red, green, blue};
                 if (beamColor[0] <= dark[0] + g && beamColor[1] <= dark[1] + g && beamColor[2] <= dark[2] + g) {
                     this.beamColors = BeamColorStage.stage_2;

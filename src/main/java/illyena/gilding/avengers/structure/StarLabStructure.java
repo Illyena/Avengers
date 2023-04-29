@@ -1,47 +1,11 @@
 package illyena.gilding.avengers.structure;
-/*
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import illyena.gilding.GildingInit;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.enums.StructureBlockMode;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.structure.*;
-import net.minecraft.structure.pool.StructurePool;
-import net.minecraft.structure.pool.StructurePoolBasedGenerator;
-import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.world.HeightLimitView;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.gen.HeightContext;
-import net.minecraft.world.gen.heightprovider.HeightProvider;
-import net.minecraft.world.gen.structure.Structure;
-import net.minecraft.world.gen.structure.StructureType;
-import org.apache.commons.compress.utils.Lists;
-
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
 /**
- *
  * @source StructureTutorialMod <a href="http://www.github.com/TelepathicGrunt/StructureTutorialMod"></a>   @author TelepathicGrunt
  */
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import illyena.gilding.GildingInit;
 import net.minecraft.block.Blocks;
 import net.minecraft.structure.*;
 import net.minecraft.structure.pool.StructurePool;
@@ -70,27 +34,21 @@ public class StarLabStructure  extends StructureFeature<StructurePoolFeatureConf
 
     public StarLabStructure() {
         super(CODEC, StarLabStructure::createPieceGenerator, PostPlacementProcessor.EMPTY);
-
-
     }
 
     static boolean extraSpawningChecks(StructureGeneratorFactory.Context<StructurePoolFeatureConfig> context) {
         ChunkPos chunkPos = context.chunkPos();
         HeightLimitView world = context.world();
 
-
         boolean chunkIsEmpty = true;
         for (int y = world.getBottomY(); y <= world.getTopY(); ++y) {
-            GildingInit.LOGGER.warn(context.chunkGenerator().getColumnSample(chunkPos.x, chunkPos.z, world).getState(y) + " y: " + y);
             if (!context.chunkGenerator().getColumnSample(chunkPos.x, chunkPos.z, world).getState(y).isOf(Blocks.AIR)) {
                 chunkIsEmpty = false;
                 break;
             }
         }
 
-        GildingInit.LOGGER.error(chunkPos + "    " + chunkIsEmpty);
         return true;
-
     }
 
 

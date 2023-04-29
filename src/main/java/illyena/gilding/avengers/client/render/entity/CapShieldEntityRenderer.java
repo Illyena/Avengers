@@ -1,8 +1,7 @@
 package illyena.gilding.avengers.client.render.entity;
 
-
 import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
-import illyena.gilding.avengers.client.render.entity.model.BirthdayEntityModelLayers;
+import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +18,6 @@ import net.minecraft.util.math.Vec3f;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
-
 @Environment(EnvType.CLIENT)
 public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
     public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/cap_shield.png");
@@ -27,7 +25,7 @@ public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
 
     public CapShieldEntityRenderer(EntityRendererFactory.Context context) {
         super(context);
-        this.model = new CapShieldEntityModel(context.getPart(BirthdayEntityModelLayers.CAP_SHIELD_MODEL_LAYER));
+        this.model = new CapShieldEntityModel(context.getPart(AvengersEntityModelLayers.CAP_SHIELD_MODEL_LAYER));
     }
 
     public void render(CapShieldEntity capShieldEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {

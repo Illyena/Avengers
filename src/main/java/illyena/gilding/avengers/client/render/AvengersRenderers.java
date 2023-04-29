@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersRenderers {
-
     public static void registerRenderers() {
         LOGGER.info("Registering Renderers for " + MOD_NAME + ".");
 

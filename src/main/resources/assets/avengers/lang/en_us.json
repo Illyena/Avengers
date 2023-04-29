@@ -1,6 +1,4 @@
-{   
-    "key.category.gilding.gilding": "Gilding KeyBindings",
-    "key.gilding.throw": "Throw",
+{
     "itemGroup.avengers.avengers_group":   "Happy Birthday!  Here's some stuff.",
     "item.avengers.cap_shield":     "Captain America's Shield",
     "block.avengers.star_portal_block": "Portal Box",
@@ -20,6 +18,5 @@
     "block.avengers.star_portal_block_green": "Green Portal Box",
     "block.avengers.star_portal_block_red": "Red Portal Box",
     "block.avengers.star_portal_block_black": "BlackPortal Box",
-    "block.avengers.teleport_anchor": "Teleport Anchor",
-    "enchantment.gilding.ricochet": "Ricochet"
+    "block.avengers.teleport_anchor": "Teleport Anchor"
 }
