@@ -4,9 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.structure.StarLabStructure;
+import illyena.gilding.avengers.util.data.AvengersTags;
 import illyena.gilding.core.event.TeleportCallback;
-import illyena.gilding.core.util.data.GildingTags;
-
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -265,7 +264,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public static BlockPos findTeleportLocation(ServerWorld world, BlockPos pos) {
         BlockPos teleportPoint = pos;
-        TagKey<ConfiguredStructureFeature<?,?>> tag = GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO;
+        TagKey<ConfiguredStructureFeature<?,?>> tag = AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO;
 
         BlockPos structurePos = world.locateStructure(tag, pos, 100, false);
         if (structurePos == null) {
@@ -280,7 +279,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
             if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure) {
@@ -357,7 +356,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(GildingTags.GildingStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
             if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure) {

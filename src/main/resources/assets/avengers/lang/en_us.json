@@ -18,5 +18,8 @@
     "block.avengers.star_portal_block_green": "Green Portal Box",
     "block.avengers.star_portal_block_red": "Red Portal Box",
     "block.avengers.star_portal_block_black": "BlackPortal Box",
-    "block.avengers.teleport_anchor": "Teleport Anchor"
+    "block.avengers.teleport_anchor": "Teleport Anchor",
+
+
+    "enchantment.gilding.ricochet": "Ricochet"
 }

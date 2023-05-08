@@ -20,25 +20,29 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "illyena.gilding.GildingInit",
+      "illyena.gilding.GildingInitializer",
       "illyena.gilding.avengers.AvengersInit"
     ],
     "client": [
-      "illyena.gilding.GildingClientInit",
       "illyena.gilding.avengers.AvengersClientInit"
     ],
     "fabric-datagen": [
       "illyena.gilding.avengers.AvengersDataGeneration"
+    ],
+    "mm:early_risers": [
+      "illyena.gilding.EarlyRiser"
+    ],
+    "modmenu": [
+
     ]
   },
   "mixins": [
     "avengers.mixins.json"
   ],
-
   "accessWidener": "avengers.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.14.19",
     "fabric": "*",
     "minecraft": "~1.18",
     "java": ">=17"

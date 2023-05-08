@@ -1,4 +1,4 @@
-package illyena.gilding.avengers.mixin;
+package illyena.gilding.mixin.avengers;
 
 import illyena.gilding.avengers.item.custom.CapShieldItem;
 import net.minecraft.entity.LivingEntity;

@@ -7,10 +7,10 @@
   ],
   "placement": {
     "salt": 5464623448,
-    "type": "minecraft:concentric_rings",
+    "type": "minecraft:configurable_concentric_rings",
     "distance": 8,
-    "count": 3,
-    "spread": 3,
+    "count_config": "avengers:star_lab_config",
+    "spread_config": "avengers:star_lab_config",
     "preferred_biomes": "#avengers:has_structure/star_lab"
   }
 }

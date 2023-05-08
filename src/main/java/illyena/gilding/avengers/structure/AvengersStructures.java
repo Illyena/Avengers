@@ -1,6 +1,6 @@
 package illyena.gilding.avengers.structure;
 
-import illyena.gilding.mixin.birthday.worldgen.StructureFeatureAccessor;
+import illyena.gilding.mixin.worldgen.StructureFeatureAccessor;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.tag.BiomeTags;

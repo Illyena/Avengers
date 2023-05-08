@@ -2,11 +2,14 @@ package illyena.gilding.avengers;
 
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.blockentity.AvengersBlockEntities;
+import illyena.gilding.avengers.config.AvengersConfigOptions;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.event.AvengersEvents;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.avengers.painting.AvengersPaintings;
 import illyena.gilding.avengers.structure.AvengersStructures;
+import illyena.gilding.avengers.util.data.AvengersTags;
+import illyena.gilding.compat.Mod;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
@@ -29,6 +32,7 @@ public class AvengersInit implements ModInitializer {
     public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(CAP_SHIELD));
 
     public void onInitialize() {
+        AvengersConfigOptions.registerConfigs();
         LOGGER.info("Happy Birthday Papa!");
 
         AvengersBlocks.callAvengersBlocks();
@@ -38,7 +42,7 @@ public class AvengersInit implements ModInitializer {
         AvengersStructures.registerAvengersStructures();
         AvengersPaintings.callPaintings();
         AvengersEvents.registerEvents();
-
+        AvengersTags.callAvengersTags();
 
     }
 }

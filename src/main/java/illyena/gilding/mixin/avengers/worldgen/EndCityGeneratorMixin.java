@@ -1,5 +1,6 @@
-package illyena.gilding.avengers.mixin.worldgen;
+package illyena.gilding.mixin.avengers.worldgen;
 
+import illyena.gilding.mixin.worldgen.SimpleStructurePieceAccessor;
 import net.minecraft.structure.EndCityGenerator;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePiece;
