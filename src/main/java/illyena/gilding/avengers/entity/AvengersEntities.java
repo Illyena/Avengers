@@ -12,7 +12,7 @@ import net.minecraft.util.registry.Registry;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersEntities {
-    public static void registerRobertEntities() {
+    public static void registerEntities() {
         LOGGER.info("Registering entities for " + MOD_NAME + " Mod.");
     }
 

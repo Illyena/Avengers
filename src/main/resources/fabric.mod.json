@@ -33,7 +33,7 @@
       "illyena.gilding.EarlyRiser"
     ],
     "modmenu": [
-
+      "illyena.gilding.avengers.compat.ModMenuCompat"
     ]
   },
   "mixins": [

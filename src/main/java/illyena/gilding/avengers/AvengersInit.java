@@ -14,6 +14,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,11 +39,16 @@ public class AvengersInit implements ModInitializer {
         AvengersBlocks.callAvengersBlocks();
         AvengersBlockEntities.registerAvengersBlockEntities();
         AvengersItems.registerItems();
-        AvengersEntities.registerRobertEntities();
+        AvengersEntities.registerEntities();
         AvengersStructures.registerAvengersStructures();
         AvengersPaintings.callPaintings();
         AvengersEvents.registerEvents();
         AvengersTags.callAvengersTags();
 
     }
+
+    public static TranslatableText translationKeyOf(String type, String key) {
+        return new TranslatableText(type + "." + MOD_ID + "." + key);
+    }
+
 }
