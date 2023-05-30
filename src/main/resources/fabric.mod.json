@@ -1,47 +1,49 @@
 {
   "schemaVersion": 1,
-  "id": "birthday",
+  "id": "avengers",
   "version": "${version}",
 
-  "name": "Happy Birthday!",
+  "name": "Avengers Assemble!",
   "description": "Happy Birthday, Papa!",
   "authors": [
     "Illyena",
     "SpiderBrat"
   ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/Illyena/gilding-birthday-robert"
+    "sources": "https://github.com/Illyena/Avengers.git",
+    "issues": "httpsa://github.com/Illyena/Avengers/issues"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/birthday/cake.png",
+  "license": "Apache-2.0",
+  "icon": "cap_shield.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "illyena.gilding.GildingInit",
-      "illyena.gilding.birthday.BirthdayInitializer"
+      "illyena.gilding.GildingInitializer",
+      "illyena.gilding.avengers.AvengersInit"
     ],
     "client": [
-      "illyena.gilding.GildingClientInit",
-      "illyena.gilding.birthday.BirthdayClientInitializer"
+      "illyena.gilding.avengers.AvengersClientInit"
     ],
     "fabric-datagen": [
-      "illyena.gilding.core.util.data.GildingDataGeneration"
+      "illyena.gilding.avengers.AvengersDataGeneration"
     ],
     "mm:early_risers":[
-      "illyena.gilding.GildingEarlyRiser"
+      "illyena.gilding.EarlyRiser"
+    ],
+    "modmenu": [
+      "illyena.gilding.avengers.compat.ModMenuCompat"
     ]
   },
   "mixins": [
-    "birthday.mixins.json"
+    "avengers.mixins.json"
   ],
 
-  "accessWidener": "gilding.accesswidener",
+  "accessWidener": "avengers.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.14.19",
     "fabric": "*",
     "minecraft": "~1.19",
     "java": ">=17"
