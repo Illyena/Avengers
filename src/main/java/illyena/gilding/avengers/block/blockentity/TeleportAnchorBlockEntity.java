@@ -109,11 +109,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
 
     public int getDrawnSidesCount() {
         int i = 0;
-        Direction[] var2 = Direction.values();
-        int var3 = var2.length;
-
-        for (int var4 = 0; var4 < var3; ++var4) {
-            Direction direction = var2[var4];
+        for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
 

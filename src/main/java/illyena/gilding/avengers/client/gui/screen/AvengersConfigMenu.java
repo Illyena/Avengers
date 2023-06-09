@@ -26,10 +26,6 @@ public class AvengersConfigMenu extends ConfigScreen {
     private static final Identifier TITLE_TEXTURE = new Identifier(MOD_ID, "textures/gui/title/avengers.png");
     private final RotatingCubeMapRenderer backgroundRenderer;
 
-    private static final Identifier MINECRAFT_TITLE_TEXTURE = new Identifier("textures/gui/title/minecraft.png");
-    private static final Identifier EDITION_TITLE_TEXTURE = new Identifier("textures/gui/title/edition.png");
-
-
     public AvengersConfigMenu() { this(MinecraftClient.getInstance().currentScreen); }
 
     public AvengersConfigMenu(Screen parent) {

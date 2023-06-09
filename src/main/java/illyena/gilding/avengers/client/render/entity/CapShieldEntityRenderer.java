@@ -1,6 +1,5 @@
 package illyena.gilding.avengers.client.render.entity;
 
-
 import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
 import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
@@ -18,7 +17,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
-
 
 @Environment(EnvType.CLIENT)
 public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {

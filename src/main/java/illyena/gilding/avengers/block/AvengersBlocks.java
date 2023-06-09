@@ -6,9 +6,7 @@ import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import illyena.gilding.core.item.BlockItemWithGlint;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -19,19 +17,20 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.DROPS_NOTHING;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.STAR_PORTAL;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
 
 public class AvengersBlocks {
     public static void registerBlocks() {
         LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod.");
     }
 
-    private static Block registerBlockWithoutItem(String name, Block block) {
+    private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
+        AvengersModelProvider.addModels(block);
+        AvengersLootTableProvider.addLootTable(block, lootType);
         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
-    private static Block registerBlock(String name, Block block, Rarity rarity, @Nullable ItemGroup group) {
+    private static Block registerBlockWithoutItem(String name, Block block) {
          return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 

@@ -1,5 +1,6 @@
 package illyena.gilding.core.enchantment;
 
+import illyena.gilding.core.enchantment.EnchantmentTargetMixin;
 import illyena.gilding.core.item.IThrowable;
 import net.minecraft.item.Item;
 import net.minecraft.item.TridentItem;

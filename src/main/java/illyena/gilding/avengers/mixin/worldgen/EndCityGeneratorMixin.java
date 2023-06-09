@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -75,13 +74,11 @@ public abstract class EndCityGeneratorMixin {
 
                 for(int i = 0; i < 2 && random.nextInt(3) != 0; ++i) {
                     piece = addPiece(pieces, createPiece(manager, piece, new BlockPos(0, 8, 0), "fat_tower_middle", blockRotation, true));
-                    Iterator var10 = FAT_TOWER_BRIDGE_ATTACHMENTS.iterator();
 
-                    while(var10.hasNext()) {
-                        Pair<BlockRotation, BlockPos> pair = (Pair)var10.next();
+                    for (Pair<BlockRotation, BlockPos> fatTowerBridgeAttachment : FAT_TOWER_BRIDGE_ATTACHMENTS) {
                         if (random.nextBoolean()) {
-                            EndCityGenerator.Piece piece2 = addPiece(pieces, createPiece(manager, piece, (BlockPos)pair.getRight(), "bridge_end", blockRotation.rotate((BlockRotation)pair.getLeft()), true));
-                            createPart(manager, BRIDGE_PIECE, depth + 1, piece2, (BlockPos)null, pieces, random);
+                            EndCityGenerator.Piece piece2 = addPiece(pieces, createPiece(manager, piece, fatTowerBridgeAttachment.getRight(), "bridge_end", blockRotation.rotate(fatTowerBridgeAttachment.getLeft()), true));
+                            createPart(manager, BRIDGE_PIECE, depth + 1, piece2, null, pieces, random);
                         }
                     }
                 }

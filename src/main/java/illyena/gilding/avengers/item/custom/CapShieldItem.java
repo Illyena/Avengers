@@ -2,9 +2,11 @@ package illyena.gilding.avengers.item.custom;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import illyena.gilding.avengers.AvengersInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
+import illyena.gilding.core.item.Unbreakable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -32,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable {
+public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreakable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
@@ -40,20 +42,18 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier",
-                (double)(isUsable(this.getDefaultStack()) ? 3.0f : 0.0f), EntityAttributeModifier.Operation.ADDITION));
+                isUsable(this.getDefaultStack()) ? 3.0f : 0.0f, EntityAttributeModifier.Operation.ADDITION));
         builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier",
-                (double)(isUsable(this.getDefaultStack()) ? -2.0f : -3.2f), EntityAttributeModifier.Operation.ADDITION));
+                isUsable(this.getDefaultStack()) ? -2.0f : -3.2f, EntityAttributeModifier.Operation.ADDITION));
         this.attributeModifiers = builder.build();
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            FabricModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) -> {
-                return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f;
-            });
+            FabricModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) ->
+                    livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f);
         }
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            FabricModelPredicateProviderRegistry.register(new Identifier("broken_shield"), (stack, world, entity, seed) -> {
-                return stack.getItem() instanceof CapShieldItem && isUsable(stack) ? 0.0F : 1.0F;
-            });
+            FabricModelPredicateProviderRegistry.register(new Identifier("broken_shield"), (stack, world, entity, seed) ->
+                    stack.getItem() instanceof CapShieldItem && isUsable(stack) ? 0.0F : 1.0F);
         }
     }
 
@@ -70,10 +70,8 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
     }
 
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        return isUsable(stack) ? super.postHit(stack, target, attacker) : false;
+        return isUsable(stack) && super.postHit(stack, target, attacker);
     }
-
-    public static boolean isUsable(ItemStack stack) { return stack.getDamage() < stack.getMaxDamage() - 1; }
 
     public UseAction getUseAction(ItemStack stack) { return isUsable(stack) ? UseAction.BLOCK : UseAction.NONE; }
 
@@ -106,7 +104,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        tooltip.add(Text.translatable("press Throw (default R) while blocking to release."));
+        tooltip.add(AvengersInit.translationKeyOf("tooltip", "throwable"));
     }
 
     @Override
@@ -124,6 +122,9 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
         return f;
     }
+
+    @Override
+    public boolean canThrow(ItemStack stack, World world, LivingEntity user, int remainingTicks) { return true; }
 
     public static DyeColor getColor(ItemStack stack) {
         NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(stack);

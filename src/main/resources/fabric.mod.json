@@ -20,7 +20,6 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "illyena.gilding.GildingInitializer",
       "illyena.gilding.avengers.AvengersInit"
     ],
     "client": [
@@ -28,9 +27,6 @@
     ],
     "fabric-datagen": [
       "illyena.gilding.avengers.AvengersDataGeneration"
-    ],
-    "mm:early_risers":[
-      "illyena.gilding.EarlyRiser"
     ],
     "modmenu": [
       "illyena.gilding.avengers.compat.ModMenuCompat"

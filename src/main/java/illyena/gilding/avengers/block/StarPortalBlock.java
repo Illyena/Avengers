@@ -253,7 +253,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                 }
                 nbt = new NbtCompound();
                 itemStack.setSubNbt("BlockStateTag", nbt);
-                ItemEntity itemEntity = new ItemEntity(world, (double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), itemStack);
+                ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                 itemEntity.setToDefaultPickupDelay();
                 world.spawnEntity(itemEntity);
             }

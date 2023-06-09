@@ -11,7 +11,6 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.CopyNbtLootFunction;
 import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
-import net.minecraft.loot.provider.nbt.LootNbtProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.util.Identifier;
 
@@ -50,9 +49,9 @@ public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1.0F))
                         .with(ItemEntry.builder(drop)
-                                .apply(CopyNbtLootFunction.builder((LootNbtProvider) ContextLootNbtProvider.BLOCK_ENTITY)
+                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
                                         .withOperation("ExitPortal", "BlockEntityTag.ExitPortal"))
-                                .apply(CopyNbtLootFunction.builder((LootNbtProvider) ContextLootNbtProvider.BLOCK_ENTITY)
+                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
                                         .withOperation("ExactTeleport", "BlockEntityTag.ExactTeleport"))));
     }
 

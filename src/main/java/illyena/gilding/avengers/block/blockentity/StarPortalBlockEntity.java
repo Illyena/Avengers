@@ -72,7 +72,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     }
 
     public Box getBoundingBox(BlockState state) {
-        return ShulkerEntity.calculateBoundingBox((Direction)state.get(StarPortalBlock.FACING), 0.5F * this.getAnimationProgress(1.0F));
+        return ShulkerEntity.calculateBoundingBox(state.get(StarPortalBlock.FACING), 0.5F * this.getAnimationProgress(1.0F));
     }
 
     public Box getHeadBoundingBox(BlockState state) {
@@ -168,7 +168,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     }
 
     private boolean isPlayerInRange(World world, BlockPos pos) {
-        return world.isPlayerInRange((double)pos.getX() + 0.5, (double)pos.getY() +0.5, (double)pos.getZ() +0.5, (double)this.requiredPlayerRange);
+        return world.isPlayerInRange((double)pos.getX() + 0.5, (double)pos.getY() +0.5, (double)pos.getZ() +0.5, this.requiredPlayerRange);
     }
 
     private void pushEntities(World world, BlockPos pos, BlockState state) {
@@ -283,7 +283,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
-            if (pair != null && pair.getSecond().value() instanceof StarLabStructure labStructure) {
+            if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
                 List<StructureStart> list = world.getStructureAccessor().getStructureStarts(world.getChunk(structurePos).getPos(), structure -> structure instanceof StarLabStructure);
                 if (!list.isEmpty()) {
                     List<StructurePiece> pieces = list.get(0).getChildren();
@@ -336,7 +336,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         for (int i = -searchRadius; i <= searchRadius; ++i) {
             for (int j = -searchRadius; j <= searchRadius; ++j) {
                 if (i != 0 || j != 0 || force) {
-//                    for (int k = world.getTopY() - 1; k > (blockPos == null ? world.getBottomY() : blockPos.getY()); --k) {
                     for (int k = -searchRadius; k <= searchRadius; ++k) {
                         BlockPos blockPos2 = new BlockPos(pos.getX() + i, pos.getY() + k, pos.getZ() + j);
                         BlockState blockState = world.getBlockState(blockPos2);
@@ -361,7 +360,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
-            if (pair != null && pair.getSecond().value() instanceof StarLabStructure labStructure) {
+            if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
                 List<StructureStart> list = world.getStructureAccessor().getStructureStarts(world.getChunk(pos).getPos(), structure -> structure instanceof StarLabStructure);
                 if (!list.isEmpty()) {
                     List<StructurePiece> pieces = list.get(0).getChildren();
@@ -414,10 +413,8 @@ public class StarPortalBlockEntity extends BlockEntity {
     public int getDrawnSidesCount() {
         int i = 0;
         Direction[] var2 = Direction.values();
-        int var3 = var2.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Direction direction = var2[var4];
+        for (Direction direction : var2) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
 
