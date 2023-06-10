@@ -1,6 +1,6 @@
 package illyena.gilding.avengers.painting;
 
-import  net.minecraft.entity.decoration.painting.PaintingMotive;
+import net.minecraft.entity.decoration.painting.PaintingMotive;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 

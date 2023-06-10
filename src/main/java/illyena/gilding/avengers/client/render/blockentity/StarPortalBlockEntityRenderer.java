@@ -58,8 +58,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
 
         VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntityCutoutNoCull);
-        this.model.getShellParts().forEach((part) ->
-                part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
+        this.model.getShellParts().forEach(part -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
 
         float g = 0.1f *( MathHelper.sin(starPortalBlockEntity.getPulseProgress(tickDelta) / 6.0f)) + 1.0f;
         this.model.head.setPivot(1.0f - g, 1.0f - g - starPortalBlockEntity.getAnimationProgress(tickDelta), 1.0f - g );

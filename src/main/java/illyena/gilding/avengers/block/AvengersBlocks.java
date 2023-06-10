@@ -6,9 +6,7 @@ import illyena.gilding.avengers.util.data.AvengersLootTableProvider;
 import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -19,20 +17,19 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.DROPS_NOTHING;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.STAR_PORTAL;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
 
 public class AvengersBlocks {
-    public static void callAvengersBlocks() {
-        LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod.");
+    public static void registerBlocks() { LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod."); }
+
+    private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
+        AvengersModelProvider.addModels(block);
+        AvengersLootTableProvider.addLootTable(block, lootType);
+        return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static Block registerBlockWithoutItem(String name, Block block) {
         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
-    }
-
-    private static Block registerBlock(String name, Block block, Rarity rarity, @Nullable ItemGroup group) {
-         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static Block registerBlockWithItem(String name, Block block, Rarity rarity, boolean hasGlint, AvengersLootTableProvider.LootTableTypes lootType, @Nullable ItemGroup group) {
@@ -45,7 +42,7 @@ public class AvengersBlocks {
 
     private static StarPortalBlock registerStarPortalBlock(DyeColor color) {
 
-        return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(state -> 15)
+        return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
                 .suffocates((((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
                     if (!(blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity)) {

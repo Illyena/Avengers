@@ -2,9 +2,11 @@ package illyena.gilding.avengers.item.custom;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import illyena.gilding.GildingInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
+import illyena.gilding.core.item.IUnbreakable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -24,7 +26,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable {
+public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbreakable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
@@ -49,10 +50,6 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             ModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) ->
                     livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f);
-        }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            ModelPredicateProviderRegistry.register(new Identifier("broken_shield"), (stack, world, entity, seed) ->
-                    stack.getItem() instanceof CapShieldItem && isUsable(stack) ? 0.0F : 1.0F);
         }
     }
 
@@ -71,8 +68,6 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         return isUsable(stack) && super.postHit(stack, target, attacker);
     }
-
-    public static boolean isUsable(ItemStack stack) { return stack.getDamage() < stack.getMaxDamage() - 1; }
 
     public UseAction getUseAction(ItemStack stack) { return isUsable(stack) ? UseAction.BLOCK : UseAction.NONE; }
 
@@ -105,7 +100,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        tooltip.add(new LiteralText("press Throw (default R) while blocking to release."));
+        tooltip.add(GildingInit.translationKeyOf("tooltip", "throwable"));
     }
 
     @Override
@@ -123,6 +118,9 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
         return f;
     }
+
+    @Override
+    public boolean canThrow(ItemStack stack, World world, LivingEntity user, int remainingTicks) { return true; }
 
     public static DyeColor getColor(ItemStack stack) {
         NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(stack);

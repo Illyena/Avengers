@@ -19,7 +19,6 @@ public class AvengersClientInit implements ClientModInitializer {
     public void onInitializeClient() {
         AvengersEntityModelLayers.registerModelLayers();
         AvengersRenderers.registerRenderers();
-
     }
 
 }

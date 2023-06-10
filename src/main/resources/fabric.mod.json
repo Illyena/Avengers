@@ -3,7 +3,7 @@
   "id": "avengers",
   "version": "${version}",
 
-  "name": "Avengers Assemble",
+  "name": "Avengers Assemble!",
   "description": "Happy Birthday, Papa!",
   "authors": [
     "Illyena",
@@ -45,7 +45,8 @@
     "fabricloader": ">=0.14.19",
     "fabric": "*",
     "minecraft": "~1.18",
-    "java": ">=17"
+    "java": ">=17",
+    "gilding": "1.18.2v0.2.1"
   },
   "suggests": {
     "another-mod": "*"

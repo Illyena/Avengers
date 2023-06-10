@@ -9,9 +9,7 @@ import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersTags {
-    public static void callAvengersTags() {
-        LOGGER.info("Registering Tags for " + MOD_NAME);
-    }
+    public static void registerTags() { LOGGER.info("Registering Tags for {}.", MOD_NAME); }
 
     public static interface StructureTags extends ConfiguredStructureFeatureTags {
         private static TagKey<ConfiguredStructureFeature<?,?>> createTag(String modId, String name) {

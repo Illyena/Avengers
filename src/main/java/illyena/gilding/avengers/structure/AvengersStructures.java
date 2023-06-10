@@ -15,7 +15,6 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.*;
 
-
 import java.util.Map;
 
 import static illyena.gilding.avengers.AvengersInit.*;
@@ -25,7 +24,7 @@ public class AvengersStructures {
     public static RegistryEntry<ConfiguredStructureFeature<?, ?>> STAR_LAB_CONFIG;
     public static RegistryKey<ConfiguredStructureFeature<?, ?>> STAR_LAB_CONFIG_KEY;
 
-    public static void registerAvengersStructures() {
+    public static void registerStructures() {
         LOGGER.info("Registering Structures for " + MOD_NAME + " Mod.");
 
         StructureFeatureAccessor.callRegister(MOD_ID + ":star_lab", STAR_LAB, GenerationStep.Feature.RAW_GENERATION);
@@ -36,7 +35,6 @@ public class AvengersStructures {
                 StarLabGenerator.STRUCTURE_POOLS, 7), BiomeTags.END_CITY_HAS_STRUCTURE, true,
                 Map.of(SpawnGroup.MONSTER, new StructureSpawns(StructureSpawns.BoundingBox.STRUCTURE,
                         Pool.of(new SpawnSettings.SpawnEntry(EntityType.SHULKER, 1, 1, 1))))));
-
     }
 
     private static <FC extends FeatureConfig, F extends StructureFeature<FC>> RegistryEntry<ConfiguredStructureFeature<?, ?>> register(RegistryKey<ConfiguredStructureFeature<?, ?>> key, ConfiguredStructureFeature<FC, F> configuredStructureFeature) {
