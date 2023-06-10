@@ -4,13 +4,13 @@
   "package": "illyena.gilding.avengers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "worldgen.EndCityGeneratorMixin",
-    "entity.PlayerEntityMixin",
-    "gilding.enchantment.LoyaltyEnchantmentMixin",
-    "gilding.enchantment.PowerEnchantmentMixin",
-    "gilding.enchantment.PunchEnchantmentMixin"
+    "enchantment.ChannelingEnchantmentMixin",
+    "entity.ItemEntityMixin",
+    "entity.LightningEntityMixin",
+    "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
+    "entity.HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

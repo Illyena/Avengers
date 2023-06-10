@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:mjolnir",
+      "nbt": "{Damage:0}"
+    },
+    "title": "God of Thunder",
+    "description": "Bring down lighting upon mortals",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "avengers:thormod",
+  "criteria": {
+    "1": {
+      "conditions": {
+        "victims": [
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:creeper",
+                "nbt": "{powered: 1b}"
+              }
+            }
+          ]
+        ]
+      },
+      "trigger": "minecraft:killed_with_channeling"
+    }
+
+  },
+  "requirements": [
+    [
+      "1"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "avengers:blocks/mjolnir_block"
+    ]
+  }
+}

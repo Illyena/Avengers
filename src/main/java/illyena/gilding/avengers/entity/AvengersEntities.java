@@ -1,6 +1,7 @@
 package illyena.gilding.avengers.entity;
 
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
+import illyena.gilding.avengers.entity.projectile.MjolnirEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -22,5 +23,6 @@ public class AvengersEntities {
 
     public static final EntityType<CapShieldEntity> CAP_SHIELD_ENTITY_TYPE = registerPersistentProjectile("cap_shield_entity",
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, CapShieldEntity::new));
-
+    public static final EntityType<MjolnirEntity> MJOLNIR_ENTITY_TYPE = registerPersistentProjectile("mjolnir_entity",
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, MjolnirEntity::new));
 }

@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:mjolnir"
+    },
+    "title": "Thor Mod",
+    "description": "Avengers Assemble!",
+    "frame": "task",
+    "show_toast": false,
+    "annouce_to_chat": false,
+    "background": "avengers:textures/item/cap_shield.png"
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:lightning_strike",
+      "conditions": {
+        "lightning": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "distance": {
+                "absolute": {
+                  "max": 30.0
+                }
+              },
+              "type_specific": {
+                "type": "lightning"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

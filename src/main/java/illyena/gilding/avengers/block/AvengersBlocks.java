@@ -57,6 +57,9 @@ public class AvengersBlocks {
 
     //BLOCKS
 
+    public static final Block MJOLNIR_BLOCK = registerBlockWithoutItem("mjolnir_block",
+            new MjolnirBlock(FabricBlockSettings.of(Material.METAL).strength(4f).nonOpaque().requiresTool().strength(4.0f, 9.0f)), BLOCK);
+
     public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block", registerStarPortalBlock(null), Rarity.EPIC, false, STAR_PORTAL, null);
 
     public static final Block WHITE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_white", registerStarPortalBlock(DyeColor.WHITE), Rarity.EPIC, false, STAR_PORTAL, null);

@@ -1,5 +1,6 @@
 package illyena.gilding.avengers;
 
+import illyena.gilding.avengers.advancement.Advancements;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.blockentity.AvengersBlockEntities;
 import illyena.gilding.avengers.config.AvengersConfigOptions;
@@ -39,6 +40,8 @@ public class AvengersInit implements ModInitializer {
         AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
 
+        Advancements.register();
+    }
 
     public static Text translationKeyOf(String type, String key) {
         return Text.translatable(type + "." + MOD_ID + "." + key);
