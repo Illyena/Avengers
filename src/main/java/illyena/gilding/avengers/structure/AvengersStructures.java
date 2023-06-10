@@ -15,7 +15,6 @@ import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.*;
 
-
 import java.util.Map;
 
 import static illyena.gilding.avengers.AvengersInit.*;
@@ -25,7 +24,7 @@ public class AvengersStructures {
     public static RegistryEntry<ConfiguredStructureFeature<?, ?>> STAR_LAB_CONFIG;
     public static RegistryKey<ConfiguredStructureFeature<?, ?>> STAR_LAB_CONFIG_KEY;
 
-    public static void registerAvengersStructures() {
+    public static void registerStructures() {
         LOGGER.info("Registering Structures for " + MOD_NAME + " Mod.");
 
         StructureFeatureAccessor.callRegister(MOD_ID + ":star_lab", STAR_LAB, GenerationStep.Feature.RAW_GENERATION);

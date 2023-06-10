@@ -9,9 +9,7 @@ import net.minecraft.util.registry.Registry;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersBlockEntities {
-    public static void registerAvengersBlockEntities() {
-        LOGGER.info("Registering Block Entities for " + MOD_NAME + " Mod.");
-    }
+    public static void registerBlockEntities() { LOGGER.info("Registering Block Entities for " + MOD_NAME + " Mod."); }
 
     public static final BlockEntityType<StarPortalBlockEntity> STAR_PORTAL_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "star_portal_block_entity"),
             FabricBlockEntityTypeBuilder.create(StarPortalBlockEntity::new, AvengersBlocks.STAR_PORTAL_BLOCK,
@@ -33,6 +31,6 @@ public class AvengersBlockEntities {
                     AvengersBlocks.BLACK_STAR_PORTAL_BLOCK).build(null));
 
     public static final BlockEntityType<TeleportAnchorBlockEntity> TELEPORT_ANCHOR_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "teleport_anchor_block_entity"),
-            FabricBlockEntityTypeBuilder.create(TeleportAnchorBlockEntity::new,AvengersBlocks.TELEPORT_ANCHOR).build(null));
+            FabricBlockEntityTypeBuilder.create(TeleportAnchorBlockEntity::new, AvengersBlocks.TELEPORT_ANCHOR).build(null));
 
 }

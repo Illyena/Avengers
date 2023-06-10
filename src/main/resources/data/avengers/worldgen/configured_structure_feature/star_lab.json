@@ -4,11 +4,9 @@
     "start_pool": "avengers:star_lab/start_pool",
     "size": 2
   },
-  "biomes": "#avengers:has_structure/star_lab",
   "adapt_noise": false,
-
   "max_distance_from_center": 30,
-/*
+  "biomes": "#avengers:has_structure/star_lab",
   "step": "raw_generation",
   "start_height": {
     "type": "uniform",
@@ -19,7 +17,6 @@
       "below_top": 30
     }
   },
-  */
   "use_expansion_hack": false,
   "spawn_overrides": {
     "monster": {

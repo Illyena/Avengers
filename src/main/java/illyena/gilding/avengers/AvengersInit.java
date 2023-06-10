@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static illyena.gilding.GildingInit.GILDING;
-import static illyena.gilding.avengers.item.AvengersItems.CAP_SHIELD;
 
 public class AvengersInit implements ModInitializer {
     public static final String MOD_ID = "avengers";
@@ -29,21 +28,20 @@ public class AvengersInit implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public static final Mod AVENGERS = new Mod(MOD_ID, GILDING, false, AvengersConfigOptions.class);
-
-    public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(CAP_SHIELD));
+    public static final ItemGroup AVENGERS_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(AvengersItems.CAP_SHIELD));
 
     public void onInitialize() {
         AvengersConfigOptions.registerConfigs();
         LOGGER.info("Happy Birthday Papa!");
 
-        AvengersBlocks.callAvengersBlocks();
-        AvengersBlockEntities.registerAvengersBlockEntities();
+        AvengersBlocks.registerBlocks();
+        AvengersBlockEntities.registerBlockEntities();
         AvengersItems.registerItems();
         AvengersEntities.registerEntities();
-        AvengersStructures.registerAvengersStructures();
+        AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
         AvengersEvents.registerEvents();
-        AvengersTags.callAvengersTags();
+        AvengersTags.registerTags();
 
     }
 

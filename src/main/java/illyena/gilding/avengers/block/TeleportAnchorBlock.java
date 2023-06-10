@@ -20,7 +20,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -93,16 +92,6 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return checkType(type, AvengersBlockEntities.TELEPORT_ANCHOR_BLOCK_ENTITY, TeleportAnchorBlockEntity::tick);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> GameEventListener getGameEventListener(World world, T blockEntity) {
-        if (blockEntity instanceof TeleportAnchorBlockEntity teleportAnchorBlockEntity) {
-            return teleportAnchorBlockEntity;
-        } else {
-            return null;
-        }
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {

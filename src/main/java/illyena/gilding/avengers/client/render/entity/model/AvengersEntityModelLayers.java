@@ -15,11 +15,9 @@ public class AvengersEntityModelLayers {
     public static final EntityModelLayer CAP_SHIELD_MODEL_LAYER = new EntityModelLayer(new Identifier(MOD_ID, "cap_shield_model_layer"), "main");
 
     public static void registerModelLayers() {
-
         EntityModelLayerRegistry.registerModelLayer(CAP_SHIELD_MODEL_LAYER, CapShieldEntityModel::getTexturedModelData);
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) ->
             registry.register(new Identifier(MOD_ID, "entity/cap_shield")));
-
 
     }
 
