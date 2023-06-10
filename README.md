@@ -1,6 +1,6 @@
-# Avengers Assemble!
+# AVENGERS ASSEMBLE!
 #### Description:
-Happy Birthday Papa!
+A collection of Marvel related randoms.
 ##### Authors:
 Illyena, SpiderBrat, SpiderScrunch
 

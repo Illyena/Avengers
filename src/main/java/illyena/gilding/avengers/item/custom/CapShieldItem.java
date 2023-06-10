@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
+import illyena.gilding.core.item.Unbreakable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -24,7 +25,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +33,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable {
+import static illyena.gilding.avengers.AvengersInit.translationKeyOf;
+
+public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreakable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
@@ -72,8 +74,6 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
         return isUsable(stack) && super.postHit(stack, target, attacker);
     }
 
-    public static boolean isUsable(ItemStack stack) { return stack.getDamage() < stack.getMaxDamage() - 1; }
-
     public UseAction getUseAction(ItemStack stack) { return isUsable(stack) ? UseAction.BLOCK : UseAction.NONE; }
 
     public int getMaxUseTime(ItemStack stack) { return 72000; }
@@ -105,7 +105,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable {
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        tooltip.add(new LiteralText("press Throw (default R) while blocking to release."));
+        tooltip.add(translationKeyOf("tooltip", "throwable"));
     }
 
     @Override

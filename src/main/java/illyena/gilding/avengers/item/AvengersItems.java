@@ -12,6 +12,7 @@ import net.minecraft.util.registry.Registry;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersItems {
+
     public static void registerItems() {
         LOGGER.info("Registering items for " + MOD_NAME);
     }
@@ -22,12 +23,12 @@ public class AvengersItems {
 
     private static BlockItem registerBlockItem(String name, Block block) {
         return Registry.register(Registry.ITEM, new Identifier(MOD_ID, name),
-                new BlockItem(block, new FabricItemSettings().group(ITEM_GROUP)));
+                new BlockItem(block, new FabricItemSettings().group(AVENGERS_GROUP)));
     }
 
     /** Items */
 
     public static final Item CAP_SHIELD = registerItem("cap_shield",
-            new CapShieldItem(new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(ITEM_GROUP)));
+            new CapShieldItem(new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
 
 }
