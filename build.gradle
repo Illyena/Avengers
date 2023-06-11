@@ -38,7 +38,8 @@ dependencies {
 	}
 	include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
 
-	//Gilding-Api
+	//Gilding API
+//	modImplementation "com.github.Illyena:Gilding-core:${project.minecraft_version}v${project.gilding_version}"
 	modImplementation("illyena.gilding:Gilding-core:${project.minecraft_version}v${project.gilding_version}")
 }
 

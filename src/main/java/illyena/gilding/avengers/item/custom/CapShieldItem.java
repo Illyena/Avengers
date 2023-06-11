@@ -2,11 +2,11 @@ package illyena.gilding.avengers.item.custom;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import illyena.gilding.avengers.AvengersInit;
+import illyena.gilding.GildingInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
-import illyena.gilding.core.item.Unbreakable;
+import illyena.gilding.core.item.IUnbreakable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreakable {
+public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbreakable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
@@ -50,10 +50,6 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreak
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             FabricModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) ->
                     livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f);
-        }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            FabricModelPredicateProviderRegistry.register(new Identifier("broken_shield"), (stack, world, entity, seed) ->
-                    stack.getItem() instanceof CapShieldItem && isUsable(stack) ? 0.0F : 1.0F);
         }
     }
 
@@ -104,7 +100,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreak
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         BannerItem.appendBannerTooltip(stack, tooltip);
-        tooltip.add(AvengersInit.translationKeyOf("tooltip", "throwable"));
+        tooltip.add(GildingInit.translationKeyOf("tooltip", "throwable"));
     }
 
     @Override

@@ -110,7 +110,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
-            long l = (long) this.random.nextInt(i/2 +2);
+            long l = this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
         if(entity instanceof LivingEntity livingEntity) {
@@ -124,7 +124,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             return;
         }
 
-        DamageSource damageSource = DamageSource.thrownProjectile(this, (Entity)(owner == null ? this : owner));
+        DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
 
@@ -166,50 +166,57 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         super.onBlockHit(blockHitResult);
     }
 
-    public double getRicochetRange() {return 2 + this.getDataTracker().get(RICOCHET) * 3;}
+    public boolean damage(DamageSource source, float amount) {
+        if (this.getDamage() >= this.capShieldStack.getMaxDamage() - 1) {
+            this.setDamage(this.capShieldStack.getMaxDamage() - 1);
+        }
+        if (source == DamageSource.CACTUS) {
+            this.world.breakBlock(this.getBlockPos(), true, this);
+        }
+        return true;
+    }
 
-    public int getBounces() {return this.bounces;}
+    public double getRicochetRange() { return 2 + this.getDataTracker().get(RICOCHET) * 3; }
 
-    public List<Entity> getRicochetHitEntities() {return this.ricochetHitEntities;}
+    public int getBounces() { return this.bounces; }
 
-    public int getRemainingBounces() {return this.remainingBounces;}
+    public List<Entity> getRicochetHitEntities() { return this.ricochetHitEntities; }
 
-    public void setRemainingBounces(int value) {this.remainingBounces = value;}
+    public int getRemainingBounces() { return this.remainingBounces; }
 
-    public boolean getBlockHit() {return this.blockHit;}
+    public void setRemainingBounces(int value) { this.remainingBounces = value; }
 
-    public int getHangTime() {return this.hangTime;}
+    public boolean getBlockHit() { return this.blockHit; }
 
-    public void setHangTime(int value) {this.hangTime = value;}
+    public int getHangTime() { return this.hangTime; }
 
+    public void setHangTime(int value) { this.hangTime = value; }
 
-    public int getInGroundTime() {return this.inGroundTime;}
+    public int getInGroundTime() { return this.inGroundTime; }
 
-    public void setInGroundTime(int value) {this.inGroundTime = value;}
+    public void setInGroundTime(int value) { this.inGroundTime = value; }
 
-    public boolean getDealtDamage() {return this.dealtDamage;}
+    public boolean getDealtDamage() { return this.dealtDamage; }
 
-    public DataTracker getDataTracker() {return dataTracker;}
+    public DataTracker getDataTracker() { return dataTracker; }
 
-    public TrackedData<Integer> getLoyalty() {return LOYALTY;}
+    public TrackedData<Integer> getLoyalty() { return LOYALTY; }
 
-    public TrackedData<Integer> getRicochet() {return RICOCHET;}
+    public TrackedData<Integer> getRicochet() { return RICOCHET; }
 
-    public int getReturnTimer() {return this.returnTimer;}
+    public int getReturnTimer() { return this.returnTimer; }
 
-    public void setReturnTimer(int value) {this.returnTimer = value;}
+    public void setReturnTimer(int value) { this.returnTimer = value; }
 
-    public int getWait() {return this.wait;}
+    public int getWait() { return this.wait; }
 
-    public void setWait(int value) {this.wait =value;}
+    public void setWait(int value) { this.wait = value; }
 
 
     @Override
-    public ItemStack asItemStack() {
-        return this.capShieldStack.copy();
-    }
+    public ItemStack asItemStack() { return this.capShieldStack.copy(); }
 
-    public boolean isEnchanted() {return (Boolean)this.dataTracker.get(ENCHANTED);}
+    public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
     static {
         RICOCHET = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);

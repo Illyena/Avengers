@@ -23,7 +23,6 @@ public class AvengersModelProvider extends FabricModelProvider {
     static Model TELEPORT_ANCHOR_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
     static Model TELEPORT_ANCHOR_ITEM_MODEL = new Model(Optional.of(new Identifier("minecraft", "block/cube_all")), Optional.empty(), TextureKey.ALL);
 
-
     public AvengersModelProvider(FabricDataGenerator dataGenerator) {
         super(dataGenerator);
     }
@@ -31,13 +30,10 @@ public class AvengersModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
         modelList.forEach((block) -> registerBlockModels(blockStateModelGenerator, block));
-
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-
-    }
+    public void generateItemModels(ItemModelGenerator itemModelGenerator) { }
 
     public static void registerBlockModels(BlockStateModelGenerator modelGenerator, Block block) {
         if (block instanceof StarPortalBlock) {
@@ -49,9 +45,7 @@ public class AvengersModelProvider extends FabricModelProvider {
         }
     }
 
-    public static void addModels(Block block ) {
-        modelList.add(block);
-    }
+    public static void addModels(Block block ) { modelList.add(block); }
 
     public static void registerStarPortal(BlockStateModelGenerator modelGenerator, Block block) {
         String color = ModelIds.getBlockModelId(block).getPath().replace("block/star_portal_block_", "");

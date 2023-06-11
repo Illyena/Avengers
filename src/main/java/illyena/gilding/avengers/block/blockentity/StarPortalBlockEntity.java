@@ -41,9 +41,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static illyena.gilding.avengers.AvengersInit.LOGGER;
 
@@ -175,7 +173,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (state.getBlock() instanceof StarPortalBlock) {
             Direction direction = state.get(StarPortalBlock.FACING);
             Box box = ShulkerEntity.calculateBoundingBox(direction, this.prevAnimationProgress, this.animationProgress).offset(pos);
-            List<Entity> list = world.getOtherEntities((Entity)null, box);
+            List<Entity> list = world.getOtherEntities(null, box);
             if (!list.isEmpty()) {
                 for (Entity entity : list) {
                     if (entity.getPistonBehavior() != PistonBehavior.IGNORE) {
@@ -193,7 +191,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, pos);
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             PiglinBrain.onGuardedBlockInteracted(player, true);
         }
 
@@ -203,7 +201,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
 
         }
     }
@@ -412,23 +410,19 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public int getDrawnSidesCount() {
         int i = 0;
-        Direction[] var2 = Direction.values();
-
-        for (Direction direction : var2) {
+        for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
-
         return i;
     }
 
-
-    public static enum AnimationStage {
+    public enum AnimationStage {
         CLOSED,
         OPENING,
         OPENED,
         CLOSING;
 
-        private AnimationStage() { }
+        AnimationStage() { }
     }
 
 }
