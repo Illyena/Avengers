@@ -20,9 +20,7 @@ import static illyena.gilding.avengers.AvengersInit.*;
 import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
 
 public class AvengersBlocks {
-    public static void registerBlocks() {
-        LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod.");
-    }
+    public static void registerBlocks() { LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod."); }
 
     private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
         AvengersModelProvider.addModels(block);
@@ -31,7 +29,7 @@ public class AvengersBlocks {
     }
 
     private static Block registerBlockWithoutItem(String name, Block block) {
-         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
+        return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static Block registerBlockWithItem(String name, Block block, Rarity rarity, boolean hasGlint, AvengersLootTableProvider.LootTableTypes lootType, @Nullable ItemGroup group) {

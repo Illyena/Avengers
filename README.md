@@ -8,4 +8,4 @@ Illyena, SpiderBrat, SpiderScrunch
 [![](https://jitpack.io/v/Illyena/Avengers.svg)](https://jitpack.io/#Illyena/Avengers)
 
 ### License
-This mod is available under the $License
+This mod is available under the ${License}

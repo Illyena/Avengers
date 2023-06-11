@@ -16,7 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -24,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityProvider, FluidFlowsThrough {
     public TeleportAnchorBlock(Settings settings) {
@@ -120,10 +121,10 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
                 int l = random.nextInt(2) * 2 - 1;
                 if (random.nextBoolean()) {
                     f = (double)pos.getZ() + 0.5 + 0.25 * (double)l;
-                    k = (double)(random.nextFloat() * 2.0F * (float)l);
+                    k = random.nextFloat() * 2.0F * (float)l;
                 } else {
                     d = (double)pos.getX() + 0.5 + 0.25 * (double)l;
-                    g = (double)(random.nextFloat() * 2.0F * (float)l);
+                    g = random.nextFloat() * 2.0F * (float)l;
                 }
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);

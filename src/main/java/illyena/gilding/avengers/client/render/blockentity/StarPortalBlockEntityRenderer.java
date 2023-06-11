@@ -33,7 +33,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         if (starPortalBlockEntity.hasWorld()) {
             BlockState blockState = starPortalBlockEntity.getWorld().getBlockState(starPortalBlockEntity.getPos());
             if (blockState.getBlock() instanceof StarPortalBlock) {
-                direction = (Direction)blockState.get(StarPortalBlock.FACING);
+                direction = blockState.get(StarPortalBlock.FACING);
             }
         }
 
@@ -42,7 +42,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         if (dyeColor == null) {
             spriteIdentifier = TexturedRenderLayers.SHULKER_TEXTURE_ID;
         } else {
-            spriteIdentifier = (SpriteIdentifier)TexturedRenderLayers.COLORED_SHULKER_BOXES_TEXTURES.get(dyeColor.getId());
+            spriteIdentifier = TexturedRenderLayers.COLORED_SHULKER_BOXES_TEXTURES.get(dyeColor.getId());
         }
 
         matrixStack.push();
@@ -58,7 +58,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
 
         VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntityCutoutNoCull);
-        this.model.getShellParts().forEach((part) -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
+        this.model.getShellParts().forEach(part -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
 
         float g = 0.1f *( MathHelper.sin(starPortalBlockEntity.getPulseProgress(tickDelta) / 6.0f)) + 1.0f;
         this.model.head.setPivot(1.0f - g, 1.0f - g - starPortalBlockEntity.getAnimationProgress(tickDelta), 1.0f - g );

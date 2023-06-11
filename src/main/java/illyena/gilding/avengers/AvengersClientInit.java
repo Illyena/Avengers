@@ -13,8 +13,7 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
 @Environment(EnvType.CLIENT)
 public class AvengersClientInit implements ClientModInitializer {
-
-    Screen AVENGERS_CONFIG_SCREEN = Mod.ModScreens.registerConfigScreen(MOD_ID, new AvengersConfigMenu());
+    public static final Screen AVENGERS_CONFIG_SCREEN = Mod.ModScreens.registerConfigScreen(MOD_ID, new AvengersConfigMenu());
 
     @Override
     public void onInitializeClient() {
