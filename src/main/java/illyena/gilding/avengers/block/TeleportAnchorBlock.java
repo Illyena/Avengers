@@ -62,11 +62,11 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
         super.neighborUpdate(state, world, pos, block, fromPos, notify);
 
         FluidState fluidState = world.getBlockState(fromPos).getFluidState();
-        world.createAndScheduleFluidTick(pos, fluidState.getFluid(), fluidState.getFluid().getTickRate(world));
+        world.scheduleFluidTick(pos, fluidState.getFluid(), fluidState.getFluid().getTickRate(world));
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        world.createAndScheduleFluidTick(pos, state.getFluidState().getFluid(), state.getFluidState().getFluid().getTickRate(world));
+        world.scheduleFluidTick(pos, state.getFluidState().getFluid(), state.getFluidState().getFluid().getTickRate(world));
 
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
@@ -120,10 +120,10 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
                 int l = random.nextInt(2) * 2 - 1;
                 if (random.nextBoolean()) {
                     f = (double)pos.getZ() + 0.5 + 0.25 * (double)l;
-                    k = (double)(random.nextFloat() * 2.0F * (float)l);
+                    k = random.nextFloat() * 2.0F * (float)l;
                 } else {
                     d = (double)pos.getX() + 0.5 + 0.25 * (double)l;
-                    g = (double)(random.nextFloat() * 2.0F * (float)l);
+                    g = random.nextFloat() * 2.0F * (float)l;
                 }
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);

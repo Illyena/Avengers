@@ -1,14 +1,16 @@
 package illyena.gilding.avengers.util.data;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.ModelIds;
-import net.minecraft.data.server.BlockLootTableGenerator;
+import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.condition.SurvivesExplosionLootCondition;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.function.CopyNbtLootFunction;
 import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
@@ -23,7 +25,7 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
     public static Map<Block, LootTableTypes> lootTables = new HashMap<>();
 
-    public AvengersLootTableProvider(FabricDataGenerator dataGenerator) { super(dataGenerator, LootContextTypes.BLOCK); }
+    public AvengersLootTableProvider(FabricDataOutput output) { super(output, LootContextTypes.BLOCK); }
 
     @Override
     public void accept(BiConsumer<Identifier, LootTable.Builder> identifierBuilderBiConsumer) {
@@ -38,7 +40,7 @@ public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
 
     public static LootTable.Builder dropsPerLootType(Block block, LootTableTypes lootType) {
         switch (lootType) {
-            case BLOCK -> { return BlockLootTableGenerator.drops(block); }
+            case BLOCK -> { return BlockLootTableGenerator.drops(block, SurvivesExplosionLootCondition.builder(), LootTableEntry.builder(block.getLootTableId())); }
             case STAR_PORTAL -> { return starPortalDrops(block); }
             default -> { return BlockLootTableGenerator.dropsNothing(); }
         }

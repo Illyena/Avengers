@@ -2,8 +2,8 @@ package illyena.gilding.avengers.structure;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import illyena.gilding.GildingInit;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
@@ -13,7 +13,6 @@ import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.HeightContext;
@@ -115,19 +114,14 @@ public class StarLabStructure  extends Structure {
         context.noiseConfig()) < 150;</code>
          */
 
-
         boolean chunkIsEmpty = true;
         for (int y = world.getBottomY(); y <= world.getTopY(); ++y) {
-            GildingInit.LOGGER.warn(context.chunkGenerator().getColumnSample(chunkPos.x, chunkPos.z, world, context.noiseConfig()).getState(y) + " y: " + y);
             if (!context.chunkGenerator().getColumnSample(chunkPos.x, chunkPos.z, world, context.noiseConfig()).getState(y).isOf(Blocks.AIR)) {
                 chunkIsEmpty = false;
                 break;
             }
         }
-
-        GildingInit.LOGGER.error(chunkPos + "    " + chunkIsEmpty);
         return true;
-
     }
 
 

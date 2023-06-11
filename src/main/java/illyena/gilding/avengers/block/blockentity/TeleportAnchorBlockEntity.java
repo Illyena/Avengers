@@ -9,6 +9,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.BlockPositionSource;
 import net.minecraft.world.event.GameEvent;
@@ -90,11 +91,11 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     }
 
     @Override
-    public boolean listen(ServerWorld world, GameEvent.Message event) {
+    public boolean listen(ServerWorld world, GameEvent event, GameEvent.Emitter emitter, Vec3d emitterPos) {
         if (this.isRemoved()) {
             return false;
         } else {
-            if (event.getEvent() == GameEvent.TELEPORT) {
+            if (event == GameEvent.TELEPORT) {
                 startTeleportCooldown(world, pos, world.getBlockState(pos), this);
                 return true;
             }

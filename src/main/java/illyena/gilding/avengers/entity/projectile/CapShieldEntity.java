@@ -110,7 +110,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
-            long l = (long) this.random.nextInt(i/2 +2);
+            long l = this.random.nextInt(i/2 +2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
         if(entity instanceof LivingEntity livingEntity) {
@@ -124,7 +124,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             return;
         }
 
-        DamageSource damageSource = DamageSource.thrownProjectile(this, (Entity)(owner == null ? this : owner));
+        DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
 
@@ -209,7 +209,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         return this.capShieldStack.copy();
     }
 
-    public boolean isEnchanted() {return (Boolean)this.dataTracker.get(ENCHANTED);}
+    public boolean isEnchanted() {return this.dataTracker.get(ENCHANTED);}
 
     static {
         RICOCHET = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);

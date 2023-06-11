@@ -22,18 +22,18 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.*;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -175,7 +175,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (state.getBlock() instanceof StarPortalBlock) {
             Direction direction = state.get(StarPortalBlock.FACING);
             Box box = ShulkerEntity.calculateBoundingBox(direction, this.prevAnimationProgress, this.animationProgress).offset(pos);
-            List<Entity> list = world.getOtherEntities((Entity)null, box);
+            List<Entity> list = world.getOtherEntities(null, box);
             if (!list.isEmpty()) {
                 for (Entity entity : list) {
                     if (entity.getPistonBehavior() != PistonBehavior.IGNORE) {
@@ -193,7 +193,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_OPEN, pos);
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             PiglinBrain.onGuardedBlockInteracted(player, true);
         }
 
@@ -203,7 +203,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), requiredPlayerRange * 2, false);
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+            world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
 
         }
     }
@@ -280,7 +280,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
@@ -302,8 +302,8 @@ public class StarPortalBlockEntity extends BlockEntity {
     }
 
     private static BlockPos getBlockInBox(World world, Box box, Block block) {
-        BlockPos blockPos1 = new BlockPos(box.minX, box.minY, box.minZ);
-        BlockPos blockPos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
+        BlockPos blockPos1 = new BlockPos((int) box.minX, (int) box.minY, (int) box.minZ);
+        BlockPos blockPos2 = new BlockPos((int) box.maxX, (int) box.maxY, (int) box.maxZ);
         Iterator<BlockPos> iterator = BlockPos.iterate(blockPos1, blockPos2).iterator();
         BlockPos blockPos3 = null;
 
@@ -357,7 +357,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {

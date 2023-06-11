@@ -125,7 +125,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                         world.setBlockState(pos, newState);
                         stack.decrement(1);
                     }
-                    return ActionResult.success(player.world.isClient);
+                    return ActionResult.success(player.getWorld().isClient);
                 }
                 else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
                          && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
@@ -138,7 +138,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                             StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
                         }
                     }
-                    return ActionResult.success(player.world.isClient);
+                    return ActionResult.success(player.getWorld().isClient);
                 }
             }
             return ActionResult.PASS;

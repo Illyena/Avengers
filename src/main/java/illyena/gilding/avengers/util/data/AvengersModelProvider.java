@@ -3,7 +3,7 @@ package illyena.gilding.avengers.util.data;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.TeleportAnchorBlock;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
@@ -23,15 +23,11 @@ public class AvengersModelProvider extends FabricModelProvider {
     static Model TELEPORT_ANCHOR_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
     static Model TELEPORT_ANCHOR_ITEM_MODEL = new Model(Optional.of(new Identifier("minecraft", "block/cube_all")), Optional.empty(), TextureKey.ALL);
 
-
-    public AvengersModelProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
-    }
+    public AvengersModelProvider(FabricDataOutput output) { super(output); }
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        modelList.forEach((block) -> registerBlockModels(blockStateModelGenerator, block));
-
+        modelList.forEach(block -> registerBlockModels(blockStateModelGenerator, block));
     }
 
     @Override
@@ -49,22 +45,19 @@ public class AvengersModelProvider extends FabricModelProvider {
         }
     }
 
-    public static void addModels(Block block ) {
-        modelList.add(block);
-    }
+    public static void addModels(Block block ) { modelList.add(block); }
 
     public static void registerStarPortal(BlockStateModelGenerator modelGenerator, Block block) {
         String color = ModelIds.getBlockModelId(block).getPath().replace("block/star_portal_block_", "");
         Identifier blockModelId = block != AvengersBlocks.STAR_PORTAL_BLOCK ? new Identifier("minecraft", "block/" + color + "_shulker_box") : new Identifier("minecraft", "block/shulker_box");
-        Identifier itemModelId = block != AvengersBlocks.STAR_PORTAL_BLOCK ? new Identifier("minecraft", "entity/shulker/shulker_" + color) : new Identifier("minecraft", "entity/shulker/shulker");
 
         Identifier identifier = STAR_PORTAL_BLOCK_MODEL.upload(block, new TextureMap().put(TextureKey.PARTICLE, blockModelId), modelGenerator.modelCollector);
         modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, identifier));
-        STAR_PORTAL_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.LAYER0, itemModelId), modelGenerator.modelCollector);
+        STAR_PORTAL_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.LAYER0, blockModelId), modelGenerator.modelCollector);
     }
 
     public static void registerTeleportAnchor(BlockStateModelGenerator modelGenerator, Block block) {
-        Identifier blockModelId = new Identifier("minecraft", "entity/end_portal");
+        Identifier blockModelId = new Identifier(MOD_ID, "block/end_portal");
         Identifier identifier = TELEPORT_ANCHOR_BLOCK_MODEL.upload(block, new TextureMap().put(TextureKey.PARTICLE, blockModelId), modelGenerator.modelCollector);
         modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, identifier));
         TELEPORT_ANCHOR_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.ALL, blockModelId), modelGenerator.modelCollector);
