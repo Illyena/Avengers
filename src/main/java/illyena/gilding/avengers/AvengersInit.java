@@ -38,7 +38,7 @@ public class AvengersInit implements ModInitializer {
         AvengersEntities.registerEntities();
         AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
-
+    }
 
     public static Text translationKeyOf(String type, String key) {
         return Text.translatable(type + "." + MOD_ID + "." + key);
