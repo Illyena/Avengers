@@ -1,6 +1,8 @@
 package illyena.gilding.avengers.entity.projectile;
 
 import com.google.common.collect.Lists;
+import illyena.gilding.avengers.block.MjolnirBlock;
+import illyena.gilding.avengers.block.blockentity.MjolnirBlockEntity;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.avengers.item.custom.MjolnirItem;
@@ -69,7 +71,6 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         this.dataTracker.set(ENCHANTED, stack.hasGlint());
     }
 
-
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(RICOCHET, 0);
@@ -96,6 +97,9 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
 
     @Override
     public void tick() {
+        if (this.getBlockPos().getY() <= this.world.getBottomY()) {
+            this.toBlock(new BlockPos(this.getBlockPos().getX(), this.world.getBottomY() +1, this.getBlockPos().getZ()));
+        }
         if (this.inGroundTime > 4) {
             this.dealtDamage = true;
         }
@@ -123,7 +127,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
-            long l = (long) this.random.nextInt(i/2 +2);
+            long l = this.random.nextInt(i/2 +2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
         if(entity instanceof LivingEntity livingEntity) {
@@ -137,7 +141,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
             return;
         }
 
-        DamageSource damageSource = DamageSource.thrownProjectile(this, (Entity)(owner == null ? this : owner));
+        DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
 
@@ -172,7 +176,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         if (this.world instanceof ServerWorld && this.world.isThundering() && this.hasChanneling()) {
             BlockPos blockPos = entity.getBlockPos();
             if (this.world.isSkyVisible(blockPos)) {
-                LightningEntity lightningEntity = (LightningEntity)EntityType.LIGHTNING_BOLT.create(this.world);
+                LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(this.world);
                 lightningEntity.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(blockPos));
                 lightningEntity.setChanneler(owner instanceof ServerPlayerEntity ? (ServerPlayerEntity)owner : null);
                 this.world.spawnEntity(lightningEntity);
@@ -191,56 +195,74 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         super.onBlockHit(blockHitResult);
     }
 
+    public boolean damage(DamageSource source, float amount) {
+        if (this.getDamage() >= this.mjolnirStack.getMaxDamage() -1) {
+            this.setDamage(this.mjolnirStack.getMaxDamage() -1);
+        }
+        if (source == DamageSource.CACTUS) {
+            this.world.breakBlock(this.getBlockPos(), true, this);
+            this.toBlock(this.getBlockPos());
+        }
+        return true;
+
+    }
+
+    private void toBlock(BlockPos pos) {
+        this.world.setBlockState(pos, ((MjolnirItem)this.mjolnirStack.getItem()).getBlock().getDefaultState().with(MjolnirBlock.FACING, this.getHorizontalFacing()));
+        if (this.world.getBlockEntity(this.getBlockPos()) instanceof MjolnirBlockEntity blockEntity) {
+            blockEntity.setDamage((int) this.getDamage());
+        }
+        this.discard();
+    }
+
     public boolean hasChanneling() { return EnchantmentHelper.hasChanneling(this.mjolnirStack); }
 
-    public double getRicochetRange() {return 2 + this.getDataTracker().get(RICOCHET) * 3;}
+    public double getRicochetRange() { return 2 + this.getDataTracker().get(RICOCHET) * 3; }
 
-    public int getBounces() {return this.bounces;}
+    public int getBounces() { return this.bounces; }
 
-    public List<Entity> getRicochetHitEntities() {return this.ricochetHitEntities;}
+    public List<Entity> getRicochetHitEntities() { return this.ricochetHitEntities; }
 
-    public int getRemainingBounces() {return this.remainingBounces;}
+    public int getRemainingBounces() { return this.remainingBounces; }
 
-    public void setRemainingBounces(int value) {this.remainingBounces = value;}
+    public void setRemainingBounces(int value) { this.remainingBounces = value; }
 
-    public boolean getBlockHit() {return this.blockHit;}
+    public boolean getBlockHit() { return this.blockHit; }
 
-    public int getHangTime() {return this.hangTime;}
+    public int getHangTime() { return this.hangTime; }
 
-    public void setHangTime(int value) {this.hangTime = value;}
+    public void setHangTime(int value) { this.hangTime = value; }
 
 
-    public int getInGroundTime() {return this.inGroundTime;}
+    public int getInGroundTime() { return this.inGroundTime; }
 
-    public void setInGroundTime(int value) {this.inGroundTime = value;}
+    public void setInGroundTime(int value) { this.inGroundTime = value; }
 
-    public boolean getDealtDamage() {return this.dealtDamage;}
+    public boolean getDealtDamage() { return this.dealtDamage; }
 
-    public DataTracker getDataTracker() {return dataTracker;}
+    public DataTracker getDataTracker() { return dataTracker; }
 
-    public TrackedData<Integer> getLoyalty() {return LOYALTY;}
+    public TrackedData<Integer> getLoyalty() { return LOYALTY; }
 
-    public TrackedData<Integer> getRicochet() {return RICOCHET;}
+    public TrackedData<Integer> getRicochet() { return RICOCHET; }
 
-    public int getReturnTimer() {return this.returnTimer;}
+    public int getReturnTimer() { return this.returnTimer; }
 
-    public void setReturnTimer(int value) {this.returnTimer = value;}
+    public void setReturnTimer(int value) { this.returnTimer = value; }
 
-    public int getWait() {return this.wait;}
+    public int getWait() { return this.wait; }
 
-    public void setWait(int value) {this.wait =value;}
+    public void setWait(int value) { this.wait =value; }
 
 
     @Override
-    public ItemStack asItemStack() {
-        return this.mjolnirStack.copy();
-    }
+    public ItemStack asItemStack() { return this.mjolnirStack.copy(); }
 
-    public boolean isEnchanted() {return (Boolean)this.dataTracker.get(ENCHANTED);}
+    public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
     static {
         RICOCHET = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.INTEGER);
         LOYALTY = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
-} //todo add Channelling
+}

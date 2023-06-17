@@ -24,7 +24,6 @@ public class AvengersModelProvider extends FabricModelProvider {
     static Model TELEPORT_ANCHOR_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
     static Model TELEPORT_ANCHOR_ITEM_MODEL = new Model(Optional.of(new Identifier("minecraft", "block/cube_all")), Optional.empty(), TextureKey.ALL);
 
-
     public AvengersModelProvider(FabricDataGenerator dataGenerator) {
         super(dataGenerator);
     }
@@ -47,14 +46,13 @@ public class AvengersModelProvider extends FabricModelProvider {
             registerTeleportAnchor(modelGenerator, block);
         } else if (block instanceof MjolnirBlock){
             modelGenerator.registerNorthDefaultHorizontalRotation(block);
+            modelGenerator.excludeFromSimpleItemModelGeneration(block);
         } else {
             modelGenerator.registerSimpleCubeAll(block);
         }
     }
 
-    public static void addModels(Block block ) {
-        modelList.add(block);
-    }
+    public static void addModels(Block block ) { modelList.add(block); }
 
     public static void registerStarPortal(BlockStateModelGenerator modelGenerator, Block block) {
         String color = ModelIds.getBlockModelId(block).getPath().replace("block/star_portal_block_", "");

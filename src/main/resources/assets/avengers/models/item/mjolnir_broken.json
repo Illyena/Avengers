@@ -1,0 +1,6 @@
+{
+  "parent": "avengers:item/mjolnir",
+  "textures": {
+    "hammer": "avengers:item/mjolnir_broken"
+  }
+}

@@ -1,6 +1,5 @@
 package illyena.gilding.avengers.item.custom;
 
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import illyena.gilding.avengers.block.AvengersBlocks;
@@ -11,9 +10,6 @@ import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
 import illyena.gilding.core.item.Unbreakable;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
@@ -35,7 +31,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -68,11 +67,6 @@ public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreak
         builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? attackSpeed : -3.2f, EntityAttributeModifier.Operation.ADDITION));
         this.attributeModifiers = builder.build();
-
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            FabricModelPredicateProviderRegistry.register(new Identifier("broken"), (stack, world, entity, seed) ->
-                    stack.getItem() instanceof MjolnirItem && isUsable(stack) ? 0.0F : 1.0F);
-        }
     }
 
     public ToolMaterial getMaterial() { return this.material; }
@@ -155,13 +149,11 @@ public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreak
                 int j = EnchantmentHelper.getRiptide(stack);
                 if (user instanceof PlayerEntity playerEntity) {
                     if (!world.isClient) {
-                        stack.damage(1, playerEntity, (p) -> {
-                            p.sendToolBreakStatus(user.getActiveHand());
-                        });
+                        stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(user.getActiveHand()));
                     }
                     playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
                 }
-                if (this instanceof MjolnirItem || j > 0) { //todo
+                if (j > 0) {
                     float f = user.getYaw();
                     float g = user.getPitch();
                     float h = -MathHelper.sin(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
@@ -172,7 +164,7 @@ public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreak
                     h *= n / m;
                     k *= n / m;
                     l *= n / m;
-                    user.addVelocity((double) h, (double) k, (double) l);
+                    user.addVelocity(h, k, l);
                     if (user instanceof PlayerEntity playerEntity) {
                         playerEntity.useRiptide(20);
                     }
@@ -191,13 +183,13 @@ public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreak
                         soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_1;
                     }
 
-                    world.playSoundFromEntity((PlayerEntity) null, user, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    world.playSoundFromEntity(null, user, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 }
             }
     }
 
     private boolean isWorthy(LivingEntity user) {
-        if ( user instanceof PlayerEntity player && player.experienceLevel >= 30) {
+        if ( user instanceof PlayerEntity player && (player.experienceLevel >= 30 || player.isCreative())) {
             return true;
         } else return user instanceof WolfEntity wolf && wolf.isTamed();
     }
@@ -243,7 +235,7 @@ public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreak
     public int getMaxUseTime(ItemStack stack) { return 72000; }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        super.appendTooltip(stack, world, tooltip, context); //todo tooltip
+        super.appendTooltip(stack, world, tooltip, context);
     }
 
     @Override
