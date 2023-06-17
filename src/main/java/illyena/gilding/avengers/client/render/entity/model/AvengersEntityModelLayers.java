@@ -25,7 +25,6 @@ public class AvengersEntityModelLayers {
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((((atlasTexture, registry) ->
                 registry.register(new Identifier(MOD_ID, "entity/mjolnir")))));
 
-
     }
 
 }

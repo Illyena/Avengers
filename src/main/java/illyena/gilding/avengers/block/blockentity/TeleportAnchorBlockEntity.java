@@ -19,7 +19,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     public long age;
     private final BlockPositionSource positionSource;
 
-
     public TeleportAnchorBlockEntity(BlockPos pos, BlockState state) {
         super(AvengersBlockEntities.TELEPORT_ANCHOR_BLOCK_ENTITY, pos, state);
         this.positionSource = new BlockPositionSource(this.pos);

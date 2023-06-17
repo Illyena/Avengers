@@ -110,7 +110,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
-            long l = this.random.nextInt(i/2 +2);
+            long l = this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
         if(entity instanceof LivingEntity livingEntity) {
@@ -191,7 +191,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     public int getHangTime() { return this.hangTime; }
 
     public void setHangTime(int value) { this.hangTime = value; }
-
 
     public int getInGroundTime() { return this.inGroundTime; }
 

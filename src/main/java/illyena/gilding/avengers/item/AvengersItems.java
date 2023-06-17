@@ -16,9 +16,7 @@ import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersItems {
 
-    public static void registerItems() {
-        LOGGER.info("Registering items for " + MOD_NAME);
-    }
+    public static void registerItems() { LOGGER.info("Registering items for " + MOD_NAME); }
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registry.ITEM, new Identifier(MOD_ID, name), item);

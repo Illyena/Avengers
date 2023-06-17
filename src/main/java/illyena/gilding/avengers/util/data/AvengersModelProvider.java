@@ -31,13 +31,10 @@ public class AvengersModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
         modelList.forEach((block) -> registerBlockModels(blockStateModelGenerator, block));
-
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-
-    }
+    public void generateItemModels(ItemModelGenerator itemModelGenerator) { }
 
     public static void registerBlockModels(BlockStateModelGenerator modelGenerator, Block block) {
         if (block instanceof StarPortalBlock) {

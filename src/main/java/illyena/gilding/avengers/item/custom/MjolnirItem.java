@@ -8,7 +8,7 @@ import illyena.gilding.avengers.block.blockentity.MjolnirBlockEntity;
 import illyena.gilding.avengers.entity.projectile.MjolnirEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
-import illyena.gilding.core.item.Unbreakable;
+import illyena.gilding.core.item.IUnbreakable;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,7 +48,7 @@ import java.util.Objects;
 
 import static com.terraformersmc.modmenu.util.TranslationUtil.translationKeyOf;
 
-public class MjolnirItem extends AliasedBlockItem implements IThrowable, Unbreakable {
+public class MjolnirItem extends AliasedBlockItem implements IThrowable, IUnbreakable {
     private final ToolMaterial material;
     private final TagKey<Block> effectiveBlocks;
     public final float miningSpeed;

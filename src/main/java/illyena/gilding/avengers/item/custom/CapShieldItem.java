@@ -6,7 +6,7 @@ import illyena.gilding.GildingInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
-import illyena.gilding.core.item.Unbreakable;
+import illyena.gilding.core.item.IUnbreakable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable, Unbreakable {
+public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbreakable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
