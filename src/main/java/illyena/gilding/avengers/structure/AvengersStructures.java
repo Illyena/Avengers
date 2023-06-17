@@ -35,7 +35,6 @@ public class AvengersStructures {
                 StarLabGenerator.STRUCTURE_POOLS, 7), BiomeTags.END_CITY_HAS_STRUCTURE, true,
                 Map.of(SpawnGroup.MONSTER, new StructureSpawns(StructureSpawns.BoundingBox.STRUCTURE,
                         Pool.of(new SpawnSettings.SpawnEntry(EntityType.SHULKER, 1, 1, 1))))));
-
     }
 
     private static <FC extends FeatureConfig, F extends StructureFeature<FC>> RegistryEntry<ConfiguredStructureFeature<?, ?>> register(RegistryKey<ConfiguredStructureFeature<?, ?>> key, ConfiguredStructureFeature<FC, F> configuredStructureFeature) {

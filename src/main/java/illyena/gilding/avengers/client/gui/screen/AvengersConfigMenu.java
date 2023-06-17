@@ -37,7 +37,6 @@ public class AvengersConfigMenu extends ConfigScreen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         float f = 1.0F;
         this.backgroundRenderer.render(delta, MathHelper.clamp(f, 0.0F, 1.0F));
-//        int j = this.width / 2 - 137;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, PANORAMA_OVERLAY);
         RenderSystem.enableBlend();
@@ -57,13 +56,9 @@ public class AvengersConfigMenu extends ConfigScreen {
             if (MinecraftClient.getModStatus().isModded()) {
                 string = string + I18n.translate("menu.modded", Mod.getModsWithSubGroups(MOD_ID).toArray());
             }
-
             drawStringWithShadow(matrices, this.textRenderer, string, 2, this.height - 10, 16777215 | l);
 
-
             super.render(matrices, mouseX, mouseY, delta);
-
-
         }
     }
 }

@@ -411,14 +411,11 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public int getDrawnSidesCount() {
         int i = 0;
-
         for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
-
         return i;
     }
-
 
     public enum AnimationStage {
         CLOSED,

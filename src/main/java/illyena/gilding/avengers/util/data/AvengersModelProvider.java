@@ -45,9 +45,7 @@ public class AvengersModelProvider extends FabricModelProvider {
         }
     }
 
-    public static void addModels(Block block ) {
-        modelList.add(block);
-    }
+    public static void addModels(Block block ) { modelList.add(block); }
 
     public static void registerStarPortal(BlockStateModelGenerator modelGenerator, Block block) {
         String color = ModelIds.getBlockModelId(block).getPath().replace("block/star_portal_block_", "");

@@ -3,6 +3,7 @@ package illyena.gilding.avengers.block.blockentity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
@@ -10,15 +11,16 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.event.BlockPositionSource;
+import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.event.PositionSource;
+import net.minecraft.world.event.listener.GameEventListener;
+import org.jetbrains.annotations.Nullable;
 
 public class TeleportAnchorBlockEntity extends BlockEntity {
     public long age;
-    private final BlockPositionSource positionSource;
-
 
     public TeleportAnchorBlockEntity(BlockPos pos, BlockState state) {
         super(AvengersBlockEntities.TELEPORT_ANCHOR_BLOCK_ENTITY, pos, state);
-        this.positionSource = new BlockPositionSource(this.pos);
     }
 
     protected void writeNbt(NbtCompound nbt) {

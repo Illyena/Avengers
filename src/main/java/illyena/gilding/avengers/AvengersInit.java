@@ -48,5 +48,4 @@ public class AvengersInit implements ModInitializer {
     public static TranslatableText translationKeyOf(String type, String key) {
         return new TranslatableText(type + "." + MOD_ID + "." + key);
     }
-
 }
