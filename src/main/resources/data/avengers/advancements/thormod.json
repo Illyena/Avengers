@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "struck_mob": {
+      "conditions": {
+      },
+      "trigger": "minecraft:channeled_lightning"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": "Bring down lighting upon the world",
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:trident",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": "God of Thunder"
+  },
+  "requirements": [
+    [
+      "struck_mob"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "avengers:blocks/mjolnir_block"
+    ]
+  }
+}
+
+

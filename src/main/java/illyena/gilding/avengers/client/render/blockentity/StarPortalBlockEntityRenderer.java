@@ -1,9 +1,9 @@
 package illyena.gilding.avengers.client.render.blockentity;
 
 import com.google.common.collect.ImmutableList;
-import illyena.gilding.avengers.client.render.AvengersRenderers;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.blockentity.StarPortalBlockEntity;
+import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -18,14 +18,15 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<StarPortalBlockEntity> {
     private final StarPortalModel model;
 
     public StarPortalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersRenderers.STAR_PORTAL_MODEL_LAYER));
+        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersEntityModelLayers.STAR_PORTAL_MODEL_LAYER));
     }
 
     public void render(StarPortalBlockEntity starPortalBlockEntity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {

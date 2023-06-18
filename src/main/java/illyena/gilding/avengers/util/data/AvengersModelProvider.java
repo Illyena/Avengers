@@ -1,6 +1,7 @@
 package illyena.gilding.avengers.util.data;
 
 import illyena.gilding.avengers.block.AvengersBlocks;
+import illyena.gilding.avengers.block.MjolnirBlock;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.TeleportAnchorBlock;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -40,6 +41,9 @@ public class AvengersModelProvider extends FabricModelProvider {
             registerStarPortal(modelGenerator, block);
         } else if (block instanceof TeleportAnchorBlock) {
             registerTeleportAnchor(modelGenerator, block);
+        } else if (block instanceof MjolnirBlock){
+            modelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(block))));
+            modelGenerator.excludeFromSimpleItemModelGeneration(block);
         } else {
             modelGenerator.registerSimpleCubeAll(block);
         }

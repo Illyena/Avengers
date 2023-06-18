@@ -1,17 +1,19 @@
 package illyena.gilding.avengers.client.render;
 
+import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.blockentity.AvengersBlockEntities;
 import illyena.gilding.avengers.client.render.blockentity.StarPortalBlockEntityRenderer;
 import illyena.gilding.avengers.client.render.blockentity.TeleportAnchorBlockEntityRenderer;
 import illyena.gilding.avengers.client.render.entity.CapShieldEntityRenderer;
+import illyena.gilding.avengers.client.render.entity.MjolnirEntityRenderer;
 import illyena.gilding.avengers.entity.AvengersEntities;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.render.RenderLayer;
 
-import static illyena.gilding.avengers.AvengersInit.*;
+import static illyena.gilding.avengers.AvengersInit.LOGGER;
+import static illyena.gilding.avengers.AvengersInit.MOD_NAME;
 
 public class AvengersRenderers {
 
@@ -19,14 +21,12 @@ public class AvengersRenderers {
         LOGGER.info("Registering Renderers for " + MOD_NAME + ".");
 
         EntityRendererRegistry.register(AvengersEntities.CAP_SHIELD_ENTITY_TYPE, CapShieldEntityRenderer::new);
+        EntityRendererRegistry.register(AvengersEntities.MJOLNIR_ENTITY_TYPE, MjolnirEntityRenderer::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(AvengersBlocks.MJOLNIR_BLOCK, RenderLayer.getCutout());
 
         BlockEntityRendererRegistry.register(AvengersBlockEntities.STAR_PORTAL_BLOCK_ENTITY, StarPortalBlockEntityRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(STAR_PORTAL_MODEL_LAYER, StarPortalBlockEntityRenderer.StarPortalModel::getTexturedModelData);
-
         BlockEntityRendererRegistry.register(AvengersBlockEntities.TELEPORT_ANCHOR_BLOCK_ENTITY, TeleportAnchorBlockEntityRenderer::new);
 
     }
-
-    public static final EntityModelLayer STAR_PORTAL_MODEL_LAYER = new EntityModelLayer(new Identifier(MOD_ID, "star_portal_model"), "main");
 
 }

@@ -5,6 +5,8 @@
 
     "itemGroup.avengers.avengers_group":   "Happy Birthday!  Here's some stuff.",
     "item.avengers.cap_shield": "Captain America's Shield",
+    "item.avengers.mjolnir": "Mjolnir",
+    "block.avengers.mjolnir_block": "Mjolnir",
     "block.avengers.star_portal_block": "Portal Box",
     "block.avengers.star_portal_block_white": "White Portal Box",
     "block.avengers.star_portal_block_orange": "Orange Portal Box",
@@ -25,5 +27,7 @@
     "block.avengers.teleport_anchor": "Teleport Anchor",
 
 
-    "enchantment.gilding.ricochet": "Ricochet"
+    "enchantment.gilding.ricochet": "Ricochet",
+
+    "message.avengers.not_worthy": "You are not yet worthy. Gain more experience to become Worthy."
 }

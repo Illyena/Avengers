@@ -1,6 +1,7 @@
 package illyena.gilding.avengers.item;
 
 import illyena.gilding.avengers.item.custom.CapShieldItem;
+import illyena.gilding.avengers.item.custom.MjolnirItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -28,6 +29,7 @@ public class AvengersItems {
 
     public static final Item CAP_SHIELD = registerItem("cap_shield",
             new CapShieldItem(new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
-
+    public static final Item MJOLNIR = registerItem("mjolnir",
+            new MjolnirItem(new FabricItemSettings().maxDamage(100).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
 
 }
