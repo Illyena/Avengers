@@ -7,7 +7,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
@@ -36,7 +36,7 @@ public class MjolnirEntityModel extends Model {
 
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
         matrices.push();
-        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90));
         this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         matrices.pop();
     }

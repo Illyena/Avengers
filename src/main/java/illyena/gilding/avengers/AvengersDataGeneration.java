@@ -7,10 +7,11 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class AvengersDataGeneration implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        fabricDataGenerator.addProvider(AvengersModelProvider::new);
-        fabricDataGenerator.addProvider(AvengersLootTableProvider::new);
-        fabricDataGenerator.addProvider(AvengersBlockTagGenerator::new);
-        fabricDataGenerator.addProvider(AvengersItemTagGenerator::new);
-        fabricDataGenerator.addProvider(AvengersPaintingTagGenerator::new);
+        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        pack.addProvider(AvengersModelProvider::new);
+        pack.addProvider(AvengersLootTableProvider::new);
+        pack.addProvider(AvengersBlockTagGenerator::new);
+        pack.addProvider(AvengersItemTagGenerator::new);
+        pack.addProvider(AvengersPaintingTagGenerator::new);
     }
 }

@@ -68,7 +68,7 @@ public abstract class EndCityGeneratorMixin {
             }
 
             public boolean create(StructureTemplateManager manager, int depth, EndCityGenerator.Piece root, BlockPos pos, List<StructurePiece> pieces, Random random) {
-                BlockRotation blockRotation = root.method_41626().getRotation();
+                BlockRotation blockRotation = root.getPlacementData().getRotation();
                 EndCityGenerator.Piece piece = addPiece(pieces, createPiece(manager, root, new BlockPos(-3, 4, -3), "fat_tower_base", blockRotation, true));
                 piece = addPiece(pieces, createPiece(manager, piece, new BlockPos(0, 4, 0), "fat_tower_middle", blockRotation, true));
 

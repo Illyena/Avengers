@@ -20,15 +20,15 @@ public abstract class ItemEntityMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick2(CallbackInfo ci) {
         ItemEntity itemEntity = (ItemEntity)(Object)this;
-        if (this.getStack().getItem() instanceof MjolnirItem item && !itemEntity.world.isClient) {
+        if (this.getStack().getItem() instanceof MjolnirItem item && !itemEntity.getWorld().isClient) {
             if (this.pickupDelay == 0) {
-                itemEntity.world.setBlockState(itemEntity.getBlockPos(), item.getBlock().getDefaultState());
+                itemEntity.getWorld().setBlockState(itemEntity.getBlockPos(), item.getBlock().getDefaultState());
                 itemEntity.discard();
             }
         }
-        if (itemEntity.getBlockPos().getY() <= itemEntity.world.getBottomY() && itemEntity.getStack().getItem() instanceof MjolnirItem item) {
-            BlockPos blockPos = itemEntity.getBlockPos().withY(itemEntity.world.getBottomY() + 1);
-            itemEntity.world.setBlockState(blockPos, item.getBlock().getDefaultState());
+        if (itemEntity.getBlockPos().getY() <= itemEntity.getWorld().getBottomY() && itemEntity.getStack().getItem() instanceof MjolnirItem item) {
+            BlockPos blockPos = itemEntity.getBlockPos().withY(itemEntity.getWorld().getBottomY() + 1);
+            itemEntity.getWorld().setBlockState(blockPos, item.getBlock().getDefaultState());
         }
     }
 }

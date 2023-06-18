@@ -5,6 +5,7 @@ import illyena.gilding.avengers.block.MjolnirBlock;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.TeleportAnchorBlock;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
@@ -24,9 +25,7 @@ public class AvengersModelProvider extends FabricModelProvider {
     static Model TELEPORT_ANCHOR_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
     static Model TELEPORT_ANCHOR_ITEM_MODEL = new Model(Optional.of(new Identifier("minecraft", "block/cube_all")), Optional.empty(), TextureKey.ALL);
 
-    public AvengersModelProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
-    }
+    public AvengersModelProvider(FabricDataOutput output) { super(output); }
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {

@@ -124,7 +124,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             return;
         }
 
-        DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
+        DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
 
@@ -170,8 +170,8 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         if (this.getDamage() >= this.capShieldStack.getMaxDamage() - 1) {
             this.setDamage(this.capShieldStack.getMaxDamage() - 1);
         }
-        if (source == DamageSource.CACTUS) {
-            this.world.breakBlock(this.getBlockPos(), true, this);
+        if (source == this.getDamageSources().cactus()) {
+            this.getWorld().breakBlock(this.getBlockPos(), true, this);
         }
         return true;
     }

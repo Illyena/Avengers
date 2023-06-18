@@ -22,18 +22,18 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.*;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -41,7 +41,9 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import static illyena.gilding.avengers.AvengersInit.LOGGER;
 
@@ -278,7 +280,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
@@ -300,8 +302,8 @@ public class StarPortalBlockEntity extends BlockEntity {
     }
 
     private static BlockPos getBlockInBox(World world, Box box, Block block) {
-        BlockPos blockPos1 = new BlockPos(box.minX, box.minY, box.minZ);
-        BlockPos blockPos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
+        BlockPos blockPos1 = new BlockPos((int) box.minX, (int) box.minY, (int) box.minZ);
+        BlockPos blockPos2 = new BlockPos((int) box.maxX, (int) box.maxY, (int) box.maxZ);
         Iterator<BlockPos> iterator = BlockPos.iterate(blockPos1, blockPos2).iterator();
         BlockPos blockPos3 = null;
 
@@ -355,7 +357,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(Registry.STRUCTURE_KEY).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {

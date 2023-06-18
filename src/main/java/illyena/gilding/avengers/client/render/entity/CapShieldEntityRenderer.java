@@ -1,7 +1,7 @@
 package illyena.gilding.avengers.client.render.entity;
 
-import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
 import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
+import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -14,7 +14,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
@@ -30,8 +30,8 @@ public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
 
     public void render(CapShieldEntity capShieldEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
-        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(MathHelper.lerp(g, capShieldEntity.prevYaw, capShieldEntity.getYaw()) - 90.0F));
-        matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(MathHelper.lerp(g, capShieldEntity.prevPitch, capShieldEntity.getPitch()) + 90.0F));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(g, capShieldEntity.prevYaw, capShieldEntity.getYaw()) - 90.0F));
+        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(g, capShieldEntity.prevPitch, capShieldEntity.getPitch()) + 90.0F));
         VertexConsumer vertexConsumer = ItemRenderer.getDirectItemGlintConsumer(vertexConsumerProvider, this.model.getLayer(this.getTexture(capShieldEntity)), false, capShieldEntity.isEnchanted());
         this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.pop();

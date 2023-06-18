@@ -9,15 +9,13 @@ import illyena.gilding.avengers.painting.AvengersPaintings;
 import illyena.gilding.avengers.structure.AvengersStructures;
 import illyena.gilding.compat.Mod;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static illyena.gilding.GildingInit.GILDING;
+import static illyena.gilding.GildingInit.registerItemGroup;
 
 public class AvengersInit implements ModInitializer {
     public static final String MOD_ID = "avengers";
@@ -26,7 +24,7 @@ public class AvengersInit implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     public static final Mod AVENGERS = new Mod(MOD_ID, GILDING, false, AvengersConfigOptions.class);
-    public static final ItemGroup AVENGERS_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(AvengersItems.CAP_SHIELD));
+    public static final ItemGroup AVENGERS_GROUP = registerItemGroup(MOD_ID, "avengers_group", AvengersItems.CAP_SHIELD);
 
     public void onInitialize() {
         AvengersConfigOptions.registerConfigs();

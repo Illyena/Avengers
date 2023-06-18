@@ -79,10 +79,10 @@ public class MjolnirEntity extends PersistentProjectileEntity {
         }
 
         Entity entity = this.getOwner();
-        //int i = (Byte)this.dataTracker.get(LOYALTY);
+        //int i = this.dataTracker.get(LOYALTY);
         if (/*i > 0 && */(this.dealtDamage || this.isNoClip()) && entity != null) {
             if (!this.isOwnerAlive()) {
-                if (!this.world.isClient && this.pickupType == PickupPermission.ALLOWED) {
+                if (!this.getWorld().isClient && this.pickupType == PickupPermission.ALLOWED) {
                     this.dropStack(this.asItemStack(), 0.1F);
                 }
                 this.discard();
@@ -90,7 +90,7 @@ public class MjolnirEntity extends PersistentProjectileEntity {
                 this.setNoClip(true);
                 Vec3d vec3d = entity.getEyePos().subtract(this.getPos());
                 this.setPos(this.getX(), this.getY() + vec3d.y * 0.015 * (double)3/*i*/, this.getZ());
-                if (this.world.isClient) {
+                if (this.getWorld().isClient) {
                     this.lastRenderY = this.getY();
                 }
 
@@ -141,7 +141,7 @@ public class MjolnirEntity extends PersistentProjectileEntity {
             i += EnchantmentHelper.getAttackDamage(this.mjolnirStack, livingEntity.getGroup());
         }
         Entity owner = this.getOwner();
-        DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
+        DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
         SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT;
 
@@ -172,13 +172,13 @@ public class MjolnirEntity extends PersistentProjectileEntity {
 
         this.setVelocity(this.getVelocity().multiply(-0.01, -0.1, -0.01));
         float g = 1.0f;
-        if (this.world instanceof ServerWorld && this.world.isThundering() /*&& this.hasChanneling()*/) {
+        if (this.getWorld() instanceof ServerWorld && this.getWorld().isThundering() /*&& this.hasChanneling()*/) {
             BlockPos blockPos = entity.getBlockPos();
-            if (this.world.isSkyVisible(blockPos)) {
-                LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(this.world);
+            if (this.getWorld().isSkyVisible(blockPos)) {
+                LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(this.getWorld());
                 lightningEntity.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(blockPos));
                 lightningEntity.setChanneler(owner instanceof ServerPlayerEntity ? (ServerPlayerEntity)owner : null);
-                this.world.spawnEntity(lightningEntity);
+                this.getWorld().spawnEntity(lightningEntity);
                 soundEvent = SoundEvents.ITEM_TRIDENT_THUNDER;
                 g = 5.0F;
             }

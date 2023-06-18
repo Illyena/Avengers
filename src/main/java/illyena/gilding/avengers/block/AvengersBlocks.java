@@ -5,15 +5,19 @@ import illyena.gilding.avengers.util.data.AvengersLootTableProvider;
 import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import illyena.gilding.core.item.BlockItemWithGlint;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
@@ -25,37 +29,38 @@ public class AvengersBlocks {
     private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
         AvengersModelProvider.addModels(block);
         AvengersLootTableProvider.addLootTable(block, lootType);
-        return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
+        return Registry.register(Registries.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static Block registerBlockWithoutItem(String name, Block block) {
-        return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
+        return Registry.register(Registries.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static Block registerBlockWithItem(String name, Block block, Rarity rarity, boolean hasGlint, AvengersLootTableProvider.LootTableTypes lootType, @Nullable ItemGroup group) {
         AvengersModelProvider.addModels(block);
         AvengersLootTableProvider.addLootTable(block, lootType);
-        Registry.register(Registry.ITEM, new Identifier(MOD_ID, name),
-                hasGlint ? new BlockItemWithGlint(block, new FabricItemSettings().rarity(rarity).group(group)) : new BlockItem(block, new FabricItemSettings().rarity(rarity).group(group)));
-        return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
+        Item item = Registry.register(Registries.ITEM, new Identifier(MOD_ID, name),
+                hasGlint ? new BlockItemWithGlint(block, new FabricItemSettings().rarity(rarity)) : new BlockItem(block, new FabricItemSettings().rarity(rarity)));
+        Registries.ITEM_GROUP.getKey(group).ifPresent(key -> ItemGroupEvents.modifyEntriesEvent(key).register(content -> content.add(item)));
+        return Registry.register(Registries.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
     private static StarPortalBlock registerStarPortalBlock(DyeColor color) {
 
-        return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
-                .suffocates((((state, world, pos) -> {
+        return new StarPortalBlock(color, FabricBlockSettings.create().mapColor(MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
+                .suffocates((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
                     if (!(blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity)) {
                         return true;
                     } else {
                         return starPortalBlockEntity.suffocates();
                     }
-                }))));
+                }));
     }
 
     //BLOCKS
     public static final Block MJOLNIR_BLOCK = registerBlockWithoutItem("mjolnir_block",
-            new MjolnirBlock(FabricBlockSettings.of(Material.METAL).strength(6.0f, 9.0f).nonOpaque()), BLOCK);
+            new MjolnirBlock(FabricBlockSettings.create().mapColor(MapColor.CLEAR).strength(6.0f, 9.0f).nonOpaque()), BLOCK);
 
     public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block", registerStarPortalBlock(null), Rarity.EPIC, false, STAR_PORTAL, null);
 
@@ -77,7 +82,7 @@ public class AvengersBlocks {
     public static final Block BLACK_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_black", registerStarPortalBlock(DyeColor.BLACK), Rarity.EPIC, false, STAR_PORTAL, null);
 
     public static final Block TELEPORT_ANCHOR = registerBlockWithItem("teleport_anchor",
-            new TeleportAnchorBlock(FabricBlockSettings.of(Material.AIR, MapColor.CLEAR).nonOpaque().requiresTool().strength(-1.0f, 3600000.0f)),
+            new TeleportAnchorBlock(FabricBlockSettings.create().mapColor(MapColor.CLEAR).nonOpaque().requiresTool().strength(-1.0f, 3600000.0f)),
             Rarity.EPIC, true, DROPS_NOTHING, null);
 
 }
