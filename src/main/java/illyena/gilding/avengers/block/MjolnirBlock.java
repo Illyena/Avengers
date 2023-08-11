@@ -43,11 +43,19 @@ public class MjolnirBlock extends Block {
         if (player.isSpectator()) {
             return ActionResult.CONSUME;
         } else if(player.experienceLevel>= 30 || player.isCreative()) {
-            player.getInventory().insertStack(new ItemStack(this.asItem()));
+            ItemStack stack = new ItemStack(this.asItem());
+            if (player.getInventory().getEmptySlot() != -1) {
+                player.giveItemStack(stack);
+            } else {
+                player.dropStack(stack);
+            }
+
             world.setBlockState(pos, Blocks.AIR.getDefaultState());
             return ActionResult.SUCCESS;
         } else {
-            player.sendMessage(translationKeyOf("message", "not_worthy"));
+            if (world.isClient() && hand == player.getActiveHand()) {
+                player.sendMessage(translationKeyOf("message", "not_worthy"));
+            }
             return ActionResult.FAIL;
         }
     }

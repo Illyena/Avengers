@@ -14,9 +14,7 @@ import net.minecraft.util.Identifier;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersEntities {
-    public static void registerEntities() {
-        LOGGER.info("Registering entities for " + MOD_NAME + " Mod.");
-    }
+    public static void registerEntities() { LOGGER.info("Registering entities for " + MOD_NAME + " Mod."); }
 
     private static <T extends Entity> EntityType<T> registerPersistentProjectile(String id, FabricEntityTypeBuilder<T> builder) {
         return Registry.register(Registries.ENTITY_TYPE, new Identifier(MOD_ID, id), builder.dimensions(EntityDimensions.fixed(0.75f,0.75f)).build());

@@ -8,9 +8,7 @@ import net.minecraft.util.Identifier;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersPaintings {
-    public static void callPaintings() {
-        LOGGER.info("Registering Paintings for " + MOD_NAME);
-    }
+    public static void callPaintings() { LOGGER.info("Registering Paintings for " + MOD_NAME); }
 
     private static PaintingVariant registerPainting(String name, PaintingVariant paintingVariant) {
         return Registry.register(Registries.PAINTING_VARIANT, new Identifier(MOD_ID, name), paintingVariant);

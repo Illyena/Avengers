@@ -198,8 +198,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
     public boolean getDealtDamage() { return this.dealtDamage; }
 
-    public DataTracker getDataTracker() { return dataTracker; }
-
     public TrackedData<Integer> getLoyalty() { return LOYALTY; }
 
     public TrackedData<Integer> getRicochet() { return RICOCHET; }

@@ -29,6 +29,7 @@ public abstract class ItemEntityMixin {
         if (itemEntity.getBlockPos().getY() <= itemEntity.getWorld().getBottomY() && itemEntity.getStack().getItem() instanceof MjolnirItem item) {
             BlockPos blockPos = itemEntity.getBlockPos().withY(itemEntity.getWorld().getBottomY() + 1);
             itemEntity.getWorld().setBlockState(blockPos, item.getBlock().getDefaultState());
+            itemEntity.discard();
         }
     }
 }

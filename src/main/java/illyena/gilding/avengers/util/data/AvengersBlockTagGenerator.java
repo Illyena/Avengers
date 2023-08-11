@@ -29,12 +29,12 @@ public class AvengersBlockTagGenerator extends FabricTagProvider<Block> {
     public static final TagKey<Block> FEATURES_CANNOT_REPLACE       = TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "features_cannot_replace"));
     public static final TagKey<Block> GEODE_INVALID_BLOCKS          = TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "geode_invalid_blocks"));
 
-    public AvengersBlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> futureRegistries) {
-        super(output, RegistryKeys.BLOCK, futureRegistries);
+    public AvengersBlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, RegistryKeys.BLOCK, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup args) {
+    protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(GildingBlockTagGenerator.MAGIC_MINEABLE).addOptionalTag(MAGIC_MINEABLE);
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(MAGIC_MINEABLE).add(block));
         getOrCreateTagBuilder(GildingBlockTagGenerator.NEEDS_TOOL_LEVEL_5).addOptionalTag(NEEDS_TOOL_LEVEL_5);

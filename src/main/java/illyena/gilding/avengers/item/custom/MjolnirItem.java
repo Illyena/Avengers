@@ -11,6 +11,8 @@ import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
@@ -21,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundCategory;
@@ -28,6 +31,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -58,6 +62,11 @@ public class MjolnirItem extends BlockItem implements IThrowable {
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) { return !miner.isCreative(); }
 
+    /**
+     * prevents block from being placed
+     */
+    public ActionResult useOnBlock(ItemUsageContext context) { return ActionResult.PASS; }
+
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (stack.getDamage() >= stack.getMaxDamage() - 1) {
@@ -86,8 +95,83 @@ public class MjolnirItem extends BlockItem implements IThrowable {
                 } else this.onRiptide(stack, world, user, remainingTicks);
             }
         } else {
-            if (user instanceof PlayerEntity player) {
+            if (user instanceof PlayerEntity player && world.isClient()) {
                 player.sendMessage(translationKeyOf("message", "not_worthy"));
+            }
+        }
+    }
+
+    public void onThrow(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+
+        if (user instanceof PlayerEntity playerEntity && canThrow(stack, world, user, remainingUseTicks)) {
+            int i = stack.getItem().getMaxUseTime(stack) - remainingUseTicks;
+            if (!((double)getPullProgress(i) < 0.1)) {
+                int j = EnchantmentHelper.getRiptide(stack);
+                if (j <= 0 || playerEntity.isTouchingWaterOrRain()) {
+                    if (!world.isClient) {
+
+                        if (j == 0) {
+                            PersistentProjectileEntity projectile = getProjectileEntity(world, (PlayerEntity) user, stack);
+                            projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, 2.5F + (float) j * 0.5F, 0.0f); //1.0F);
+
+                            if (getPullProgress(i) == 1.0f) {
+                                projectile.setCritical(true);
+                            }
+
+                            if (EnchantmentHelper.getLevel(Enchantments.POWER, stack) > 0) {
+                                projectile.setDamage(projectile.getDamage() + (double)EnchantmentHelper.getLevel(Enchantments.POWER, stack) * 0.5 +0.5);
+                            }
+
+                            if (EnchantmentHelper.getLevel(Enchantments.PUNCH, stack) > 0) {
+                                projectile.setPunch(EnchantmentHelper.getLevel(Enchantments.PUNCH, stack));
+                            }
+
+                            if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) {
+                                projectile.setOnFireFor(100);
+                            }
+
+                            if (playerEntity.getAbilities().creativeMode) {
+                                projectile.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+                            }
+                            world.spawnEntity(projectile);
+                            world.playSoundFromEntity((PlayerEntity) null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F); //todo sound
+                            if (!playerEntity.getAbilities().creativeMode) {
+                                playerEntity.getInventory().removeOne(stack);
+                            }
+                        }
+                    }
+
+                    playerEntity.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+                    if (j > 0) {
+                        float f = playerEntity.getYaw();
+                        float g = playerEntity.getPitch();
+                        float h = -MathHelper.sin(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+                        float k = -MathHelper.sin(g * 0.017453292F);
+                        float l = MathHelper.cos(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+                        float m = MathHelper.sqrt(h * h + k * k + l * l);
+                        float n = 3.0F * ((1.0F + (float) j) / 4.0F);
+                        h *= n / m;
+                        k *= n / m;
+                        l *= n / m;
+                        playerEntity.addVelocity(h, k, l);
+                        playerEntity.useRiptide(20);
+                        if (playerEntity.isOnGround()) {
+                            float o = 1.1999999F;
+                            playerEntity.move(MovementType.SELF, new Vec3d(0.0, 1.1999999284744263, 0.0));
+                        }
+
+                        SoundEvent soundEvent;
+                        if (j >= 3) {
+                            soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_3;
+                        } else if (j == 2) {
+                            soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_2;
+                        } else {
+                            soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_1;
+                        }
+
+                        world.playSoundFromEntity(null, playerEntity, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    }
+                }
             }
         }
     }
@@ -143,7 +227,7 @@ public class MjolnirItem extends BlockItem implements IThrowable {
     public float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
         return state.isIn(this.effectiveBlocks) ? this.miningSpeed : 1.0f;
     }
-
+/*
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         stack.damage(0, attacker, entity -> entity.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
         return true;
@@ -155,6 +239,8 @@ public class MjolnirItem extends BlockItem implements IThrowable {
         }
         return true;
     }
+
+ */
 
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         return slot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getAttributeModifiers(slot);

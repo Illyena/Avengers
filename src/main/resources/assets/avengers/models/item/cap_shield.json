@@ -363,7 +363,7 @@
 		},
 		{
 			"predicate": {
-				"broken": 1
+				"broken_item": 1
 			},
 			"model": "avengers:item/cap_shield_broken"
 		}

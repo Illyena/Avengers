@@ -50,6 +50,7 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             FabricModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) ->
                     livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f);
+
         }
     }
 

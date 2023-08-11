@@ -17,11 +17,13 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 public class AvengersItemTagGenerator extends FabricTagProvider<Item> {
     public static final TagKey<Item> SHIELDS = TagKey.of(RegistryKeys.ITEM, new Identifier(MOD_ID, "shields"));
 
-    public AvengersItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> futureRegistries) {
-        super(output, RegistryKeys.ITEM, futureRegistries); }
+    public AvengersItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, RegistryKeys.ITEM, registriesFuture);
+    }
+
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup args) {
+    protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(GildingItemTagGenerator.SHIELDS).addOptionalTag(SHIELDS);
         getOrCreateTagBuilder(SHIELDS).add(AvengersItems.CAP_SHIELD);
     }
