@@ -99,7 +99,7 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
             case stage_1 -> {
                 float red = first[0] * (1.0F - h) + dark[0] * (h);
                 float green = first[1] * (1.0F - h) + dark[1] * (h);
-                float blue = first[2] * (1.0F - h) + dark[2] * (h);;
+                float blue = first[2] * (1.0F - h) + dark[2] * (h);
                 beamColor = new float[]{red, green, blue};
                 if (beamColor[0] <= dark[0] + g && beamColor[1] <= dark[1] + g && beamColor[2] <= dark[2] + g) {
                     this.beamColors = BeamColorStage.stage_2;
@@ -138,7 +138,6 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
 
     private float[] getJebBeamColor(TeleportAnchorBlockEntity entity, float tickDelta) {
         float f = 3.25f;
-        float g = 0.002f / (f / 100.0f);
         float h = ((entity.age % f) + tickDelta) / f;
         int i = (int) (entity.age / f);
 

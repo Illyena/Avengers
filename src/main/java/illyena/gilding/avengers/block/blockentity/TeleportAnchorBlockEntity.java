@@ -20,7 +20,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     public long age;
     private final BlockPositionSource positionSource;
 
-
     public TeleportAnchorBlockEntity(BlockPos pos, BlockState state) {
         super(AvengersBlockEntities.TELEPORT_ANCHOR_BLOCK_ENTITY, pos, state);
         this.positionSource = new BlockPositionSource(this.pos);
@@ -39,27 +38,20 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     public static void tick(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
         boolean bl = blockEntity.isRecentlyGenerated();
         ++blockEntity.age;
-        if (!world.isClient() && bl != blockEntity.isRecentlyGenerated()) { // || bl2 != blockEntity.hasBeamCooldown()) {
+        if (!world.isClient() && bl != blockEntity.isRecentlyGenerated()) {
             markDirty(world, pos, state);
         }
     }
 
-    public boolean isRecentlyGenerated() {
-        return this.age < 20L;
-    }
+    public boolean isRecentlyGenerated() { return this.age < 20L; }
 
     public float getRecentlyGeneratedBeamHeight(float tickDelta) {
         return MathHelper.clamp(((float) this.age + tickDelta) / 10.0F, 0.0F, 1.0F);
     }
 
+    public BlockEntityUpdateS2CPacket toUpdatePacket() { return BlockEntityUpdateS2CPacket.create(this); }
 
-    public BlockEntityUpdateS2CPacket toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    public NbtCompound toInitialChunkDataNbt() {
-        return this.createNbt();
-    }
+    public NbtCompound toInitialChunkDataNbt() { return this.createNbt(); }
 
     private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
         if (!world.isClient) {
@@ -70,7 +62,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     }
 
     public boolean onSyncedBlockEvent(int type, int data) {
-
         if (type == 1) {
             this.age = 0;
             return true;
@@ -81,14 +72,10 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     }
 
     @Override
-    public PositionSource getPositionSource() {
-        return this.positionSource;
-    }
+    public PositionSource getPositionSource() { return this.positionSource; }
 
     @Override
-    public int getRange() {
-        return 30;
-    }
+    public int getRange() { return 30; }
 
     @Override
     public boolean listen(ServerWorld world, GameEvent event, GameEvent.Emitter emitter, Vec3d emitterPos) {

@@ -38,7 +38,7 @@ public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
         super.render(capShieldEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
-    public Identifier getTexture(CapShieldEntity capShieldEntity) {
-        return TEXTURE;
-    }
+    public Identifier getTexture(CapShieldEntity capShieldEntity) { return TEXTURE; }
+
+    public CapShieldEntityModel getModel() { return this.model; }
 }

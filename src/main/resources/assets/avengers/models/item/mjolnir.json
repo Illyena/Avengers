@@ -1,0 +1,11 @@
+{
+  "parent": "avengers:block/mjolnir_block",
+  "overrides": [
+    {
+      "predicate": {
+        "gilding:broken": 1
+      },
+      "model": "avengers:item/mjolnir_broken"
+    }
+  ]
+}

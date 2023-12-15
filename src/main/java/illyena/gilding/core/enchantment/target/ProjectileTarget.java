@@ -1,4 +1,4 @@
-package illyena.gilding.core.enchantment;
+package illyena.gilding.core.enchantment.target;
 
 import illyena.gilding.core.enchantment.EnchantmentTargetMixin;
 import illyena.gilding.core.item.IThrowable;
