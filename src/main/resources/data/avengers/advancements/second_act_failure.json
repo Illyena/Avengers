@@ -1,0 +1,83 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:mjolnir",
+      "nbt": "{Damage:335}"
+    },
+    "title": {
+      "translate": "advancement.avengers.second_act.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.second_act.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "avengers:root",
+  "criteria": {
+    "cap" : {
+      "trigger": "minecraft:thrown_item_picked_up_by_entity",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:entity_properties",
+              "predicate": {
+                "equipment": {
+                  "offhand": {
+                    "items": [
+                      "avengers:cap_shield"
+                    ]
+                  }
+                }
+              },
+              "entity": "this"
+            }
+          },
+          {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:entity_properties",
+              "predicate": {
+                "equipment": {
+                  "mainhand": {
+                    "items": [
+                      "avengers:cap_shield"
+                    ]
+                  }
+                }
+              },
+              "entity": "this"
+            }
+          }
+        ],
+        "item": {
+          "items": [
+            "avengers:cap_shield"
+          ]
+        }
+      }
+    },
+    "thor": {
+      "trigger": "avengers:not_worthy"
+    }
+
+
+  },
+  "requirements": [
+    [
+      "cap"
+    ],
+    [
+      "thor"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+
+    ]
+  }
+}

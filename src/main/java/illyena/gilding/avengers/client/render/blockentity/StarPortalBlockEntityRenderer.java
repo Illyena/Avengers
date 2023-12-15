@@ -1,9 +1,9 @@
 package illyena.gilding.avengers.client.render.blockentity;
 
 import com.google.common.collect.ImmutableList;
-import illyena.gilding.avengers.client.render.AvengersRenderers;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.blockentity.StarPortalBlockEntity;
+import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -18,14 +18,15 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<StarPortalBlockEntity> {
     private final StarPortalModel model;
 
     public StarPortalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersRenderers.STAR_PORTAL_MODEL_LAYER));
+        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersEntityModelLayers.STAR_PORTAL_MODEL_LAYER));
     }
 
     public void render(StarPortalBlockEntity starPortalBlockEntity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {
@@ -33,7 +34,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         if (starPortalBlockEntity.hasWorld()) {
             BlockState blockState = starPortalBlockEntity.getWorld().getBlockState(starPortalBlockEntity.getPos());
             if (blockState.getBlock() instanceof StarPortalBlock) {
-                direction = (Direction)blockState.get(StarPortalBlock.FACING);
+                direction = blockState.get(StarPortalBlock.FACING);
             }
         }
 
@@ -42,7 +43,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         if (dyeColor == null) {
             spriteIdentifier = TexturedRenderLayers.SHULKER_TEXTURE_ID;
         } else {
-            spriteIdentifier = (SpriteIdentifier)TexturedRenderLayers.COLORED_SHULKER_BOXES_TEXTURES.get(dyeColor.getId());
+            spriteIdentifier = TexturedRenderLayers.COLORED_SHULKER_BOXES_TEXTURES.get(dyeColor.getId());
         }
 
         matrixStack.push();
@@ -58,7 +59,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
 
         VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntityCutoutNoCull);
-        this.model.getShellParts().forEach((part) -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
+        this.model.getShellParts().forEach(part -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
 
         float g = 0.1f *( MathHelper.sin(starPortalBlockEntity.getPulseProgress(tickDelta) / 6.0f)) + 1.0f;
         this.model.head.setPivot(1.0f - g, 1.0f - g - starPortalBlockEntity.getAnimationProgress(tickDelta), 1.0f - g );

@@ -39,7 +39,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
         return BlockRenderType.INVISIBLE;
     }
 
-    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) { return true; }
+    public boolean isTransparent(BlockState state, BlockView world, BlockPos pos) { return true; }
 
     public boolean canBucketPlace(BlockState state, Fluid fluid) { return false; }
 

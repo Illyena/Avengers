@@ -11,7 +11,7 @@
   ],
   "contact": {
     "sources": "https://github.com/Illyena/Avengers.git",
-    "issues": "httpsa://github.com/Illyena/Avengers/issues"
+    "issues": "https://github.com/Illyena/Avengers/issues"
   },
 
   "license": "Apache-2.0",
@@ -30,12 +30,14 @@
     ],
     "modmenu": [
       "illyena.gilding.avengers.compat.ModMenuCompat"
+    ],
+    "config": [
+      "illyena.gilding.avengers.config.AvengersConfigOptions"
     ]
   },
   "mixins": [
     "avengers.mixins.json"
   ],
-
   "accessWidener": "avengers.accesswidener",
 
   "depends": {
@@ -43,7 +45,7 @@
     "fabric": "*",
     "minecraft": "~1.20",
     "java": ">=17",
-    "gilding": "1.20v0.2.1"
+    "gilding": "1.20v0.2.2"
   },
   "suggests": {
     "another-mod": "*"

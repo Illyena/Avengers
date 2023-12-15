@@ -357,15 +357,21 @@
 	"overrides": [
 		{
 			"predicate": {
-				"blocking": 1
+				"minecraft:blocking": 1
 			},
 			"model": "avengers:item/cap_shield_blocking"
 		},
 		{
 			"predicate": {
-				"broken_shield": 1
+				"gilding:broken": 1
 			},
 			"model": "avengers:item/cap_shield_broken"
+		},
+		{
+			"predicate": {
+				"avengers:mob_held": 1
+			},
+			"model": "avengers:item/cap_shield_mob_held"
 		}
 	]
 }

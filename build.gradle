@@ -38,7 +38,8 @@ dependencies {
 	}
 	include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
 
-	//Gilding-Api
+	//Gilding API
+//	modImplementation "com.github.Illyena:Gilding-core:${project.minecraft_version}v${project.gilding_version}"
 	modImplementation("illyena.gilding:Gilding-core:${project.minecraft_version}v${project.gilding_version}")
 }
 
@@ -71,14 +72,10 @@ loom {
 sourceSets { main { resources { srcDirs += dataOutput } } }
 
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
 	it.options.release = 17
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 }
 
