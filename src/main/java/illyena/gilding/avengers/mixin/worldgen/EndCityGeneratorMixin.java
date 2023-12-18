@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-
 @Mixin(EndCityGenerator.class)
 public abstract class EndCityGeneratorMixin {
     private static final int buildHeight = 255;

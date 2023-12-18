@@ -21,7 +21,6 @@ public class AvengersItemTagGenerator extends FabricTagProvider<Item> {
         super(output, RegistryKeys.ITEM, registriesFuture);
     }
 
-
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(GildingItemTagGenerator.SHIELDS).addOptionalTag(SHIELDS);

@@ -1,0 +1,15 @@
+{
+  "parent": "avengers:item/cap_shield",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -90, 0],
+      "translation": [2.5, -10, 4],
+      "scale": [0.5, 0.5, 1]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, -90, 0],
+      "translation": [-4, -7, 0],
+      "scale": [0.5, 0.5, 1]
+    }
+  }
+}

@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.structure.StarLabStructure;
-import illyena.gilding.avengers.util.data.AvengersTags;
+import illyena.gilding.avengers.util.data.AvengersStructureTagGenerator;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -67,9 +67,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         this.cachedColor = color;
     }
 
-    public StarPortalBlockEntity(BlockPos pos, BlockState state) {
-        this(null, pos, state);
-    }
+    public StarPortalBlockEntity(BlockPos pos, BlockState state) { this(null, pos, state); }
 
     public Box getBoundingBox(BlockState state) {
         return ShulkerEntity.calculateBoundingBox(state.get(StarPortalBlock.FACING), 0.5F * this.getAnimationProgress(1.0F));
@@ -97,7 +95,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         if (nbt.contains("ExitPortal", 10)) {
@@ -108,7 +105,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
         this.exactTeleport = nbt.getBoolean("ExactTeleport");
     }
-
 
     public static void tick(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
         if (blockEntity.isPlayerInRange(world, pos) && StarPortalBlock.canOpen(state, world, pos, blockEntity)) {
@@ -204,7 +200,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
             world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
-
         }
     }
 
@@ -217,9 +212,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasPortalCooldown();
     }
 
-    public boolean needsCooldownBeforeTeleporting() {
-        return this.teleportCooldown > 0;
-    }
+    public boolean needsCooldownBeforeTeleporting() { return this.teleportCooldown > 0; }
 
     private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
         if (!world.isClient) {
@@ -230,7 +223,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     }
 
     public static void tryTeleportingEntity(World world, BlockPos pos, BlockState state , Entity entity, StarPortalBlockEntity blockEntity) {
-        if (world instanceof ServerWorld serverWorld && !blockEntity.needsCooldownBeforeTeleporting()) {
+        if (world instanceof ServerWorld serverWorld && !blockEntity.needsCooldownBeforeTeleporting() && canTeleport(entity)) {
             blockEntity.teleportCooldown = 100;
             BlockPos teleportPoint;
             if (blockEntity.exitPortalPos == null && world.getRegistryKey() == World.END) {
@@ -265,7 +258,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public static BlockPos findTeleportLocation(ServerWorld world, BlockPos pos) {
         BlockPos teleportPoint = pos;
-        TagKey<Structure> tag = AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO;
+        TagKey<Structure> tag = AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO;
 
         BlockPos structurePos = world.locateStructure(tag, pos, 100, false);
         if (structurePos == null) {
@@ -280,7 +273,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
@@ -357,7 +350,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersTags.AvengersStructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<Structure>> optional = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getEntryList(AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
             if (pair != null && pair.getSecond().value() instanceof StarLabStructure) {
@@ -373,11 +366,6 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     private static boolean isAirOrFluid(BlockState blockState) {
         return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
-    }
-
-    public void setExitPortalPos(BlockPos pos, boolean exactTeleport) {
-        this.exactTeleport = exactTeleport;
-        this.exitPortalPos = pos;
     }
 
     @Nullable
@@ -407,7 +395,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     public DyeColor getColor() { return this.cachedColor; }
 
     public boolean shouldDrawSide(Direction direction) {
-        return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
+        return this.world != null && Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
     }
 
     public int getDrawnSidesCount() {

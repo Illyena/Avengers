@@ -30,6 +30,9 @@
     ],
     "modmenu": [
       "illyena.gilding.avengers.compat.ModMenuCompat"
+    ],
+    "config": [
+      "illyena.gilding.avengers.config.AvengersConfigOptions"
     ]
   },
   "mixins": [
@@ -42,7 +45,7 @@
     "fabric": "*",
     "minecraft": "~1.20",
     "java": ">=17",
-    "gilding": "1.20.1v0.2.1"
+    "gilding": "1.20v0.2.2"
   },
   "suggests": {
     "another-mod": "*"

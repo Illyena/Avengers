@@ -36,8 +36,10 @@ public class AvengersBlockTagGenerator extends FabricTagProvider<Block> {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         getOrCreateTagBuilder(GildingBlockTagGenerator.MAGIC_MINEABLE).addOptionalTag(MAGIC_MINEABLE);
+        getOrCreateTagBuilder(MAGIC_MINEABLE).add(AvengersBlocks.MJOLNIR_BLOCK);
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(MAGIC_MINEABLE).add(block));
         getOrCreateTagBuilder(GildingBlockTagGenerator.NEEDS_TOOL_LEVEL_5).addOptionalTag(NEEDS_TOOL_LEVEL_5);
+        getOrCreateTagBuilder(NEEDS_TOOL_LEVEL_5).add(AvengersBlocks.MJOLNIR_BLOCK);
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(NEEDS_TOOL_LEVEL_5).add(block));
 
         getOrCreateTagBuilder(GildingBlockTagGenerator.DRAGON_IMMUNE).addOptionalTag(DRAGON_IMMUNE);
@@ -50,8 +52,8 @@ public class AvengersBlockTagGenerator extends FabricTagProvider<Block> {
         getOrCreateTagBuilder(GildingBlockTagGenerator.FEATURES_CANNOT_REPLACE).addOptionalTag(FEATURES_CANNOT_REPLACE);
         getOrCreateTagBuilder(GildingBlockTagGenerator.GEODE_INVALID_BLOCKS).addOptionalTag(GEODE_INVALID_BLOCKS);
 
-        getOrCreateTagBuilder(DRAGON_IMMUNE).add(AvengersBlocks.TELEPORT_ANCHOR);
-        getOrCreateTagBuilder(WITHER_IMMUNE).add(AvengersBlocks.TELEPORT_ANCHOR);
+        getOrCreateTagBuilder(DRAGON_IMMUNE).add(AvengersBlocks.MJOLNIR_BLOCK).add(AvengersBlocks.TELEPORT_ANCHOR);
+        getOrCreateTagBuilder(WITHER_IMMUNE).add(AvengersBlocks.MJOLNIR_BLOCK).add(AvengersBlocks.TELEPORT_ANCHOR);
         getOrCreateTagBuilder(PORTALS);
         getOrCreateTagBuilder(SHULKER_BOXES);
         getOrCreateTagBuilder(HOGLIN_REPELLENTS).add(AvengersBlocks.TELEPORT_ANCHOR);

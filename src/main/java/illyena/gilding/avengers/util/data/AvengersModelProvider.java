@@ -1,6 +1,5 @@
 package illyena.gilding.avengers.util.data;
 
-import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.MjolnirBlock;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.TeleportAnchorBlock;
@@ -18,11 +17,7 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
 public class AvengersModelProvider extends FabricModelProvider {
     static List<Block> modelList = new ArrayList<>();
-
-    static Model STAR_PORTAL_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
-    static Model STAR_PORTAL_ITEM_MODEL = new Model(Optional.of(new Identifier(MOD_ID, "item/star_portal_inventory")), Optional.empty(), TextureKey.LAYER0);
-    static Model TELEPORT_ANCHOR_BLOCK_MODEL = new Model(Optional.empty(), Optional.empty(), TextureKey.PARTICLE);
-    static Model TELEPORT_ANCHOR_ITEM_MODEL = new Model(Optional.of(new Identifier("minecraft", "block/cube_all")), Optional.empty(), TextureKey.ALL);
+    private static final TextureKey OVERLAY = TextureKey.of("overlay");
 
     public AvengersModelProvider(FabricDataOutput output) { super(output); }
 
@@ -35,13 +30,12 @@ public class AvengersModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) { }
 
     public static void registerBlockModels(BlockStateModelGenerator modelGenerator, Block block) {
-        if (block instanceof StarPortalBlock) {
-            registerStarPortal(modelGenerator, block);
+        if (block instanceof StarPortalBlock starPortalBlock) {
+            registerStarPortal(modelGenerator, starPortalBlock);
         } else if (block instanceof TeleportAnchorBlock) {
             registerTeleportAnchor(modelGenerator, block);
-        } else if (block instanceof MjolnirBlock){
-            modelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(block))));
-            modelGenerator.excludeFromSimpleItemModelGeneration(block);
+        } else if (block instanceof MjolnirBlock) {
+            registerMjolnirBlock(modelGenerator, block);
         } else {
             modelGenerator.registerSimpleCubeAll(block);
         }
@@ -49,19 +43,63 @@ public class AvengersModelProvider extends FabricModelProvider {
 
     public static void addModels(Block block ) { modelList.add(block); }
 
-    public static void registerStarPortal(BlockStateModelGenerator modelGenerator, Block block) {
-        String color = ModelIds.getBlockModelId(block).getPath().replace("block/star_portal_block_", "");
-        Identifier blockModelId = block != AvengersBlocks.STAR_PORTAL_BLOCK ? new Identifier("minecraft", "block/" + color + "_shulker_box") : new Identifier("minecraft", "block/shulker_box");
+    public static void registerMjolnirBlock(BlockStateModelGenerator modelGenerator, Block block) {
+        Identifier blockLegacyId = ModelIds.getBlockSubModelId(block, "_legacy");
+        Identifier blockBrokenId = ModelIds.getBlockSubModelId(block, "_broken");
+        Identifier blockLegacyBrokenId = ModelIds.getBlockSubModelId(block, "_legacy_broken");
 
-        Identifier identifier = STAR_PORTAL_BLOCK_MODEL.upload(block, new TextureMap().put(TextureKey.PARTICLE, blockModelId), modelGenerator.modelCollector);
-        modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, identifier));
-        STAR_PORTAL_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.LAYER0, blockModelId), modelGenerator.modelCollector);
+        BlockStateVariantMap.DoubleProperty<Boolean, Boolean> variantMap =
+                BlockStateVariantMap.create(MjolnirBlock.LEGACY, MjolnirBlock.BROKEN)
+                        .register(false, false, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, ModelIds.getBlockModelId(block)))
+                        .register(false, true, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockBrokenId))
+                        .register(true, false, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockLegacyId))
+                        .register(true, true, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockLegacyBrokenId));
+
+
+        modelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block)
+                .coordinate(variantMap)
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
+
+        Model brokenModel = new Model(Optional.of(ModelIds.getBlockModelId(block)), Optional.of("_broken"), OVERLAY, TextureKey.TEXTURE);
+        brokenModel.upload(blockBrokenId, new TextureMap().put(OVERLAY, blockBrokenId.withSuffixedPath("_underlay")).put(TextureKey.TEXTURE, blockBrokenId), modelGenerator.modelCollector);
+
+        Model legacyBrokenModel = new Model(Optional.of(blockLegacyId), Optional.of("_legacy_broken"), TextureKey.TEXTURE);
+        legacyBrokenModel.upload(blockLegacyBrokenId, new TextureMap().put(TextureKey.TEXTURE, blockLegacyBrokenId), modelGenerator.modelCollector);
+
+        modelGenerator.excludeFromSimpleItemModelGeneration(block);
+        modelGenerator.modelCollector.accept(ModelIds.getItemModelId(block.asItem()).withSuffixedPath("_broken"), new SimpleModelSupplier(blockBrokenId));
+    }
+
+    public static void registerBreakableBlock(BlockStateModelGenerator modelGenerator, Block block) {
+        Identifier blockBrokenId = ModelIds.getBlockSubModelId(block, "_broken");
+        modelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block)
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+                .coordinate(BlockStateModelGenerator.createBooleanModelMap(MjolnirBlock.BROKEN, blockBrokenId, ModelIds.getBlockModelId(block))));
+        Model brokenModel = new Model(Optional.of(ModelIds.getBlockModelId(block)), Optional.of("_broken"), OVERLAY, TextureKey.TEXTURE);
+        brokenModel.upload(blockBrokenId, new TextureMap().put(OVERLAY, blockBrokenId.withSuffixedPath("_underlay")).put(TextureKey.TEXTURE, blockBrokenId), modelGenerator.modelCollector);
+
+        modelGenerator.excludeFromSimpleItemModelGeneration(block);
+        modelGenerator.modelCollector.accept(ModelIds.getItemModelId(block.asItem()).withSuffixedPath("_broken"), new SimpleModelSupplier(blockBrokenId));
+    }
+
+    public static void registerStarPortal(BlockStateModelGenerator modelGenerator, StarPortalBlock block) {
+        String color = block.getColor() == null ? "" : block.getColor().asString() + "_";
+        Identifier textureId = new Identifier("minecraft", "block/" + color + "shulker_box");
+        Identifier blockModelId = Models.PARTICLE.upload(block, new TextureMap().put(TextureKey.PARTICLE, textureId), modelGenerator.modelCollector);
+        modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, blockModelId));
+
+        Model itemModel = new Model(Optional.of(new Identifier(MOD_ID, "item/star_portal_inventory")), Optional.empty(), TextureKey.LAYER0);
+        itemModel.upload(ModelIds.getItemModelId(block.asItem()), new TextureMap().put(TextureKey.LAYER0, textureId), modelGenerator.modelCollector);
     }
 
     public static void registerTeleportAnchor(BlockStateModelGenerator modelGenerator, Block block) {
-        Identifier blockModelId = new Identifier(MOD_ID, "block/end_portal");
-        Identifier identifier = TELEPORT_ANCHOR_BLOCK_MODEL.upload(block, new TextureMap().put(TextureKey.PARTICLE, blockModelId), modelGenerator.modelCollector);
-        modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, identifier));
-        TELEPORT_ANCHOR_ITEM_MODEL.upload(new Identifier(MOD_ID, ModelIds.getBlockModelId(block).getPath().replace("block/", "item/")), new TextureMap().put(TextureKey.ALL, blockModelId), modelGenerator.modelCollector);
+        Identifier textureId = new Identifier(MOD_ID, "block/end_portal");
+        Identifier blockModelId = Models.PARTICLE.upload(block, new TextureMap().put(TextureKey.PARTICLE, textureId), modelGenerator.modelCollector);
+        modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, blockModelId));
+        Models.CUBE_ALL.upload(ModelIds.getItemModelId(block.asItem()), new TextureMap().put(TextureKey.ALL, textureId), modelGenerator.modelCollector);
     }
 }

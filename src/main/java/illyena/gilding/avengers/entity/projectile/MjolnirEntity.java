@@ -1,8 +1,14 @@
 package illyena.gilding.avengers.entity.projectile;
 
+import illyena.gilding.avengers.block.blockentity.MjolnirBlockEntity;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.item.AvengersItems;
+import illyena.gilding.avengers.item.custom.MjolnirItem;
+import illyena.gilding.core.entity.projectile.ILoyalty;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -27,23 +33,28 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class MjolnirEntity extends PersistentProjectileEntity {
+import static illyena.gilding.avengers.block.MjolnirBlock.FACING;
+import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
+
+public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalty {
     private static final TrackedData<Integer> LOYALTY;
     private static final TrackedData<Boolean> ENCHANTED;
     private ItemStack mjolnirStack;
     private boolean dealtDamage;
-    public int returnTimer;
+    private int returnTimer;
+    private int wait;
 
     public MjolnirEntity(EntityType<? extends MjolnirEntity> entityType, World world) {
         super(entityType, world);
         this.mjolnirStack = new ItemStack(AvengersItems.MJOLNIR);
+        this.setDamage(this.mjolnirStack.getDamage());
     }
 
     public MjolnirEntity(World world, LivingEntity owner, ItemStack stack) {
         super(AvengersEntities.MJOLNIR_ENTITY_TYPE, owner, world);
         this.mjolnirStack = new ItemStack(AvengersItems.MJOLNIR);
         this.mjolnirStack = stack.copy();
-        this.dataTracker.set(LOYALTY, EnchantmentHelper.getLoyalty(stack));
+        this.dataTracker.set(LOYALTY, MJOLNIR_LEGACY.getValue() ? 3 : EnchantmentHelper.getLoyalty(stack));
         this.dataTracker.set(ENCHANTED, stack.hasGlint());
     }
 
@@ -69,39 +80,17 @@ public class MjolnirEntity extends PersistentProjectileEntity {
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @Override
     public void tick() {
+        if (this.getBlockPos().getY() <= this.getWorld().getBottomY()) {
+            this.toBlock(this.getWorld(), new BlockPos(this.getBlockPos().getX(), this.getWorld().getBottomY() +1, this.getBlockPos().getZ()));
+        }
         if (this.inGroundTime > 4) {
             this.dealtDamage = true;
         }
-        if (this.getBlockY()<= getWorld().getBottomY()){
-            this.dealtDamage = true;
-            this.setVelocity(0,0,0);
-        }
 
-        Entity entity = this.getOwner();
-        //int i = this.dataTracker.get(LOYALTY);
-        if (/*i > 0 && */(this.dealtDamage || this.isNoClip()) && entity != null) {
-            if (!this.isOwnerAlive()) {
-                if (!this.getWorld().isClient && this.pickupType == PickupPermission.ALLOWED) {
-                    this.dropStack(this.asItemStack(), 0.1F);
-                }
-                this.discard();
-            } else {
-                this.setNoClip(true);
-                Vec3d vec3d = entity.getEyePos().subtract(this.getPos());
-                this.setPos(this.getX(), this.getY() + vec3d.y * 0.015 * (double)3/*i*/, this.getZ());
-                if (this.getWorld().isClient) {
-                    this.lastRenderY = this.getY();
-                }
-
-                double d = 0.05 * (double)3/*i*/;
-                this.setVelocity(this.getVelocity().multiply(0.95).add(vec3d.normalize().multiply(d)));
-                if (this.returnTimer == 0) {
-                    this.playSound(SoundEvents.ITEM_TRIDENT_RETURN, 10.0F, 1.0F);
-                }
-
-                ++this.returnTimer;
-            }
+        if (!this.getLoyalty().equals(0)) {
+            ILoyalty.tick(this);
         }
 
         super.tick();
@@ -114,15 +103,6 @@ public class MjolnirEntity extends PersistentProjectileEntity {
         }
     }
 
-    private boolean isOwnerAlive() {
-        Entity entity = this.getOwner();
-        if (entity != null && entity.isAlive()) {
-            return !(entity instanceof ServerPlayerEntity) || !entity.isSpectator();
-        } else {
-            return false;
-        }
-    }
-
     @Nullable
     protected EntityHitResult getEntityCollision(Vec3d currentPosition, Vec3d nextPosition) {
         return this.dealtDamage ? null : super.getEntityCollision(currentPosition, nextPosition);
@@ -130,7 +110,7 @@ public class MjolnirEntity extends PersistentProjectileEntity {
 
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        float f = 8.0F;
+
         float damage = (float)this.getVelocity().length();
         int i = MathHelper.ceil(MathHelper.clamp((double)damage * getDamage(), 0.0, 2.147483647E9));
         if(this.isCritical()) {
@@ -172,7 +152,7 @@ public class MjolnirEntity extends PersistentProjectileEntity {
 
         this.setVelocity(this.getVelocity().multiply(-0.01, -0.1, -0.01));
         float g = 1.0f;
-        if (this.getWorld() instanceof ServerWorld && this.getWorld().isThundering() /*&& this.hasChanneling()*/) {
+        if (this.getWorld() instanceof ServerWorld && this.getWorld().isThundering() && this.hasChanneling()) {
             BlockPos blockPos = entity.getBlockPos();
             if (this.getWorld().isSkyVisible(blockPos)) {
                 LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(this.getWorld());
@@ -186,9 +166,75 @@ public class MjolnirEntity extends PersistentProjectileEntity {
         this.playSound(soundEvent, g, 1.0f);
     }
 
+    public boolean damage(DamageSource source, float amount) {
+        if (this.isInvulnerableTo(source)) {
+            return false;
+        } else {
+            int i;
+            if (amount > 0) {
+                i = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, this.mjolnirStack);
+                int j = 0;
+                for (int k = 0; i > 0 && k < amount; ++k) {
+                    if (UnbreakingEnchantment.shouldPreventDamage(this.mjolnirStack, i, random)) {
+                        ++j;
+                    }
+                }
+                amount -= j;
+                if (amount <= 0) {
+                    return false;
+                }
+            }
+
+            i =  this.mjolnirStack.getDamage() + (int)amount;
+            this.mjolnirStack.setDamage(Math.min(i, this.mjolnirStack.getMaxDamage() -1));
+
+            if (!this.isRemoved()) {
+                if (source == this.getDamageSources().cactus()) {
+                    this.getWorld().breakBlock(this.getBlockPos(), true, this);
+                    this.toBlock(this.getWorld(), this.getBlockPos());
+                }
+            }
+            return true;
+        }
+
+    }
+
     protected boolean tryPickup(PlayerEntity player) {
         return super.tryPickup(player) || this.isNoClip() && this.isOwner(player) && player.getInventory().insertStack(this.asItemStack());
     }
+
+    private void toBlock(World world, BlockPos pos) {
+        BlockState state = ((MjolnirItem)this.mjolnirStack.getItem()).getBlock().getDefaultState().with(FACING, this.getHorizontalFacing());
+
+        if (world.setBlockState(pos, state, 3)) {
+            if (this.getWorld().getBlockEntity(this.getBlockPos()) instanceof MjolnirBlockEntity mjolnirBlockEntity) {
+                mjolnirBlockEntity.setDamage(this.mjolnirStack.getDamage(), this.mjolnirStack);
+                mjolnirBlockEntity.setEnchantments(this.mjolnirStack.getEnchantments());
+            }
+            world.updateNeighbors(pos, state.getBlock());
+            this.discard();
+        }
+    }
+
+    public boolean hasChanneling() { return MJOLNIR_LEGACY.getValue() || EnchantmentHelper.hasChanneling(this.mjolnirStack); }
+
+    public int getInGroundTime() { return this.inGroundTime; }
+
+    public void setInGroundTime(int value) { this.inGroundTime = value; }
+
+    public boolean getDealtDamage() { return this.dealtDamage; }
+
+    public DataTracker getDataTracker() { return dataTracker; }
+
+    public TrackedData<Integer> getLoyalty() { return LOYALTY; }
+
+    public int getReturnTimer() { return this.returnTimer; }
+
+    public void setReturnTimer(int value) { this.returnTimer = value; }
+
+    public int getWait() { return this.wait; }
+
+    public void setWait(int value) { this.wait =value; }
 
     protected SoundEvent getHitSound() {
         return SoundEvents.ITEM_TRIDENT_HIT_GROUND;

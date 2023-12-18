@@ -1,12 +1,15 @@
 package illyena.gilding.avengers.entity.projectile;
 
 import com.google.common.collect.Lists;
+import illyena.gilding.avengers.advancement.AvengersAdvancements;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.core.enchantment.GildingEnchantmentHelper;
 import illyena.gilding.core.entity.projectile.ILoyalty;
 import illyena.gilding.core.entity.projectile.IRicochet;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -15,9 +18,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
@@ -47,6 +52,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     public CapShieldEntity(EntityType<? extends CapShieldEntity> entityType, World world) {
         super(entityType, world);
         this.capShieldStack = new ItemStack(AvengersItems.CAP_SHIELD);
+        this.setDamage(this.capShieldStack.getDamage());
         this.bounces = GildingEnchantmentHelper.getRicochet(this.capShieldStack) * 2;
         this.blockHit = false;
     }
@@ -167,13 +173,43 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     }
 
     public boolean damage(DamageSource source, float amount) {
-        if (this.getDamage() >= this.capShieldStack.getMaxDamage() - 1) {
-            this.setDamage(this.capShieldStack.getMaxDamage() - 1);
+        if (this.isInvulnerableTo(source)) {
+            return false;
+        } else {
+            int i;
+            if(amount > 0) {
+                i = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, this.capShieldStack);
+                int j = 0;
+                if (i > 0) {
+                    for (int k = 0; k < amount; ++k) {
+                        if (UnbreakingEnchantment.shouldPreventDamage(this.capShieldStack, i , random)) {
+                            ++j;
+                        }
+                    }
+                }
+                amount -= j;
+                if (amount <= 0) {
+                    return false;
+                }
+
+            }
+            i =  this.capShieldStack.getDamage() + (int)amount;
+            this.capShieldStack.setDamage(Math.min(i, this.capShieldStack.getMaxDamage() -1));
+
+            if (source == this.getDamageSources().cactus()) {
+                this.getWorld().breakBlock(this.getBlockPos(), true, this);
+            }
+            return true;
         }
-        if (source == this.getDamageSources().cactus()) {
-            this.getWorld().breakBlock(this.getBlockPos(), true, this);
-        }
-        return true;
+    }
+
+    protected boolean tryPickup(PlayerEntity player) {
+        if (super.tryPickup(player)) {
+            if (player instanceof ServerPlayerEntity serverPlayer && !this.ricochetHitEntities.isEmpty()) {
+                AvengersAdvancements.RICOCHET_AND_RETURN.trigger(serverPlayer, this.asItemStack(), this.getDamageSources().thrown(this, player), this.getRicochetHitEntities());
+            }
+            return true;
+        } else return false;
     }
 
     public double getRicochetRange() { return 2 + this.getDataTracker().get(RICOCHET) * 3; }
@@ -197,6 +233,8 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     public void setInGroundTime(int value) { this.inGroundTime = value; }
 
     public boolean getDealtDamage() { return this.dealtDamage; }
+
+    public DataTracker getDataTracker() { return dataTracker; }
 
     public TrackedData<Integer> getLoyalty() { return LOYALTY; }
 

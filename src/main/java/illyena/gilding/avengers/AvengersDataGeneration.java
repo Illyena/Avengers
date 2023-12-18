@@ -13,5 +13,6 @@ public class AvengersDataGeneration implements DataGeneratorEntrypoint {
         pack.addProvider(AvengersBlockTagGenerator::new);
         pack.addProvider(AvengersItemTagGenerator::new);
         pack.addProvider(AvengersPaintingTagGenerator::new);
+        pack.addProvider(AvengersStructureTagGenerator::new);
     }
 }

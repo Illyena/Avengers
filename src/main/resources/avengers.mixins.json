@@ -4,10 +4,10 @@
   "package": "illyena.gilding.avengers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "entity.ItemEntityMixin",
     "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
+    "entity.HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
