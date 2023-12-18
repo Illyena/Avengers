@@ -247,6 +247,7 @@ public class StarPortalBlockEntity extends BlockEntity {
                 } else {
                     entity3 = entity.getRootVehicle();
                 }
+                assert entity3 != null;
                 entity3.resetPortalCooldown();
                 entity3.teleport((double)teleportPoint.getX() + 0.5, (double)teleportPoint.getY() + 1, (double)teleportPoint.getZ() + 0.5);
                 world.emitGameEvent(entity3, GameEvent.TELEPORT, teleportPoint);
