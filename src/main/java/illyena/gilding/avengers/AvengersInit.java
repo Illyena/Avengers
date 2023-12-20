@@ -1,5 +1,6 @@
 package illyena.gilding.avengers;
 
+import illyena.gilding.avengers.advancement.AvengersAdvancements;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.blockentity.AvengersBlockEntities;
 import illyena.gilding.avengers.config.AvengersConfigOptions;
@@ -29,7 +30,6 @@ public class AvengersInit implements ModInitializer {
     public static final ItemGroup AVENGERS_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(AvengersItems.CAP_SHIELD));
 
     public void onInitialize() {
-        AvengersConfigOptions.registerConfigs();
         LOGGER.info("Happy Birthday Papa!");
 
         AvengersBlocks.registerBlocks();
@@ -38,6 +38,8 @@ public class AvengersInit implements ModInitializer {
         AvengersEntities.registerEntities();
         AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
+        AvengersAdvancements.registerAdvancements();
+
     }
 
     public static Text translationKeyOf(String type, String key) {

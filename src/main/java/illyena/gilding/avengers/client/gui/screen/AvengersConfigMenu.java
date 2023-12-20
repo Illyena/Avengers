@@ -6,23 +6,23 @@ import illyena.gilding.compat.Mod;
 import illyena.gilding.config.gui.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-import static illyena.gilding.avengers.AvengersInit.*;
+import static illyena.gilding.GildingInit.SUPER_MOD_NAME;
+import static illyena.gilding.GildingInit.VERSION;
+import static illyena.gilding.avengers.AvengersInit.MOD_ID;
+import static illyena.gilding.avengers.AvengersInit.MOD_NAME;
 
 @Environment(EnvType.CLIENT)
 public class AvengersConfigMenu extends ConfigScreen {
-    public static final CubeMapRenderer PANORAMA_CUBE_MAP = new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/title/background/panorama"));//todo
-    private static final Identifier PANORAMA_OVERLAY = new Identifier("textures/gui/title/background/panorama_overlay.png");//todo
+    public static final CubeMapRenderer PANORAMA_CUBE_MAP = new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/title/background/panorama"));
     private static final Identifier TITLE_TEXTURE = new Identifier(MOD_ID, "textures/gui/title/avengers.png");
     private final RotatingCubeMapRenderer backgroundRenderer;
 
@@ -37,27 +37,19 @@ public class AvengersConfigMenu extends ConfigScreen {
         float f = 1.0F;
         this.backgroundRenderer.render(delta, MathHelper.clamp(f, 0.0F, 1.0F));
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, PANORAMA_OVERLAY);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        drawTexture(matrices, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
-        float g = 1.0F;
         int l = MathHelper.ceil(255.0F) << 24;
-        if ((l & -67108864) != 0) {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, TITLE_TEXTURE);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, TITLE_TEXTURE);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        drawTexture(matrices, this.width / 2 - 80, 10, 0.0f, 0.0f, 160, 60, 160, 60);
 
-            drawTexture(matrices, this.width / 2 - 80 , 10, 0.0f, 0.0f, 160, 80, 160, 160);
-            String string = "Minecraft " + SharedConstants.getGameVersion().getName();
+        String string = SUPER_MOD_NAME + ": " + VERSION + ", " + MOD_NAME + ": " + Mod.getModVersion(MOD_ID);
+        drawStringWithShadow(matrices, this.textRenderer, string, 2, this.height - 10, 16777215 | l);
 
-            if (MinecraftClient.getModStatus().isModded()) {
-                string = string + I18n.translate("menu.modded", Mod.getModsWithSubGroups(MOD_ID).toArray());
-            }
-            drawStringWithShadow(matrices, this.textRenderer, string, 2, this.height - 10, 16777215 | l);
+        super.render(matrices, mouseX, mouseY, delta);
 
-            super.render(matrices, mouseX, mouseY, delta);
-        }
     }
 }

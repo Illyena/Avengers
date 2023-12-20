@@ -12,5 +12,6 @@ public class AvengersDataGeneration implements DataGeneratorEntrypoint {
         fabricDataGenerator.addProvider(AvengersBlockTagGenerator::new);
         fabricDataGenerator.addProvider(AvengersItemTagGenerator::new);
         fabricDataGenerator.addProvider(AvengersPaintingTagGenerator::new);
+        fabricDataGenerator.addProvider(AvengersStructureTagGenerator::new);
     }
 }

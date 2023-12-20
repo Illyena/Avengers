@@ -1,0 +1,26 @@
+{
+  "parent": "avengers:block/mjolnir_block",
+  "overrides": [
+    {
+      "predicate": {
+        "avengers:legacy": 1,
+        "gilding:broken": 0
+      },
+      "model": "avengers:item/mjolnir_legacy"
+    },
+    {
+      "predicate": {
+        "avengers:legacy": 0,
+        "gilding:broken": 1
+      },
+      "model": "avengers:item/mjolnir_broken"
+    },
+    {
+      "predicate": {
+        "avengers:legacy": 1,
+        "gilding:broken": 1
+      },
+      "model": "avengers:item/mjolnir_legacy"
+    }
+  ]
+}

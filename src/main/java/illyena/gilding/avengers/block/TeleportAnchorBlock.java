@@ -85,7 +85,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
     }
 
 
-    /** for BlockEntity */
+    /** BlockEntity */
 
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new TeleportAnchorBlockEntity(pos, state);

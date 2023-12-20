@@ -4,9 +4,12 @@
   "package": "illyena.gilding.avengers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "enchantment.ChannelingEnchantmentMixin",
+    "enchantment.RiptideEnchantmentMixin",
     "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
+    "entity.HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

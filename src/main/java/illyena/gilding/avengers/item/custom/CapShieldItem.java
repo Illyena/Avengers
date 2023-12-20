@@ -6,7 +6,7 @@ import illyena.gilding.GildingInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
-import illyena.gilding.core.item.IUnbreakable;
+import illyena.gilding.core.item.IUndestroyable;
 import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import net.fabricmc.api.EnvType;
@@ -22,6 +22,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.*;
@@ -34,7 +35,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbreakable {
+import static illyena.gilding.avengers.AvengersInit.MOD_ID;
+
+public class CapShieldItem extends MiningToolItem implements IThrowable, IUndestroyable {
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
@@ -46,10 +49,11 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
         builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? -2.0f : -3.2f, EntityAttributeModifier.Operation.ADDITION));
         this.attributeModifiers = builder.build();
-
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             FabricModelPredicateProviderRegistry.register(new Identifier("blocking"), (itemStack, clientWorld, livingEntity, i) ->
                     livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0f : 0.0f);
+            FabricModelPredicateProviderRegistry.register(new Identifier(MOD_ID, "mob_held"), (stack, world, entity, seed) ->
+                    stack.getItem() instanceof CapShieldItem && entity instanceof ZombieEntity ? 1.0f : 0.0f);
         }
     }
 
@@ -65,8 +69,18 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
         return state.isIn(GildingBlockTagGenerator.MAGIC_MINEABLE) && isUsable(stack) ? this.miningSpeed + 6.0f : 0.01f;
     }
 
+    public boolean isSuitableFor(BlockState state) { return state.isIn(AvengersBlockTagGenerator.NEEDS_TOOL_LEVEL_5); }
+
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         return isUsable(stack) && super.postHit(stack, target, attacker);
+    }
+
+    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
+        int amount = Math.min(2, stack.getMaxDamage() - stack.getDamage() - 1);
+        if (!world.isClient && state.getHardness(world, pos) != 0.0f) {
+            stack.damage(amount, miner, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+        }
+        return true;
     }
 
     public UseAction getUseAction(ItemStack stack) { return isUsable(stack) ? UseAction.BLOCK : UseAction.NONE; }
@@ -85,10 +99,6 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
         }
     }
 
-    public boolean isSuitableFor(BlockState state) {
-        return state.isIn(AvengersBlockTagGenerator.NEEDS_TOOL_LEVEL_5);
-    }
-
     public String getTranslationKey(ItemStack stack) {
         if (BlockItem.getBlockEntityNbt(stack) != null) {
             String var10000 = this.getTranslationKey();
@@ -103,6 +113,12 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
         tooltip.add(GildingInit.translationKeyOf("tooltip", "throwable"));
     }
 
+    public static DyeColor getColor(ItemStack stack) {
+        NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(stack);
+        return nbtCompound != null ? DyeColor.byId(nbtCompound.getInt("Base")) : DyeColor.WHITE;
+    }
+
+/** IThrowable */
     @Override
     public PersistentProjectileEntity getProjectileEntity(World world, PlayerEntity playerEntity, ItemStack stack) {
         return new CapShieldEntity(world, playerEntity, stack);
@@ -122,9 +138,5 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUnbrea
     @Override
     public boolean canThrow(ItemStack stack, World world, LivingEntity user, int remainingTicks) { return true; }
 
-    public static DyeColor getColor(ItemStack stack) {
-        NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(stack);
-        return nbtCompound != null ? DyeColor.byId(nbtCompound.getInt("Base")) : DyeColor.WHITE;
-    }
 
 }
