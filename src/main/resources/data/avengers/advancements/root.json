@@ -1,14 +1,19 @@
 {
   "display": {
     "icon": {
-      "item": "avengers:mjolnir"
+      "item": "avengers:teleport_anchor"
     },
-    "title": "Thor Mod",
-    "description": "Avengers Assemble!",
+    "title": {
+      "translate": "advancement.avengers.root.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.root.description"
+    },
     "frame": "task",
     "show_toast": false,
-    "annouce_to_chat": false,
-    "background": "avengers:textures/item/cap_shield.png"
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/entity/end_portal.png"
   },
   "criteria": {
     "requirement": {

@@ -138,7 +138,6 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
 
     private float[] getJebBeamColor(TeleportAnchorBlockEntity entity, float tickDelta) {
         float f = 3.25f;
-        float g = 0.002f / (f / 100.0f);
         float h = ((entity.age % f) + tickDelta) / f;
         int i = (int) (entity.age / f);
 

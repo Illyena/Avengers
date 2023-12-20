@@ -17,10 +17,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
+import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
 
 @Environment(EnvType.CLIENT)
 public class MjolnirEntityRenderer extends EntityRenderer<MjolnirEntity> {
     public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/mjolnir.png");
+    public static final Identifier LEGACY_TEXTURE = new Identifier(MOD_ID, "textures/entity/mjolnir_legacy.png");
     private final MjolnirEntityModel model;
 
     public MjolnirEntityRenderer(EntityRendererFactory.Context context) {
@@ -38,11 +40,7 @@ public class MjolnirEntityRenderer extends EntityRenderer<MjolnirEntity> {
         super.render(mjolnirEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
-    public Identifier getTexture(MjolnirEntity mjolnirEntity) {
-        return TEXTURE;
-    }
+    public Identifier getTexture(MjolnirEntity mjolnirEntity) { return MJOLNIR_LEGACY.getValue() ? LEGACY_TEXTURE : TEXTURE; }
 
-    public MjolnirEntityModel getModel() {
-        return model;
-    }
+    public MjolnirEntityModel getModel() { return model; }
 }

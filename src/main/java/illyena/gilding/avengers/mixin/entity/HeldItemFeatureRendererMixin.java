@@ -3,7 +3,6 @@ package illyena.gilding.avengers.mixin.entity;
 import illyena.gilding.avengers.item.AvengersItems;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
-import net.minecraft.client.render.entity.feature.PlayerHeldItemFeatureRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.ModelWithArms;
 import net.minecraft.client.render.entity.model.ModelWithHead;
@@ -31,14 +30,12 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/feature/HeldItemFeatureRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformation$Mode;Lnet/minecraft/util/Arm;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", ordinal = 0),
             locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
     private void onRender(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci, boolean bl, ItemStack itemStack, ItemStack itemStack2) {
-             if (itemStack.isOf(AvengersItems.MJOLNIR)  && itemStack.equals(livingEntity.getActiveItem())) {
+        if (itemStack.isOf(AvengersItems.MJOLNIR)  && itemStack.equals(livingEntity.getActiveItem())) {
             this.renderMjolnirCharging(livingEntity, itemStack, ModelTransformation.Mode.THIRD_PERSON_LEFT_HAND, Arm.LEFT, matrixStack, vertexConsumerProvider, i, j);
-//            this.renderMjolnirCharging(livingEntity, itemStack, ModelTransformation.Mode.FIRST_PERSON_LEFT_HAND, Arm.LEFT, matrixStack, vertexConsumerProvider, i, j);
             matrixStack.pop();
             ci.cancel();
-       } else if (itemStack2.isOf(AvengersItems.MJOLNIR)  && itemStack2.equals(livingEntity.getActiveItem())) {
+        } else if (itemStack2.isOf(AvengersItems.MJOLNIR)  && itemStack2.equals(livingEntity.getActiveItem())) {
             this.renderMjolnirCharging(livingEntity, itemStack2, ModelTransformation.Mode.THIRD_PERSON_RIGHT_HAND, Arm.RIGHT, matrixStack, vertexConsumerProvider, i, j);
-//            this.renderMjolnirCharging(livingEntity, itemStack2, ModelTransformation.Mode.FIRST_PERSON_RIGHT_HAND, Arm.RIGHT, matrixStack, vertexConsumerProvider, i, j);
             matrixStack.pop();
             ci.cancel();
         }
@@ -62,9 +59,6 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
             this.heldItemRenderer.renderItem(entity, stack, mode, bl, matrices, vertexConsumers, light);
             matrices.pop();
         }
-
-
     }
-
 
 }

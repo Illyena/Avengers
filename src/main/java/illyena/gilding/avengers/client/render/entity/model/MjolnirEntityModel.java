@@ -1,12 +1,10 @@
 package illyena.gilding.avengers.client.render.entity.model;
 
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3f;
@@ -15,7 +13,6 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
 @Environment(EnvType.CLIENT)
 public class MjolnirEntityModel extends Model {
-
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart shaft;
@@ -27,7 +24,6 @@ public class MjolnirEntityModel extends Model {
         this.root = root;
         this.head = root.getChild("head");
         this.shaft = root.getChild("shaft");
-
     }
 
     public static TexturedModelData getTexturedModelData() {
@@ -37,8 +33,6 @@ public class MjolnirEntityModel extends Model {
         modelPartData.addChild("shaft", ModelPartBuilder.create().uv(10, 15).cuboid(-1.0f, -7.5f, -4.5f, 2.0f, 11.0f, 2.0f, Dilation.NONE), ModelTransform.rotation((float) Math.PI, 0.0f, 0.0f));
         return TexturedModelData.of(modelData, 32, 32);
     }
-
-
 
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
         matrices.push();

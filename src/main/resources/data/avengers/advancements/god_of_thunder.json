@@ -4,16 +4,20 @@
       "item": "avengers:mjolnir",
       "nbt": "{Damage:0}"
     },
-    "title": "God of Thunder",
-    "description": "Bring down lighting upon mortals",
+    "title": {
+      "translate": "advancement.avengers.god_of_thunder.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.god_of_thunder.description"
+    },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": true
+    "hidden": false
   },
-  "parent": "avengers:thormod",
+  "parent": "avengers:root",
   "criteria": {
-    "1": {
+    "flying_strike": {
       "conditions": {
         "victims": [
           [
@@ -26,15 +30,23 @@
               }
             }
           ]
+        ],
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{OnGround:0b}"
+            }
+          }
         ]
       },
-      "trigger": "minecraft:killed_with_channeling"
+      "trigger": "minecraft:channeled_lightning"
     }
-
   },
   "requirements": [
     [
-      "1"
+      "flying_strike"
     ]
   ],
   "rewards": {

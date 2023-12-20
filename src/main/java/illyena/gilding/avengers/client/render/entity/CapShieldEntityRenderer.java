@@ -1,7 +1,7 @@
 package illyena.gilding.avengers.client.render.entity;
 
-import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
 import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
+import illyena.gilding.avengers.client.render.entity.model.CapShieldEntityModel;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,7 +38,7 @@ public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
         super.render(capShieldEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
-    public Identifier getTexture(CapShieldEntity capShieldEntity) {
-        return TEXTURE;
-    }
+    public Identifier getTexture(CapShieldEntity capShieldEntity) { return TEXTURE; }
+
+    public CapShieldEntityModel getModel() { return this.model; }
 }

@@ -20,7 +20,7 @@ import static illyena.gilding.avengers.AvengersInit.*;
 import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
 
 public class AvengersBlocks {
-    public static void registerBlocks() { LOGGER.info("Registering Blocks for " + MOD_NAME + " Mod."); }
+    public static void registerBlocks() { LOGGER.info("Registering blocks for {} mod.", MOD_NAME); }
 
     private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
         AvengersModelProvider.addModels(block);
@@ -40,42 +40,41 @@ public class AvengersBlocks {
         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
-    private static StarPortalBlock registerStarPortalBlock(DyeColor color) {
+    private static StarPortalBlock createStarPortalBlock(DyeColor color) {
 
         return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
-                .suffocates((((state, world, pos) -> {
+                .suffocates((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
                     if (!(blockEntity instanceof StarPortalBlockEntity starPortalBlockEntity)) {
                         return true;
                     } else {
                         return starPortalBlockEntity.suffocates();
                     }
-                }))));
+                }));
     }
 
     //BLOCKS
-
     public static final Block MJOLNIR_BLOCK = registerBlockWithoutItem("mjolnir_block",
             new MjolnirBlock(FabricBlockSettings.of(Material.METAL).strength(4f).nonOpaque().requiresTool().strength(4.0f, 9.0f)), BLOCK);
 
-    public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block", registerStarPortalBlock(null), Rarity.EPIC, false, STAR_PORTAL, null);
+    public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal", createStarPortalBlock(null), Rarity.EPIC, false, BLOCK_ENTITY, null);
 
-    public static final Block WHITE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_white", registerStarPortalBlock(DyeColor.WHITE), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block ORANGE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_orange", registerStarPortalBlock(DyeColor.ORANGE), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block MAGENTA_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_magenta", registerStarPortalBlock(DyeColor.MAGENTA), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block LIGHT_BLUE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_light_blue", registerStarPortalBlock(DyeColor.LIGHT_BLUE), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block YELLOW_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_yellow", registerStarPortalBlock(DyeColor.YELLOW), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block LIME_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_lime", registerStarPortalBlock(DyeColor.LIME), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block PINK_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_pink", registerStarPortalBlock(DyeColor.PINK), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block GRAY_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_gray", registerStarPortalBlock(DyeColor.GRAY), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block LIGHT_GRAY_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_light_gray", registerStarPortalBlock(DyeColor.LIGHT_GRAY), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block CYAN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_cyan", registerStarPortalBlock(DyeColor.CYAN), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block PURPLE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_purple", registerStarPortalBlock(DyeColor.PURPLE), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block BLUE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_blue", registerStarPortalBlock(DyeColor.BLUE), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block BROWN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_brown", registerStarPortalBlock(DyeColor.BROWN), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block GREEN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_green", registerStarPortalBlock(DyeColor.GREEN), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block RED_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_red", registerStarPortalBlock(DyeColor.RED), Rarity.EPIC, false, STAR_PORTAL, null);
-    public static final Block BLACK_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_block_black", registerStarPortalBlock(DyeColor.BLACK), Rarity.EPIC, false, STAR_PORTAL, null);
+    public static final Block WHITE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_white", createStarPortalBlock(DyeColor.WHITE), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block ORANGE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_orange", createStarPortalBlock(DyeColor.ORANGE), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block MAGENTA_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_magenta", createStarPortalBlock(DyeColor.MAGENTA), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block LIGHT_BLUE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_light_blue", createStarPortalBlock(DyeColor.LIGHT_BLUE), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block YELLOW_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_yellow", createStarPortalBlock(DyeColor.YELLOW), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block LIME_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_lime", createStarPortalBlock(DyeColor.LIME), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block PINK_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_pink", createStarPortalBlock(DyeColor.PINK), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block GRAY_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_gray", createStarPortalBlock(DyeColor.GRAY), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block LIGHT_GRAY_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_light_gray", createStarPortalBlock(DyeColor.LIGHT_GRAY), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block CYAN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_cyan", createStarPortalBlock(DyeColor.CYAN), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block PURPLE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_purple", createStarPortalBlock(DyeColor.PURPLE), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block BLUE_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_blue", createStarPortalBlock(DyeColor.BLUE), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block BROWN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_brown", createStarPortalBlock(DyeColor.BROWN), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block GREEN_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_green", createStarPortalBlock(DyeColor.GREEN), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block RED_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_red", createStarPortalBlock(DyeColor.RED), Rarity.EPIC, false, BLOCK_ENTITY, null);
+    public static final Block BLACK_STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal_black", createStarPortalBlock(DyeColor.BLACK), Rarity.EPIC, false, BLOCK_ENTITY, null);
 
     public static final Block TELEPORT_ANCHOR = registerBlockWithItem("teleport_anchor",
             new TeleportAnchorBlock(FabricBlockSettings.of(Material.AIR, MapColor.CLEAR).nonOpaque().requiresTool().strength(-1.0f, 3600000.0f)),

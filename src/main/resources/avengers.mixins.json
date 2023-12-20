@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "enchantment.ChannelingEnchantmentMixin",
-    "entity.ItemEntityMixin",
-    "entity.LightningEntityMixin",
+    "enchantment.RiptideEnchantmentMixin",
     "worldgen.EndCityGeneratorMixin"
   ],
   "client": [

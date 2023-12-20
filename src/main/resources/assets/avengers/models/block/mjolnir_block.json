@@ -1,38 +1,53 @@
-
 {
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"hammer": "avengers:block/mjolnir_block",
+		"overlay": "avengers:block/mjolnir_block",
+		"texture": "avengers:block/mjolnir_block",
 		"particle": "avengers:block/mjolnir_block"
 	},
 	"elements": [
 		{
-			"name": "body",
+			"name": "underlay",
 			"from": [6, 0, 5],
 			"to": [10, 4, 11],
 			"faces": {
-				"north": {"uv": [4, 0, 8, 4], "texture": "#hammer"},
-				"east": {"uv": [4, 0, 8, 4], "texture": "#hammer"},
-				"south": {"uv": [4, 0, 8, 4], "texture": "#hammer"},
-				"west": {"uv": [4, 0, 8, 4], "texture": "#hammer"},
-				"up": {"uv": [12, 4, 8, 0], "rotation": 270, "texture": "#hammer"},
-				"down": {"uv": [8, 4, 12, 0], "rotation": 270, "texture": "#hammer"}
+				"north": {"uv": [4, 0, 8, 4], "texture": "#overlay"},
+				"east": {"uv": [4, 0, 8, 4], "texture": "#overlay"},
+				"south": {"uv": [4, 0, 8, 4], "texture": "#overlay"},
+				"west": {"uv": [4, 0, 8, 4], "texture": "#overlay"},
+				"up": {"uv": [12, 4, 8, 0], "rotation": 270, "texture": "#overlay"},
+				"down": {"uv": [8, 4, 12, 0], "rotation": 270, "texture": "#overlay"}
 			}
 		},
 		{
-			"name": "body",
+			"name": "hammer",
+			"from": [6, 0, 5],
+			"to": [10, 4, 11],
+			"faces": {
+				"north": {"uv": [4, 0, 8, 4], "texture": "#texture"},
+				"east": {"uv": [4, 0, 8, 4], "texture": "#texture"},
+				"south": {"uv": [4, 0, 8, 4], "texture": "#texture"},
+				"west": {"uv": [4, 0, 8, 4], "texture": "#texture"},
+				"up": {"uv": [12, 4, 8, 0], "rotation": 270, "texture": "#texture"},
+				"down": {"uv": [8, 4, 12, 0], "rotation": 270, "texture": "#texture"}
+			}
+		},
+		{
+			"name": "handle",
 			"from": [7, -0.2, 7],
 			"to": [9, 11, 9],
 			"faces": {
-				"north": {"uv": [0, 0, 4, 16], "texture": "#hammer"},
-				"east": {"uv": [0, 0, 4, 16], "texture": "#hammer"},
-				"south": {"uv": [0, 0, 4, 16], "texture": "#hammer"},
-				"west": {"uv": [0, 0, 4, 16], "texture": "#hammer"},
-				"up": {"uv": [8, 8, 4, 4], "texture": "#hammer"},
-				"down": {"uv": [4, 4, 8, 0], "rotation": 270, "texture": "#hammer"}
+				"north": {"uv": [0, 0, 4, 16], "texture": "#texture"},
+				"east": {"uv": [0, 0, 4, 16], "texture": "#texture"},
+				"south": {"uv": [0, 0, 4, 16], "texture": "#texture"},
+				"west": {"uv": [0, 0, 4, 16], "texture": "#texture"},
+				"up": {"uv": [8, 8, 4, 4], "texture": "#texture"},
+				"down": {"uv": [4, 4, 8, 0], "rotation": 270, "texture": "#texture"}
 			}
 		}
+
+
 	],
 	"display": {
 		"thirdperson_righthand": {
