@@ -44,6 +44,7 @@ import static illyena.gilding.avengers.AvengersInit.LOGGER;
 import static illyena.gilding.avengers.AvengersInit.translationKeyOf;
 import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
 
+@SuppressWarnings("deprecation")
 public class MjolnirBlock extends BlockWithEntity implements LandingBlock, LimitedFallingBlock, Waterloggable {
     public static final BooleanProperty LEGACY = BooleanProperty.of("legacy");
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
@@ -223,21 +224,18 @@ public class MjolnirBlock extends BlockWithEntity implements LandingBlock, Limit
             BlockState blockState = world.getBlockState(blockPos);
             this.fallingBlockEntity.setVelocity(this.fallingBlockEntity.getVelocity().multiply(0.7, -0.5, 0.7));
             if (!blockState.isOf(Blocks.MOVING_PISTON)) {
-
                 boolean bl3 = blockState.canReplace(new AutomaticItemPlacementContext(world, blockPos, Direction.DOWN, ItemStack.EMPTY, Direction.UP));
                 boolean bl5 = state.canPlaceAt(world, blockPos);
                 if (bl3 && bl5) {
                     if (state.contains(Properties.WATERLOGGED) && world.getFluidState(blockPos).getFluid() == Fluids.WATER) {
                         state = state.with(Properties.WATERLOGGED, true);
                     }
-
                     if (world.setBlockState(blockPos, state, 3)) {
                         ((ServerWorld) world).getChunkManager().threadedAnvilChunkStorage.sendToOtherNearbyPlayers(this.fallingBlockEntity, new BlockUpdateS2CPacket(blockPos, world.getBlockState(blockPos)));
                         this.fallingBlockEntity.discard();
                         if (block instanceof LandingBlock) {
                             ((LandingBlock) block).onLanding(world, blockPos, state, blockState, this.fallingBlockEntity);
                         }
-
                         if (this.fallingBlockEntity.blockEntityData != null && state.hasBlockEntity()) {
                             BlockEntity blockEntity = world.getBlockEntity(blockPos);
                             if (blockEntity != null) {
@@ -268,10 +266,8 @@ public class MjolnirBlock extends BlockWithEntity implements LandingBlock, Limit
                         this.fallingBlockEntity.dropItem(block);
                     }
                 }
-
             }
         }
-
     }
 
     public boolean canFallThrough(BlockState state) {

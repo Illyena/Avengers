@@ -65,6 +65,6 @@ public class AvengersBlockTagGenerator extends FabricTagProvider<Block> {
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(GUARDED_BY_PIGLINS).add(block));
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(OCCLUDES_VIBRATION_SIGNALS).add(block));
         StarPortalBlock.getAll().forEach((block) -> getOrCreateTagBuilder(GEODE_INVALID_BLOCKS).add(block));
-
     }
+
 }

@@ -40,7 +40,6 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
             case CHRISTMAS -> { return getTricolorBeamColor(entity, tickDelta); }
             case BIRTHDAY -> { return getJebBeamColor(entity, tickDelta); }
             default -> { return getBicolorBeamColor(entity, tickDelta); }
-
         }
     }
 
@@ -160,7 +159,9 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
         stage_4;
 
         BeamColorStage() {}
+
     }
+
 }
 
 

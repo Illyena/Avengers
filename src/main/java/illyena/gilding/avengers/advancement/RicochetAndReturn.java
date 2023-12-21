@@ -28,11 +28,11 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
     public Identifier getId() { return ID; }
 
     public Conditions conditionsFromJson(JsonObject jsonObject, EntityPredicate.Extended extendedPredicate, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
-        EntityPredicate.Extended[] extendeds = EntityPredicate.Extended.requireInJson(jsonObject, "victims", advancementEntityPredicateDeserializer);
+        EntityPredicate.Extended[] victims = EntityPredicate.Extended.requireInJson(jsonObject, "victims", advancementEntityPredicateDeserializer);
         NumberRange.IntRange intRange = NumberRange.IntRange.fromJson(jsonObject.get("unique_entities"));
         DamageSourcePredicate damageSourcePredicate = DamageSourcePredicate.fromJson(jsonObject.get("damage_source"));
         ItemPredicate itemPredicate = ItemPredicate.fromJson(jsonObject.get("projectile"));
-        return new Conditions(extendedPredicate, itemPredicate, damageSourcePredicate, intRange, extendeds);
+        return new Conditions(extendedPredicate, itemPredicate, damageSourcePredicate, intRange, victims);
     }
 
     public void trigger(ServerPlayerEntity player, ItemStack item, DamageSource damageSource, Collection<Entity> ricochetHitList) {
@@ -68,12 +68,12 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(EntityPredicate.Builder... victimPredicates) {
-            EntityPredicate.Extended[] extendeds = new EntityPredicate.Extended[victimPredicates.length];
+            EntityPredicate.Extended[] victims = new EntityPredicate.Extended[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                extendeds[i] = EntityPredicate.Extended.ofLegacy(builder.build());
+                victims[i] = EntityPredicate.Extended.ofLegacy(builder.build());
             }
-            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, extendeds);
+            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(NumberRange.IntRange entityCount) {
@@ -81,12 +81,12 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            EntityPredicate.Extended[] extendeds = new EntityPredicate.Extended[victimPredicates.length];
+            EntityPredicate.Extended[] victims = new EntityPredicate.Extended[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                extendeds[i] = EntityPredicate.Extended.ofLegacy(builder.build());
+                victims[i] = EntityPredicate.Extended.ofLegacy(builder.build());
             }
-            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY, entityCount, extendeds);
+            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY, entityCount, victims);
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate) {
@@ -98,12 +98,12 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate, EntityPredicate.Builder... victimPredicates) {
-            EntityPredicate.Extended[] extendeds = new EntityPredicate.Extended[victimPredicates.length];
+            EntityPredicate.Extended[] victims = new EntityPredicate.Extended[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                extendeds[i] = EntityPredicate.Extended.ofLegacy(builder.build());
+                victims[i] = EntityPredicate.Extended.ofLegacy(builder.build());
             }
-            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, damageSourcePredicate,  NumberRange.IntRange.ANY, extendeds);
+            return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, damageSourcePredicate,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(DamageSourcePredicate.Builder damageSourcePredicateBuilder, EntityPredicate.Builder... victimPredicates) {

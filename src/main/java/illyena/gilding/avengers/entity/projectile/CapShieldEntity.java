@@ -132,7 +132,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
         DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
+        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT;
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
@@ -162,7 +162,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             IRicochet.onEntityHit(this, entity);
         }
         this.playSound(soundEvent, 1.0f, 1.0f);
-
     }
 
     @Override
@@ -259,4 +258,3 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
 }
-//todo Sounds

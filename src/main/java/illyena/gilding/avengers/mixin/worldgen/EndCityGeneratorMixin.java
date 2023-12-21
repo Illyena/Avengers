@@ -43,28 +43,10 @@ public abstract class EndCityGeneratorMixin {
         return false;
     }
 
-
-
-/*
-    private static final EndCityGenerator.Part STAR_PLATFORM = new EndCityGenerator.Part() {
-        public void init() {
-        }
-
-        public boolean create(StructureTemplateManager manager, int depth, EndCityGenerator.Piece root, BlockPos pos, List<StructurePiece> pieces, Random random) {
-            BlockRotation blockRotation = root.method_41626().getRotation();
-            EndCityGenerator.Piece piece = EndCityGenerator.addPiece(pieces, EndCityGenerator.createPiece(manager, root, new BlockPos(3 + random.nextInt(2), 25, 3 + random.nextInt(2)), "star_lab", blockRotation, true));
-            return true;
-        }
-    };
-*/
-
-
     static {
         FAT_TOWER = new EndCityGenerator.Part() {
             public boolean starPlatformGenerated;
-            public void init() {
-                this.starPlatformGenerated = false;
-            }
+            public void init() { this.starPlatformGenerated = false; }
 
             public boolean create(StructureTemplateManager manager, int depth, EndCityGenerator.Piece root, BlockPos pos, List<StructurePiece> pieces, Random random) {
                 BlockRotation blockRotation = root.method_41626().getRotation();

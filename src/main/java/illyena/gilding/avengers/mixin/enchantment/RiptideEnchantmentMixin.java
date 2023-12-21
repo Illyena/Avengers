@@ -12,4 +12,5 @@ public class RiptideEnchantmentMixin {
     public boolean isAcceptableItem(ItemStack stack) {
         return stack.getItem() instanceof TridentItem || stack.getItem() instanceof MjolnirItem;
     }
+
 }

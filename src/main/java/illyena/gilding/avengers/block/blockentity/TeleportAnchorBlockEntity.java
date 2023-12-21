@@ -67,7 +67,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
         } else {
             return super.onSyncedBlockEvent(type, data);
         }
-
     }
 
     @Override
@@ -86,7 +85,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
                 return true;
             }
         }
-
         return false;
     }
 
@@ -99,7 +97,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
         for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
-
         return i;
     }
+
 }

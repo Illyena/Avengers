@@ -13,12 +13,11 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 public class AvengersStructureTagGenerator extends FabricTagProvider.DynamicRegistryTagProvider<Structure> {
     public static final TagKey<Structure> STAR_PORTAL_TELEPORTS_TO = TagKey.of(Registry.STRUCTURE_KEY, new Identifier(MOD_ID, "star_portal_teleports_to"));
 
-    public AvengersStructureTagGenerator(FabricDataGenerator dataGenerator) {
-        super(dataGenerator, Registry.STRUCTURE_KEY);
-    }
+    public AvengersStructureTagGenerator(FabricDataGenerator dataGenerator) { super(dataGenerator, Registry.STRUCTURE_KEY); }
 
     @Override
     protected void generateTags() {
         getOrCreateTagBuilder(STAR_PORTAL_TELEPORTS_TO).addOptional(AvengersStructures.STAR_LAB_STRUCTURE.getValue());
     }
+
 }

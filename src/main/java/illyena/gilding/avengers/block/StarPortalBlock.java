@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -38,8 +39,8 @@ import net.minecraft.world.border.WorldBorder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.Random;
 
+@SuppressWarnings("deprecation")
 public class StarPortalBlock  extends BlockWithEntity {
     private static final Map<DyeColor, StarPortalBlock> STAR_PORTAL_BLOCKS = Maps.newIdentityHashMap();
     public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
@@ -142,7 +143,6 @@ public class StarPortalBlock  extends BlockWithEntity {
             }
             return ActionResult.PASS;
         }
-
     }
 
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
@@ -163,7 +163,6 @@ public class StarPortalBlock  extends BlockWithEntity {
                && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).intersects(projectile.getBoundingBox())) {
            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, projectile, blockEntity);
         }
-
     }
 
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
@@ -194,7 +193,6 @@ public class StarPortalBlock  extends BlockWithEntity {
                 return;
             }
         }
-
     }
 
     private Direction getAttachDirection(World world , BlockPos startPos, BlockPos pos) {
@@ -222,9 +220,7 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getSide());
-    }
+    public BlockState getPlacementState(ItemPlacementContext ctx) { return this.getDefaultState().with(FACING, ctx.getSide()); }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -261,9 +257,7 @@ public class StarPortalBlock  extends BlockWithEntity {
 
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) { builder.add(FACING); }
 
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
@@ -298,7 +292,6 @@ public class StarPortalBlock  extends BlockWithEntity {
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);
             }
-
         }
     }
 

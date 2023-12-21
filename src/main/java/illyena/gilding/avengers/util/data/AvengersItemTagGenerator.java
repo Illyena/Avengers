@@ -21,4 +21,5 @@ public class AvengersItemTagGenerator extends FabricTagProvider<Item> {
         getOrCreateTagBuilder(GildingItemTagGenerator.SHIELDS).addOptionalTag(SHIELDS);
         getOrCreateTagBuilder(SHIELDS).add(AvengersItems.CAP_SHIELD);
     }
+
 }

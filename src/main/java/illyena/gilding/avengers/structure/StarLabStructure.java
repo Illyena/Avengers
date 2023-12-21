@@ -45,7 +45,6 @@ public class StarLabStructure  extends Structure {
         this.startHeight = startHeight;
         this.projectStartToHeightmap = projectStartToHeightmap;
         this.maxDistanceFromCenter = maxDistanceFromCenter;
-
     }
 
     @Override

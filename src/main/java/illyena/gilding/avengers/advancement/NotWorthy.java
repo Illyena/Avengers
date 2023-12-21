@@ -57,6 +57,4 @@ public class NotWorthy extends AbstractCriterion<NotWorthy.Conditions> {
         }
     }
 
-
-
 }

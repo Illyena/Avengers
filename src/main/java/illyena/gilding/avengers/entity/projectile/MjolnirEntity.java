@@ -144,7 +144,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
 
         DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
+        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT;
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
@@ -225,7 +225,6 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
             }
             return true;
         }
-
     }
 
     protected boolean tryPickup(PlayerEntity player) {

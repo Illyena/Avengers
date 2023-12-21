@@ -89,7 +89,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (this.exitPortalPos != null) {
             nbt.put("ExitPortal", NbtHelper.fromBlockPos(this.exitPortalPos));
         }
-
         if (this.exactTeleport) {
             nbt.putBoolean("ExactTeleport", true);
         }
@@ -154,14 +153,11 @@ public class StarPortalBlockEntity extends BlockEntity {
             }
             case OPENED -> this.animationProgress = 1.0F;
         }
-
     }
 
     public AnimationStage getAnimationStage() { return this.animationStage; }
 
-    private static void updateNeighborStates(World world, BlockPos pos, BlockState state) {
-        state.updateNeighbors(world, pos, 3);
-    }
+    private static void updateNeighborStates(World world, BlockPos pos, BlockState state) { state.updateNeighbors(world, pos, 3); }
 
     private boolean isPlayerInRange(World world, BlockPos pos) {
         return world.isPlayerInRange((double)pos.getX() + 0.5, (double)pos.getY() +0.5, (double)pos.getZ() +0.5, this.requiredPlayerRange);
@@ -178,7 +174,6 @@ public class StarPortalBlockEntity extends BlockEntity {
                         entity.move(MovementType.SHULKER_BOX, new Vec3d((box.getXLength() + 0.0) * (double) direction.getOffsetX(), (box.getYLength() + 0.0) * (double) direction.getOffsetY(), (box.getZLength() + 0.0) * (double) direction.getOffsetZ()));
                     }
                 }
-
             }
         }
     }
@@ -192,7 +187,6 @@ public class StarPortalBlockEntity extends BlockEntity {
             world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             PiglinBrain.onGuardedBlockInteracted(player, true);
         }
-
     }
 
     public void onClose(World world, BlockPos pos) {
@@ -232,7 +226,6 @@ public class StarPortalBlockEntity extends BlockEntity {
             }
 
             if (blockEntity.exitPortalPos != null) {
-
                 teleportPoint = blockEntity.exactTeleport ? blockEntity.exitPortalPos : findBestPortalExitPos(serverWorld, blockEntity.exitPortalPos);
                 Entity entity3 = null;
                 if (entity instanceof EnderPearlEntity) {
@@ -364,9 +357,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    private static boolean isAirOrFluid(BlockState blockState) {
-        return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
-    }
+    private static boolean isAirOrFluid(BlockState blockState) { return blockState.isAir() || blockState.getBlock() instanceof FluidBlock; }
 
     @Nullable
     public  BlockPos getExitPortalPos() { return this.exitPortalPos; }

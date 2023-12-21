@@ -13,11 +13,10 @@ import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
 @Environment(EnvType.CLIENT)
 public class MjolnirEntityModel extends Model {
+    public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/mjolnir.png");
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart shaft;
-
-    public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/mjolnir.png");
 
     public MjolnirEntityModel(ModelPart root) {
         super(RenderLayer::getEntityCutout);
@@ -40,4 +39,5 @@ public class MjolnirEntityModel extends Model {
         this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         matrices.pop();
     }
+
 }

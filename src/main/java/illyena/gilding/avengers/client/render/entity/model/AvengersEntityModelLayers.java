@@ -27,7 +27,6 @@ public class AvengersEntityModelLayers {
                 registry.register(new Identifier(MOD_ID, "entity/mjolnir")));
 
         EntityModelLayerRegistry.registerModelLayer(STAR_PORTAL_MODEL_LAYER, StarPortalBlockEntityRenderer.StarPortalModel::getTexturedModelData);
-
     }
 
 }

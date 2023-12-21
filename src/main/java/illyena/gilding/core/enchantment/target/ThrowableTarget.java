@@ -10,4 +10,5 @@ public class ThrowableTarget extends EnchantmentTargetMixin {
     public boolean isAcceptableItem(Item item) { return item instanceof IThrowable || item instanceof TridentItem; }
 
     public boolean method_8177(Item item) { return item instanceof IThrowable || item instanceof TridentItem; }
+
 }

@@ -73,7 +73,7 @@ public class MjolnirBlockEntity extends BlockEntity implements Nameable {
     @Nullable
     public Text getCustomName() { return this.customName; }
 
-    public void setCustomName(Text customName) { this.customName = customName; }
+    public void setCustomName(@Nullable Text customName) { this.customName = customName; }
 
     public void setEnchantments(NbtList nbtList) { this.enchantments = nbtList; }
 

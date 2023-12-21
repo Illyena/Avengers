@@ -9,4 +9,5 @@ public class ThunderousTarget extends EnchantmentTargetMixin {
     public boolean isAcceptableItem(Item item) { return item instanceof IThunderous; }
 
     public boolean method_8177(Item item) { return item instanceof IThunderous; }
+
 }

@@ -17,7 +17,6 @@ public class CapShieldEntityModel extends Model {
     private final ModelPart straps;
     public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/cap_shield.png");
 
-
     public CapShieldEntityModel(ModelPart root) {
         super(RenderLayer::getEntitySolid);
         this.root = root;
@@ -75,5 +74,6 @@ public class CapShieldEntityModel extends Model {
         this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         matrices.pop();
     }
+
 }
 

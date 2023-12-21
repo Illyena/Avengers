@@ -41,7 +41,6 @@ public class AvengersBlocks {
     }
 
     private static StarPortalBlock createStarPortalBlock(DyeColor color) {
-
         return new StarPortalBlock(color, FabricBlockSettings.of(Material.SHULKER_BOX, MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
                 .suffocates((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);

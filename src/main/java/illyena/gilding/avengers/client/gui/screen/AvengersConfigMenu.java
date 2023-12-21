@@ -50,6 +50,6 @@ public class AvengersConfigMenu extends ConfigScreen {
         drawStringWithShadow(matrices, this.textRenderer, string, 2, this.height - 10, 16777215 | l);
 
         super.render(matrices, mouseX, mouseY, delta);
-
     }
+
 }

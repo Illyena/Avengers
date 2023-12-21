@@ -66,7 +66,6 @@ public class AvengersModelProvider extends FabricModelProvider {
 
         Model brokenModel = new Model(Optional.of(ModelIds.getBlockModelId(block)), Optional.of("_broken"), OVERLAY, TextureKey.TEXTURE);
         brokenModel.upload(blockBrokenId, new TextureMap().put(OVERLAY, ModelIds.getBlockSubModelId(block, "_broken_underlay")).put(TextureKey.TEXTURE, blockBrokenId), modelGenerator.modelCollector);
-
         Model legacyBrokenModel = new Model(Optional.of(blockLegacyId), Optional.of("_legacy_broken"), TextureKey.TEXTURE);
         legacyBrokenModel.upload(blockLegacyBrokenId, new TextureMap().put(TextureKey.TEXTURE, blockLegacyBrokenId), modelGenerator.modelCollector);
 
@@ -102,4 +101,5 @@ public class AvengersModelProvider extends FabricModelProvider {
         modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, blockModelId));
         Models.CUBE_ALL.upload(ModelIds.getItemModelId(block.asItem()), new TextureMap().put(TextureKey.ALL, textureId), modelGenerator.modelCollector);
     }
+
 }
