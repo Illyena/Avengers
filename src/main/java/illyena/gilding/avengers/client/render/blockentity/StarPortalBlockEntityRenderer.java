@@ -3,7 +3,7 @@ package illyena.gilding.avengers.client.render.blockentity;
 import com.google.common.collect.ImmutableList;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.block.blockentity.StarPortalBlockEntity;
-import illyena.gilding.avengers.client.render.AvengersRenderers;
+import illyena.gilding.avengers.client.render.entity.model.AvengersEntityModelLayers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -18,14 +18,16 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<StarPortalBlockEntity> {
     private final StarPortalModel model;
 
     public StarPortalBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersRenderers.STAR_PORTAL_MODEL_LAYER));
+        this.model = new StarPortalModel(ctx.getLayerModelPart(AvengersEntityModelLayers.STAR_PORTAL_MODEL_LAYER));
     }
 
     public void render(StarPortalBlockEntity starPortalBlockEntity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {
@@ -55,8 +57,6 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         this.model.lid.setPivot(0.0F, 24.0F - starPortalBlockEntity.getAnimationProgress(tickDelta) * 0.5F * 16.0F, 0.0F);
         this.model.lid.yaw = 270.0F * starPortalBlockEntity.getAnimationProgress(tickDelta) * 0.017453292F;
 
-
-
         VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntityCutoutNoCull);
         this.model.getShellParts().forEach(part -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -67,11 +67,9 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
         this.model.head.render(matrixStack, vertexConsumerProvider.getBuffer(this.getLayer()), i, j, 1.0f, 1.0f, 1.0f, 1.0f);
         matrixStack.pop();
-
     }
 
     protected RenderLayer getLayer() { return RenderLayer.getEndPortal(); }
-
 
     @Environment(EnvType.CLIENT)
     public static final class StarPortalModel extends Model {
@@ -101,13 +99,12 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
         public ModelPart getParts() { return this.root; }
 
-        public Iterable<ModelPart> getShellParts() {
-            return ImmutableList.of(this.root.getChild("base"), this.root.getChild("lid"));
-        }
+        public Iterable<ModelPart> getShellParts() { return ImmutableList.of(this.base, this.lid); }
 
         public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
             this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         }
+
     }
 
 }

@@ -1,5 +1,6 @@
 package illyena.gilding.avengers;
 
+import illyena.gilding.avengers.advancement.AvengersAdvancements;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.blockentity.AvengersBlockEntities;
 import illyena.gilding.avengers.config.AvengersConfigOptions;
@@ -8,7 +9,6 @@ import illyena.gilding.avengers.event.AvengersEvents;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.avengers.painting.AvengersPaintings;
 import illyena.gilding.avengers.structure.AvengersStructures;
-import illyena.gilding.avengers.util.data.AvengersTags;
 import illyena.gilding.compat.Mod;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -31,7 +31,6 @@ public class AvengersInit implements ModInitializer {
     public static final ItemGroup AVENGERS_GROUP = FabricItemGroupBuilder.build(new Identifier(MOD_ID, "avengers_group"), () -> new ItemStack(AvengersItems.CAP_SHIELD));
 
     public void onInitialize() {
-        AvengersConfigOptions.registerConfigs();
         LOGGER.info("Happy Birthday Papa!");
 
         AvengersBlocks.registerBlocks();
@@ -41,11 +40,11 @@ public class AvengersInit implements ModInitializer {
         AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
         AvengersEvents.registerEvents();
-        AvengersTags.registerTags();
-
+        AvengersAdvancements.registerAdvancements();
     }
 
     public static TranslatableText translationKeyOf(String type, String key) {
         return new TranslatableText(type + "." + MOD_ID + "." + key);
     }
+
 }

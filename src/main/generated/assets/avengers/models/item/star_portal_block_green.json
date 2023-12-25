@@ -1,6 +1,0 @@
-{
-  "parent": "avengers:item/star_portal_inventory",
-  "textures": {
-    "layer0": "minecraft:entity/shulker/shulker_green"
-  }
-}

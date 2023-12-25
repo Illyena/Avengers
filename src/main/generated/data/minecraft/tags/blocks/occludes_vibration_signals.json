@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#gilding:occludes_vibration_signals",
-      "required": false
-    }
-  ]
-}

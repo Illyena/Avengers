@@ -5,6 +5,7 @@ import illyena.gilding.core.event.TeleportCallback;
 import net.minecraft.util.ActionResult;
 
 public class AvengersEvents {
+
     public static void registerEvents() {
         TeleportCallback.TELEPORT_EVENT.register((world, player, pos) -> {
             if (world.getBlockEntity(pos) instanceof TeleportAnchorBlockEntity blockEntity) {
@@ -16,4 +17,5 @@ public class AvengersEvents {
             }
         });
     }
+
 }

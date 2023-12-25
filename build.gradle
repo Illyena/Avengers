@@ -6,8 +6,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
-version = "${project.minecraft_version}v${project.mod_version}"
+archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
+version = "${project.mod_version}"
 group = project.maven_group
 
 repositories {
@@ -39,8 +39,8 @@ dependencies {
 	include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
 
 	//Gilding API
-//	modImplementation "com.github.Illyena:Gilding-core:${project.minecraft_version}v${project.gilding_version}"
-	modImplementation("illyena.gilding:Gilding-core:${project.minecraft_version}v${project.gilding_version}")
+//	modImplementation "com.github.Illyena:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}"
+	modImplementation("illyena.gilding:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}")
 }
 
 processResources {
@@ -72,19 +72,15 @@ loom {
 sourceSets { main { resources { srcDirs += dataOutput } } }
 
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
 	it.options.release = 17
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 }
 
 jar {
-	from("LICENSE.md") {
+	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
 }

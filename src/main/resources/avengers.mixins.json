@@ -1,15 +1,17 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "illyena.gilding.mixin",
+  "package": "illyena.gilding.avengers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "avengers.worldgen.EndCityGeneratorMixin",
-    "gilding.enchantment.LoyaltyEnchantmentMixin",
-    "gilding.enchantment.PowerEnchantmentMixin",
-    "gilding.enchantment.PunchEnchantmentMixin"
+    "enchantment.ChannelingEnchantmentMixin",
+    "enchantment.RicochetEnchantmentMixin",
+    "enchantment.RiptideEnchantmentMixin",
+    "entity.PlayerEntityMixin",
+    "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
+    "client.renderer.HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

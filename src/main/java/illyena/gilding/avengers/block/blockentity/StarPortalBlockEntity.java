@@ -4,12 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.block.StarPortalBlock;
 import illyena.gilding.avengers.structure.StarLabStructure;
-import illyena.gilding.avengers.util.data.AvengersTags;
+import illyena.gilding.avengers.util.data.AvengersStructureTagGenerator;
 import illyena.gilding.core.event.TeleportCallback;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
@@ -42,7 +41,9 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 import static illyena.gilding.avengers.AvengersInit.LOGGER;
 
@@ -66,9 +67,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         this.cachedColor = color;
     }
 
-    public StarPortalBlockEntity(BlockPos pos, BlockState state) {
-        this(null, pos, state);
-    }
+    public StarPortalBlockEntity(BlockPos pos, BlockState state) { this(null, pos, state); }
 
     public Box getBoundingBox(BlockState state) {
         return ShulkerEntity.calculateBoundingBox(state.get(StarPortalBlock.FACING), 0.5F * this.getAnimationProgress(1.0F));
@@ -90,12 +89,10 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (this.exitPortalPos != null) {
             nbt.put("ExitPortal", NbtHelper.fromBlockPos(this.exitPortalPos));
         }
-
         if (this.exactTeleport) {
             nbt.putBoolean("ExactTeleport", true);
         }
     }
-
 
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
@@ -108,7 +105,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         this.exactTeleport = nbt.getBoolean("ExactTeleport");
     }
 
-
     public static void tick(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
         if (blockEntity.isPlayerInRange(world, pos) && StarPortalBlock.canOpen(state, world, pos, blockEntity)) {
             if (blockEntity.getAnimationStage() != AnimationStage.OPENED) {
@@ -118,13 +114,13 @@ public class StarPortalBlockEntity extends BlockEntity {
             blockEntity.animationStage = AnimationStage.CLOSING;
         }
         blockEntity.updateAnimation(world, pos, state);
-        blockEntity.updatePulse(world, pos, state);
+        blockEntity.updatePulse();
         if (blockEntity.needsCooldownBeforeTeleporting()) {
             --blockEntity.teleportCooldown;
         }
     }
 
-    private void updatePulse(World world, BlockPos pos, BlockState state) {
+    private void updatePulse() {
         this.prevPulseProgress = this.pulseProgress;
         switch (this.animationStage) {
             case CLOSED -> this.pulseProgress = 0.0f;
@@ -157,17 +153,14 @@ public class StarPortalBlockEntity extends BlockEntity {
             }
             case OPENED -> this.animationProgress = 1.0F;
         }
-
     }
 
     public AnimationStage getAnimationStage() { return this.animationStage; }
 
-    private static void updateNeighborStates(World world, BlockPos pos, BlockState state) {
-        state.updateNeighbors(world, pos, 3);
-    }
+    private static void updateNeighborStates(World world, BlockPos pos, BlockState state) { state.updateNeighbors(world, pos, 3); }
 
     private boolean isPlayerInRange(World world, BlockPos pos) {
-        return world.isPlayerInRange((double)pos.getX() + 0.5, (double)pos.getY() +0.5, (double)pos.getZ() +0.5, this.requiredPlayerRange);
+        return world.isPlayerInRange(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, this.requiredPlayerRange);
     }
 
     private void pushEntities(World world, BlockPos pos, BlockState state) {
@@ -181,7 +174,6 @@ public class StarPortalBlockEntity extends BlockEntity {
                         entity.move(MovementType.SHULKER_BOX, new Vec3d((box.getXLength() + 0.0) * (double) direction.getOffsetX(), (box.getYLength() + 0.0) * (double) direction.getOffsetY(), (box.getZLength() + 0.0) * (double) direction.getOffsetZ()));
                     }
                 }
-
             }
         }
     }
@@ -195,7 +187,6 @@ public class StarPortalBlockEntity extends BlockEntity {
             world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             PiglinBrain.onGuardedBlockInteracted(player, true);
         }
-
     }
 
     public void onClose(World world, BlockPos pos) {
@@ -203,7 +194,6 @@ public class StarPortalBlockEntity extends BlockEntity {
         if (player != null && !player.isSpectator()) {
             world.emitGameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
             world.playSound(null, pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE, SoundCategory.BLOCKS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
-
         }
     }
 
@@ -211,14 +201,12 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public NbtCompound toInitialChunkDataNbt() { return this.createNbt(); }
 
-    /** teleporting */
+    /** Teleporting */
     public static boolean canTeleport(Entity entity) {
         return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasNetherPortalCooldown();
     }
 
-    public boolean needsCooldownBeforeTeleporting() {
-        return this.teleportCooldown > 0;
-    }
+    public boolean needsCooldownBeforeTeleporting() { return this.teleportCooldown > 0; }
 
     private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, StarPortalBlockEntity blockEntity) {
         if (!world.isClient) {
@@ -228,8 +216,8 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    public static void tryTeleportingEntity(World world, BlockPos pos, BlockState state , Entity entity, StarPortalBlockEntity blockEntity) {
-        if (world instanceof ServerWorld serverWorld && !blockEntity.needsCooldownBeforeTeleporting()) {
+    public static boolean tryTeleportingEntity(World world, BlockPos pos, BlockState state , Entity entity, StarPortalBlockEntity blockEntity) {
+        if (world instanceof ServerWorld serverWorld && !blockEntity.needsCooldownBeforeTeleporting() && canTeleport(entity)) {
             blockEntity.teleportCooldown = 100;
             BlockPos teleportPoint;
             if (blockEntity.exitPortalPos == null && world.getRegistryKey() == World.END) {
@@ -238,7 +226,6 @@ public class StarPortalBlockEntity extends BlockEntity {
             }
 
             if (blockEntity.exitPortalPos != null) {
-
                 teleportPoint = blockEntity.exactTeleport ? blockEntity.exitPortalPos : findBestPortalExitPos(serverWorld, blockEntity.exitPortalPos);
                 Entity entity3 = null;
                 if (entity instanceof EnderPearlEntity) {
@@ -254,17 +241,20 @@ public class StarPortalBlockEntity extends BlockEntity {
                     entity3 = entity.getRootVehicle();
                 }
                 entity3.resetNetherPortalCooldown();
-                entity3.teleport((double)teleportPoint.getX() + 0.5, (double)teleportPoint.getY() + 1, (double)teleportPoint.getZ() + 0.5);
-                TeleportCallback.TELEPORT_EVENT.invoker().teleport(world, entity3, teleportPoint);
+                entity3.teleport(teleportPoint.getX() + 0.25, teleportPoint.getY() + 0.5, teleportPoint.getZ() + 0.25);
+                TeleportCallback.TELEPORT_EVENT.invoker().teleport(world, entity3, blockEntity.exitPortalPos);
             }
 
             startTeleportCooldown(world, pos, state, blockEntity);
+            return true;
+        } else {
+            return false;
         }
     }
 
     public static BlockPos findTeleportLocation(ServerWorld world, BlockPos pos) {
         BlockPos teleportPoint = pos;
-        TagKey<ConfiguredStructureFeature<?,?>> tag = AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO;
+        TagKey<ConfiguredStructureFeature<?,?>> tag = AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO;
 
         BlockPos structurePos = world.locateStructure(tag, pos, 100, false);
         if (structurePos == null) {
@@ -279,7 +269,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static BlockPos getTeleportAnchor(ServerWorld world, BlockPos structurePos) {
         BlockPos teleportAnchor = null;
 
-        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), structurePos, 100, false);
             if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure) {
@@ -314,49 +304,50 @@ public class StarPortalBlockEntity extends BlockEntity {
                 break;
             }
         }
-
         return blockPos3;
     }
 
     private static BlockPos findBestPortalExitPos(ServerWorld world, BlockPos teleportPoint) {
-        BlockPos blockPos = findFullCubeNear(world, teleportPoint, 3, false);
+        BlockPos blockPos = findFullCubeNear(world, teleportPoint, 3);
         LOGGER.debug("Best exit position for portal at {} is {}", teleportPoint, blockPos);
         if (blockPos == null) {
             LOGGER.debug("Failed to find a suitable block to teleport to, spawning an island on {}", teleportPoint.down());
             createPlatform(world, teleportPoint);
-            blockPos = findFullCubeNear(world, teleportPoint, 5, false);
+            blockPos = findFullCubeNear(world, teleportPoint, 5);
         }
-
         return blockPos;
     }
 
-    private static BlockPos findFullCubeNear(BlockView world, BlockPos pos, int searchRadius, boolean force) {
+    private static BlockPos findFullCubeNear(BlockView world, BlockPos pos, int searchRadius) {
         BlockPos blockPos = null;
-        for (int i = -searchRadius; i <= searchRadius; ++i) {
-            for (int j = -searchRadius; j <= searchRadius; ++j) {
-                if (i != 0 || j != 0 || force) {
-                    for (int k = -searchRadius; k <= searchRadius; ++k) {
-                        BlockPos blockPos2 = new BlockPos(pos.getX() + i, pos.getY() + k, pos.getZ() + j);
-                        BlockState blockState = world.getBlockState(blockPos2);
-                        BlockState blockState1 = world.getBlockState(blockPos2.up(1));
-                        BlockState blockState2 = world.getBlockState(blockPos2.up(2));
-                        if (blockState.isFullCube(world, blockPos2) && isAirOrFluid(blockState1) && isAirOrFluid(blockState2) && (force || !blockState.isOf(Blocks.BEDROCK))) {
-                            blockPos = blockPos2;
-                            break;
-                        }
-                    }
+        Box box = new Box(pos, pos);
+        int i = 0;
+        do {
+            box = box.expand(i);
+            BlockPos boxPos1 = new BlockPos(box.minX, box.minY, box.minZ);
+            BlockPos boxPos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
+            Iterator<BlockPos> iterator = BlockPos.iterate(boxPos1, boxPos2).iterator();
+            do {
+                BlockPos blockPos2 = iterator.next();
+                BlockState blockState1 = world.getBlockState(blockPos2);
+                BlockState blockState2 = world.getBlockState(blockPos2.up());
+                BlockState blockState0 = world.getBlockState(blockPos2.down());
+                if (isAirOrFluid(blockState1) && isAirOrFluid(blockState2) &&
+                        blockState0.isSideSolidFullSquare(world, blockPos2.down(), Direction.UP)) {
+                    blockPos = blockPos2;
+                    break;
                 }
-            }
-        }
-
-        return  blockPos;
+            } while (iterator.hasNext());
+            i++;
+        } while (i <= searchRadius && blockPos == null);
+        return blockPos;
     }
 
     private static void createPlatform(ServerWorld world, BlockPos pos) {
         BlockPos blockPos = new BlockPos(pos.down());
         ChunkGenerator generator = world.getChunkManager().getChunkGenerator();
 
-        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersTags.StructureTags.STAR_PORTAL_TELEPORTS_TO);
+        Optional<RegistryEntryList.Named<ConfiguredStructureFeature<?,?>>> optional = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getEntryList(AvengersStructureTagGenerator.STAR_PORTAL_TELEPORTS_TO);
         if (optional.isPresent()) {
             Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?,?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, optional.get(), pos, 100, false);
             if (pair != null && pair.getSecond().value().feature instanceof StarLabStructure) {
@@ -370,14 +361,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    private static boolean isAirOrFluid(BlockState blockState) {
-        return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
-    }
-
-    public void setExitPortalPos(BlockPos pos, boolean exactTeleport) {
-        this.exactTeleport = exactTeleport;
-        this.exitPortalPos = pos;
-    }
+    public static boolean isAirOrFluid(BlockState blockState) { return blockState.isAir() || blockState.getBlock() instanceof FluidBlock; }
 
     @Nullable
     public  BlockPos getExitPortalPos() { return this.exitPortalPos; }
@@ -391,9 +375,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         } else return super.onSyncedBlockEvent(type, data);
     }
 
-
-    /** for rendering */
-
+    /** Rendering */
     public float getAnimationProgress(float delta) {
         return MathHelper.lerp(delta, this.prevAnimationProgress, this.animationProgress);
     }
@@ -406,7 +388,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     public DyeColor getColor() { return this.cachedColor; }
 
     public boolean shouldDrawSide(Direction direction) {
-        return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
+        return Block.shouldDrawSide(this.getCachedState(), this.getWorld(), this.getPos(), direction, this.getPos().offset(direction));
     }
 
     public int getDrawnSidesCount() {
@@ -424,6 +406,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         CLOSING;
 
         AnimationStage() { }
+
     }
 
 }

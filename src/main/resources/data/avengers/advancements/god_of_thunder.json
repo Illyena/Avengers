@@ -1,0 +1,85 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:mjolnir",
+      "nbt": "{Damage:0}"
+    },
+    "title": {
+      "translate": "advancement.avengers.god_of_thunder.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.god_of_thunder.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "avengers:root",
+  "criteria": {
+    "flying_strike": {
+      "conditions": {
+        "victims": [
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:creeper",
+                "nbt": "{powered: 1b}"
+              }
+            }
+          ]
+        ],
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{OnGround:0b}"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:channeled_lightning"
+    },
+    "flying_strike_legacy": {
+      "conditions": {
+        "victims": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this"
+          }
+        ],
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{OnGround:0b}"
+            }
+          },
+          {
+            "condition": "gilding:config_properties",
+            "predicate": {
+              "config": "avengers:mjolnir_legacy_config",
+              "value": true
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:channeled_lightning"
+    }
+  },
+  "requirements": [
+    [
+      "flying_strike",
+      "flying_strike_legacy"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "avengers:blocks/mjolnir_block"
+    ]
+  }
+}

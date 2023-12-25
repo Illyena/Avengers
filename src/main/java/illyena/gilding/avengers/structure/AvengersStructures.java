@@ -13,7 +13,10 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.StructureSpawns;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.gen.feature.FeatureConfig;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.StructurePoolFeatureConfig;
 
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class AvengersStructures {
     public static RegistryKey<ConfiguredStructureFeature<?, ?>> STAR_LAB_CONFIG_KEY;
 
     public static void registerStructures() {
-        LOGGER.info("Registering Structures for " + MOD_NAME + " Mod.");
+        LOGGER.info("Registering structures for {} mod.", MOD_NAME);
 
         StructureFeatureAccessor.callRegister(MOD_ID + ":star_lab", STAR_LAB, GenerationStep.Feature.RAW_GENERATION);
 

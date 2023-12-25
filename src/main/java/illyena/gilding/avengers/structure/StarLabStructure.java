@@ -18,6 +18,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.util.Optional;
 
 public class StarLabStructure  extends StructureFeature<StructurePoolFeatureConfig> {
+
     public StarLabStructure() { super(StructurePoolFeatureConfig.CODEC, StarLabStructure::createPieceGenerator, PostPlacementProcessor.EMPTY); }
 
     public static Optional<StructurePiecesGenerator<StructurePoolFeatureConfig>> createPieceGenerator(StructureGeneratorFactory.Context<StructurePoolFeatureConfig> context) {

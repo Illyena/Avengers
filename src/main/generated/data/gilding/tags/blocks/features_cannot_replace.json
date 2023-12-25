@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#avengers:features_cannot_replace",
-      "required": false
-    }
-  ]
-}

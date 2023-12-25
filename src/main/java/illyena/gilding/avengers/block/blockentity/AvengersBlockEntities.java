@@ -9,7 +9,10 @@ import net.minecraft.util.registry.Registry;
 import static illyena.gilding.avengers.AvengersInit.*;
 
 public class AvengersBlockEntities {
-    public static void registerBlockEntities() { LOGGER.info("Registering Block Entities for " + MOD_NAME + " Mod."); }
+    public static void registerBlockEntities() { LOGGER.info("Registering block entities for {} mod.", MOD_NAME); }
+
+    public static final BlockEntityType<MjolnirBlockEntity> MJOLNIR_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "mjolnir_block_entity"),
+            FabricBlockEntityTypeBuilder.create(MjolnirBlockEntity::new, AvengersBlocks.MJOLNIR_BLOCK).build(null));
 
     public static final BlockEntityType<StarPortalBlockEntity> STAR_PORTAL_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "star_portal_block_entity"),
             FabricBlockEntityTypeBuilder.create(StarPortalBlockEntity::new, AvengersBlocks.STAR_PORTAL_BLOCK,

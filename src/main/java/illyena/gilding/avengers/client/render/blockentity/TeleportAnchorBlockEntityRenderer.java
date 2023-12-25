@@ -15,9 +15,11 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<TeleportAnchorBlockEntity> {
     private BeamColorStage beamColors;
+    private float prevColorFactor;
 
     public TeleportAnchorBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         this.beamColors = BeamColorStage.stage_1;
@@ -40,7 +42,6 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
             case CHRISTMAS -> { return getTricolorBeamColor(entity, tickDelta); }
             case BIRTHDAY -> { return getJebBeamColor(entity, tickDelta); }
             default -> { return getBicolorBeamColor(entity, tickDelta); }
-
         }
     }
 
@@ -56,90 +57,78 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
     }
 
     private float[] getBicolorBeamColor(TeleportAnchorBlockEntity entity, float tickDelta) {
-        float f = 20.0f;
-        float g = 0.0005f / (f / 100.0f); // first value somehow dependent on difference between float[]s? or perhaps closeness to 0.0f //todo adjust timing value
-        float h = (entity.age % f + tickDelta) / f;
+        float f = entity.getBeamTime();
+        float colorFactor = ((entity.age % f) + tickDelta) / f;
         float[] first = getRgbColor(1);
         float[] second = getRgbColor(2);
         float[] beamColor = first;
 
+        if (this.prevColorFactor > colorFactor) {
+            this.beamColors = BeamColorStage.next(this.beamColors);
+        }
         switch (beamColors) {
             case stage_1 -> {
-                float red = first[0] * (1.0F - h) + second[0] * (h);
-                float green = first[1] * (1.0F - h) + second[1] * (h);
-                float blue = first[2] * (1.0F - h) + second[2] * (h);
+                float red = first[0] * (1.0F - colorFactor) + second[0] * (colorFactor);
+                float green = first[1] * (1.0F - colorFactor) + second[1] * (colorFactor);
+                float blue = first[2] * (1.0F - colorFactor) + second[2] * (colorFactor);
                 beamColor = new float[]{red, green, blue};
-                if (Math.abs(beamColor[0] - second[0]) <= g && Math.abs(beamColor[1] - second[1]) <= g && Math.abs(beamColor[2] - second[2]) <= g) {
-                    this.beamColors = BeamColorStage.stage_2;
-                }
             }
             case stage_2 -> {
-                float red = second[0] * (1.0F - h) + first[0] * h;
-                float green = second[1] * (1.0F - h) + first[1] * h;
-                float blue = second[2] * (1.0F - h) + first[2] * h;
+                float red = second[0] * (1.0F - colorFactor) + first[0] * colorFactor;
+                float green = second[1] * (1.0F - colorFactor) + first[1] * colorFactor;
+                float blue = second[2] * (1.0F - colorFactor) + first[2] * colorFactor;
                 beamColor = new float[]{red, green, blue};
-                if (Math.abs(beamColor[0] - first[0]) <= g && Math.abs(beamColor[1] - first[1]) <= g && Math.abs(beamColor[2] - first[2]) <= g) {
-                    this.beamColors = BeamColorStage.stage_1;
-                }
             }
+            case stage_3 -> this.beamColors = BeamColorStage.stage_1;
         }
+        this.prevColorFactor = colorFactor;
         return beamColor;
     }
 
     private float[] getTricolorBeamColor(TeleportAnchorBlockEntity entity, float tickDelta) {
-        float f = 10.0f;
-        float g = 0.002f / (f / 100.0f); //todo adjust timing value
-        float h = ((entity.age % f) + tickDelta) / f;
+        float f = entity.getBeamTime() / 2;
+        float colorFactor = ((entity.age % f) + tickDelta) / f;
         float[] first = getRgbColor(1);
         float[] second = getRgbColor(2);
-        float[] dark = new float[] {0.0f, 0.0f, 0.0f};
-        float [] beamColor = dark;
+        float[] beamColor = DyeColor.BLACK.getColorComponents();
+
+        if (prevColorFactor > colorFactor) {
+            this.beamColors = BeamColorStage.next(this.beamColors);
+        }
 
         switch (beamColors) {
             case stage_1 -> {
-                float red = first[0] * (1.0F - h) + dark[0] * (h);
-                float green = first[1] * (1.0F - h) + dark[1] * (h);
-                float blue = first[2] * (1.0F - h) + dark[2] * (h);
-                beamColor = new float[]{red, green, blue};
-                if (beamColor[0] <= dark[0] + g && beamColor[1] <= dark[1] + g && beamColor[2] <= dark[2] + g) {
-                    this.beamColors = BeamColorStage.stage_2;
-                }
+                float red = first[0] - (first[0] * colorFactor);
+                float green = first[1] - (first[1] * colorFactor);
+                float blue = first[2] - (first[2] * colorFactor);
+                beamColor = new float[] {red, green, blue};
             }
             case stage_2 -> {
-                float red = dark[0] * (1.0F - h) + second[0] * h;
-                float green = dark[1] * (1.0F - h) + second[1] * h;
-                float blue = dark[2] * (1.0F - h) + second[2] * h;
+                float red = second[0] * colorFactor;
+                float green = second[1] * colorFactor;
+                float blue = second[2] * colorFactor;
                 beamColor = new float[]{red, green, blue};
-                if (beamColor[0] >= second[0] - g && beamColor[1] >= second[1] - g && beamColor[2] >= second[2] - g) {
-                    this.beamColors = BeamColorStage.stage_3;
-                }
             }
             case stage_3 -> {
-                float red = second[0] * (1.0F - h) + dark[0] * h;
-                float green = second[1] * (1.0F - h) + dark[1] * h;
-                float blue = second[2] * (1.0F - h) + dark[2] * h;
-                beamColor = new float[]{red, green, blue};
-                if (beamColor[0] <= dark[0] + g && beamColor[1] <= dark[1] + g && beamColor[2] <= dark[2] + g) {
-                    this.beamColors = BeamColorStage.stage_4;
-                }
+                float red = second[0] - (second[0] * colorFactor);
+                float green = second[1] - (second[1] * colorFactor);
+                float blue = second[2] - (second[2] * colorFactor);
+                beamColor = new float[] {red, green, blue};
             }
             case stage_4 -> {
-                float red = dark[0] * (1.0F - h) + first[0] * h;
-                float green = dark[1] * (1.0F - h) + first[1] * h;
-                float blue = dark[2] * (1.0F - h) + first[2] * h;
+                float red = first[0] * colorFactor;
+                float green = first[1] * colorFactor;
+                float blue = first[2] * colorFactor;
                 beamColor = new float[]{red, green, blue};
-                if (beamColor[0] >= first[0] - g && beamColor[1] >= first[1] - g && beamColor[2] >= first[2] - g) {
-                    this.beamColors = BeamColorStage.stage_1;
-                }
             }
         }
+        this.prevColorFactor = colorFactor;
         return beamColor;
     }
 
     private float[] getJebBeamColor(TeleportAnchorBlockEntity entity, float tickDelta) {
         float f = 3.25f;
-        float g = 0.002f / (f / 100.0f);
-        float h = ((entity.age % f) + tickDelta) / f;
+        float colorFactor = ((entity.age % f) + tickDelta) / f;
         int i = (int) (entity.age / f);
 
         int o = DyeColor.values().length;
@@ -147,9 +136,9 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
         int q = (i + 1) % o;
         float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
         float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
-        float red =   fs[0] * (1.0F - h) + gs[0] * h;
-        float green = fs[1] * (1.0F - h) + gs[1] * h;
-        float blue =  fs[2] * (1.0F - h) + gs[2] * h;
+        float red =   fs[0] * (1.0F - colorFactor) + gs[0] * colorFactor;
+        float green = fs[1] * (1.0F - colorFactor) + gs[1] * colorFactor;
+        float blue =  fs[2] * (1.0F - colorFactor) + gs[2] * colorFactor;
 
         return new float[]{red, green, blue};
     }
@@ -161,7 +150,16 @@ public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<Te
         stage_4;
 
         BeamColorStage() {}
+
+        public static BeamColorStage next(BeamColorStage stage) {
+            return switch (stage) {
+                case stage_1 -> stage_2;
+                case stage_2 -> stage_3;
+                case stage_3 -> stage_4;
+                case stage_4 -> stage_1;
+            };
+        }
+
     }
+
 }
-
-

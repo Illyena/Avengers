@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#avengers:mineable/magic",
-      "required": false
-    }
-  ]
-}

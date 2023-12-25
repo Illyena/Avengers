@@ -15,4 +15,5 @@ public class StarLabGenerator {
     public static final RegistryEntry<StructurePool> STRUCTURE_POOLS =
             StructurePools.register(new StructurePool(new Identifier(MOD_ID, "star_lab/starts"), new Identifier("empty"),
                     ImmutableList.of(Pair.of(StructurePoolElement.ofProcessedSingle("star_lab/platform", StructureProcessorLists.EMPTY), 1)), StructurePool.Projection.RIGID));
+
 }

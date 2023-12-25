@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:cap_shield",
+      "nbt": "{Damage:335}"
+    },
+    "title": {
+      "translate": "advancement.avengers.patriotic_physics.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.patriotic_physics.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "annouce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "avengers:super_soldier",
+  "criteria": {
+    "ricochet_and_return": {
+      "trigger": "avengers:ricochet_and_return",
+      "conditions": {
+        "projectile": {
+          "items": [
+            "avengers:cap_shield"
+          ],
+          "enchantments": [
+            {
+              "enchantment": "minecraft:loyalty",
+              "levels": {
+                "min": 1
+              }
+            }
+          ]
+        },
+        "unique_entities": 4
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ricochet_and_return"
+    ]
+  ]
+}

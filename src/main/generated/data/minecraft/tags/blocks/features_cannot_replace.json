@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#gilding:features_cannot_replace",
-      "required": false
-    }
-  ]
-}

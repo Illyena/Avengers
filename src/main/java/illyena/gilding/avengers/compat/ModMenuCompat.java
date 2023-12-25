@@ -5,8 +5,8 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import illyena.gilding.avengers.client.gui.screen.AvengersConfigMenu;
 
 public class ModMenuCompat implements ModMenuApi {
+
     @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return AvengersConfigMenu::new;
-    }
+    public ConfigScreenFactory<?> getModConfigScreenFactory() { return AvengersConfigMenu::new; }
+
 }

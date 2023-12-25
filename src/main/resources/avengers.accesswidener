@@ -1,9 +1,7 @@
 accessWidener   v2  named
 
-# throwable enchantment target
+# new enchantment targets
 extendable class net/minecraft/enchantment/EnchantmentTarget
 
 #EndCityGenerator
 accessible class net/minecraft/structure/EndCityGenerator$Part
-
-

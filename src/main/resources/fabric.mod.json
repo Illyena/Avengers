@@ -20,7 +20,6 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "illyena.gilding.GildingInitializer",
       "illyena.gilding.avengers.AvengersInit"
     ],
     "client": [
@@ -29,11 +28,11 @@
     "fabric-datagen": [
       "illyena.gilding.avengers.AvengersDataGeneration"
     ],
-    "mm:early_risers": [
-      "illyena.gilding.EarlyRiser"
-    ],
     "modmenu": [
       "illyena.gilding.avengers.compat.ModMenuCompat"
+    ],
+    "config": [
+      "illyena.gilding.avengers.config.AvengersConfigOptions"
     ]
   },
   "mixins": [
@@ -46,7 +45,7 @@
     "fabric": "*",
     "minecraft": "~1.18",
     "java": ">=17",
-    "gilding": "1.18.2v0.2.1"
+    "gilding": "0.2.3"
   },
   "suggests": {
     "another-mod": "*"

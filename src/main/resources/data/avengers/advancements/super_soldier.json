@@ -1,0 +1,40 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:cap_shield"
+    },
+    "title": {
+      "translate": "advancement.avengers.super_soldier.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.super_soldier.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "annouce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "avengers:root",
+  "criteria": {
+    "cap_shield": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "avengers:cap_shield"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cap_shield"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

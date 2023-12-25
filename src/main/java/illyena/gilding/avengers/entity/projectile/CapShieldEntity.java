@@ -1,6 +1,7 @@
 package illyena.gilding.avengers.entity.projectile;
 
 import com.google.common.collect.Lists;
+import illyena.gilding.avengers.advancement.AvengersAdvancements;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.core.enchantment.GildingEnchantmentHelper;
@@ -15,9 +16,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
@@ -47,6 +50,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
     public CapShieldEntity(EntityType<? extends CapShieldEntity> entityType, World world) {
         super(entityType, world);
         this.capShieldStack = new ItemStack(AvengersItems.CAP_SHIELD);
+        this.setDamage(this.capShieldStack.getDamage());
         this.bounces = GildingEnchantmentHelper.getRicochet(this.capShieldStack) * 2;
         this.blockHit = false;
     }
@@ -87,6 +91,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.inGroundTime > 4) {
@@ -113,11 +118,10 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             long l = this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
-        if(entity instanceof LivingEntity livingEntity) {
+        if (entity instanceof LivingEntity livingEntity) {
             i += EnchantmentHelper.getAttackDamage(this.capShieldStack, livingEntity.getGroup());
         }
         Entity owner = this.getOwner();
-
         if (isOwner(entity)
                 && this.dataTracker.get(RICOCHET) > 0
                 && this.random.nextInt(this.dataTracker.get(RICOCHET) * 2 - 1) > 0) {
@@ -126,7 +130,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
         DamageSource damageSource = DamageSource.thrownProjectile(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
+        SoundEvent soundEvent = this.getHitSound();
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
@@ -156,7 +160,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             IRicochet.onEntityHit(this, entity);
         }
         this.playSound(soundEvent, 1.0f, 1.0f);
-
     }
 
     @Override
@@ -166,14 +169,13 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         super.onBlockHit(blockHitResult);
     }
 
-    public boolean damage(DamageSource source, float amount) {
-        if (this.getDamage() >= this.capShieldStack.getMaxDamage() - 1) {
-            this.setDamage(this.capShieldStack.getMaxDamage() - 1);
-        }
-        if (source == DamageSource.CACTUS) {
-            this.world.breakBlock(this.getBlockPos(), true, this);
-        }
-        return true;
+    protected boolean tryPickup(PlayerEntity player) {
+        if (super.tryPickup(player)) {
+            if (player instanceof ServerPlayerEntity serverPlayer && !this.ricochetHitEntities.isEmpty()) {
+                AvengersAdvancements.RICOCHET_AND_RETURN.trigger(serverPlayer, this.asItemStack(), DamageSource.thrownProjectile(this, player), this.getRicochetHitEntities());
+            }
+            return true;
+        } else return false;
     }
 
     public double getRicochetRange() { return 2 + this.getDataTracker().get(RICOCHET) * 3; }
@@ -212,9 +214,10 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
     public void setWait(int value) { this.wait = value; }
 
+    protected SoundEvent getHitSound() { return SoundEvents.ITEM_TRIDENT_HIT; }
 
     @Override
-    public ItemStack asItemStack() { return this.capShieldStack.copy(); }
+    public ItemStack asItemStack() { return this.capShieldStack; }
 
     public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
@@ -223,5 +226,5 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         LOYALTY = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
+
 }
-//todo Sounds

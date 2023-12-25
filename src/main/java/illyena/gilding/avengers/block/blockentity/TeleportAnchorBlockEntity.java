@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class TeleportAnchorBlockEntity extends BlockEntity {
+    private static final float BEAM_TIME = 40.0f;
     public long age;
 
     public TeleportAnchorBlockEntity(BlockPos pos, BlockState state) {
@@ -30,27 +31,22 @@ public class TeleportAnchorBlockEntity extends BlockEntity {
     public static void tick(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
         boolean bl = blockEntity.isRecentlyGenerated();
         ++blockEntity.age;
-        if (!world.isClient() && bl != blockEntity.isRecentlyGenerated()) { // || bl2 != blockEntity.hasBeamCooldown()) {
+        if (!world.isClient() && bl != blockEntity.isRecentlyGenerated()) {
             markDirty(world, pos, state);
         }
     }
 
-    public boolean isRecentlyGenerated() {
-        return this.age < 20L;
-    }
+    public float getBeamTime() { return BEAM_TIME; }
+
+    public boolean isRecentlyGenerated() { return this.age < BEAM_TIME; }
 
     public float getRecentlyGeneratedBeamHeight(float tickDelta) {
-        return MathHelper.clamp(((float) this.age + tickDelta) / 10.0F, 0.0F, 1.0F);
+        return MathHelper.clamp(((float) this.age + tickDelta) / BEAM_TIME, 0.0F, 1.0F);
     }
 
+    public BlockEntityUpdateS2CPacket toUpdatePacket() { return BlockEntityUpdateS2CPacket.create(this); }
 
-    public BlockEntityUpdateS2CPacket toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    public NbtCompound toInitialChunkDataNbt() {
-        return this.createNbt();
-    }
+    public NbtCompound toInitialChunkDataNbt() { return this.createNbt(); }
 
     public static void startTeleportCooldown(World world, BlockPos pos, BlockState state, TeleportAnchorBlockEntity blockEntity) {
         if (!world.isClient) {
@@ -61,7 +57,6 @@ public class TeleportAnchorBlockEntity extends BlockEntity {
     }
 
     public boolean onSyncedBlockEvent(int type, int data) {
-
         if (type == 1) {
             this.age = 0;
             return true;
@@ -72,7 +67,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity {
     }
 
     public boolean shouldDrawSide(Direction direction) {
-        return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
+        return Block.shouldDrawSide(this.getCachedState(), this.getWorld(), this.getPos(), direction, this.getPos().offset(direction));
     }
 
     public int getDrawnSidesCount() {
@@ -80,7 +75,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity {
         for (Direction direction : Direction.values()) {
             i += this.shouldDrawSide(direction) ? 1 : 0;
         }
-
         return i;
     }
+
 }

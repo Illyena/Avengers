@@ -1,0 +1,41 @@
+{
+  "display": {
+    "icon": {
+      "item": "avengers:teleport_anchor"
+    },
+    "title": {
+      "translate": "advancement.avengers.root.title"
+    },
+    "description": {
+      "translate": "advancement.avengers.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/entity/end_portal.png"
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:lightning_strike",
+      "conditions": {
+        "lightning": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "distance": {
+                "absolute": {
+                  "max": 30.0
+                }
+              },
+              "type_specific": {
+                "type": "lightning"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

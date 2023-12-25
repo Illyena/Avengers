@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "#avengers:wither_immune",
-      "required": false
-    }
-  ]
-}

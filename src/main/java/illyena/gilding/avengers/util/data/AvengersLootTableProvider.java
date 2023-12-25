@@ -1,5 +1,7 @@
 package illyena.gilding.avengers.util.data;
 
+import illyena.gilding.avengers.block.MjolnirBlock;
+import illyena.gilding.avengers.block.StarPortalBlock;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
 import net.minecraft.block.Block;
@@ -9,6 +11,7 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.CopyNameLootFunction;
 import net.minecraft.loot.function.CopyNbtLootFunction;
 import net.minecraft.loot.provider.nbt.ContextLootNbtProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
@@ -32,33 +35,41 @@ public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
                         dropsPerLootType(block, lootType)));
     }
 
-    public static void addLootTable(Block block, LootTableTypes lootType) {
-        lootTables.put(block, lootType);
-    }
+    public static void addLootTable(Block block, LootTableTypes lootType) { lootTables.put(block, lootType); }
 
     public static LootTable.Builder dropsPerLootType(Block block, LootTableTypes lootType) {
         switch (lootType) {
             case BLOCK -> { return BlockLootTableGenerator.drops(block); }
-            case STAR_PORTAL -> { return starPortalDrops(block); }
+            case BLOCK_ENTITY -> { return blockEntityDrops(block); }
             default -> { return BlockLootTableGenerator.dropsNothing(); }
         }
     }
 
-    public static LootTable.Builder starPortalDrops(Block drop) {
+    public static LootTable.Builder blockEntityDrops(Block block) {
         return LootTable.builder()
                 .pool(LootPool.builder()
-                        .rolls(ConstantLootNumberProvider.create(1.0F))
-                        .with(ItemEntry.builder(drop)
-                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
-                                        .withOperation("ExitPortal", "BlockEntityTag.ExitPortal"))
-                                .apply(CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
-                                        .withOperation("ExactTeleport", "BlockEntityTag.ExactTeleport"))));
+                        .rolls(ConstantLootNumberProvider.create(1.0f))
+                        .with(ItemEntry.builder(block)
+                                .apply(CopyNameLootFunction.builder(CopyNameLootFunction.Source.BLOCK_ENTITY))
+                                .apply(blockEntityNbtLootFunction(block))));
+    }
+
+    private static CopyNbtLootFunction.Builder blockEntityNbtLootFunction(Block block) {
+        if (block instanceof MjolnirBlock) {
+            return CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
+                    .withOperation("Damage", "Damage")
+                    .withOperation("Enchantments", "Enchantments");
+        } else if (block instanceof StarPortalBlock) {
+            return CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY)
+                    .withOperation("ExitPortal", "BlockEntityTag.ExitPortal")
+                    .withOperation("ExactTeleport", "BlockEntityTag.ExactTeleport");
+        } else return CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY);
     }
 
     public enum LootTableTypes {
         DROPS_NOTHING,
         BLOCK,
-        STAR_PORTAL;
+        BLOCK_ENTITY;
 
         LootTableTypes () { }
 
