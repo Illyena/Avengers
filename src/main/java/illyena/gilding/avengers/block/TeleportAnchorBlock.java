@@ -48,9 +48,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
         builder.add(WATERLOGGED, WATER_LEVEL, FLUID_FALL);
     }
 
-
     /** FluidFlowsThrough methods */
-
     public BlockState getPlacementState(ItemPlacementContext context) {
         FluidState fluidState = context.getWorld().getFluidState(context.getBlockPos());
         int waterLevel = fluidState.getLevel();
@@ -86,9 +84,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
 
 
     /** BlockEntity */
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new TeleportAnchorBlockEntity(pos, state);
-    }
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new TeleportAnchorBlockEntity(pos, state); }
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {

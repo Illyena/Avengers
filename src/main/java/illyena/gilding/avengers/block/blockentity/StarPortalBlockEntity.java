@@ -8,7 +8,6 @@ import illyena.gilding.avengers.util.data.AvengersStructureTagGenerator;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
@@ -114,13 +113,13 @@ public class StarPortalBlockEntity extends BlockEntity {
             blockEntity.animationStage = AnimationStage.CLOSING;
         }
         blockEntity.updateAnimation(world, pos, state);
-        blockEntity.updatePulse(world, pos, state);
+        blockEntity.updatePulse();
         if (blockEntity.needsCooldownBeforeTeleporting()) {
             --blockEntity.teleportCooldown;
         }
     }
 
-    private void updatePulse(World world, BlockPos pos, BlockState state) {
+    private void updatePulse() {
         this.prevPulseProgress = this.pulseProgress;
         switch (this.animationStage) {
             case CLOSED -> this.pulseProgress = 0.0f;
@@ -160,7 +159,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     private static void updateNeighborStates(World world, BlockPos pos, BlockState state) { state.updateNeighbors(world, pos, 3); }
 
     private boolean isPlayerInRange(World world, BlockPos pos) {
-        return world.isPlayerInRange((double)pos.getX() + 0.5, (double)pos.getY() +0.5, (double)pos.getZ() +0.5, this.requiredPlayerRange);
+        return world.isPlayerInRange(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, this.requiredPlayerRange);
     }
 
     private void pushEntities(World world, BlockPos pos, BlockState state) {
@@ -201,7 +200,7 @@ public class StarPortalBlockEntity extends BlockEntity {
 
     public NbtCompound toInitialChunkDataNbt() { return this.createNbt(); }
 
-    /** teleporting */
+    /** Teleporting */
     public static boolean canTeleport(Entity entity) {
         return EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !entity.getRootVehicle().hasPortalCooldown();
     }
@@ -216,7 +215,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    public static void tryTeleportingEntity(World world, BlockPos pos, BlockState state , Entity entity, StarPortalBlockEntity blockEntity) {
+    public static boolean tryTeleportingEntity(World world, BlockPos pos, BlockState state , Entity entity, StarPortalBlockEntity blockEntity) {
         if (world instanceof ServerWorld serverWorld && !blockEntity.needsCooldownBeforeTeleporting() && canTeleport(entity)) {
             blockEntity.teleportCooldown = 100;
             BlockPos teleportPoint;
@@ -241,11 +240,14 @@ public class StarPortalBlockEntity extends BlockEntity {
                     entity3 = entity.getRootVehicle();
                 }
                 entity3.resetPortalCooldown();
-                entity3.teleport((double)teleportPoint.getX() + 0.5, (double)teleportPoint.getY() + 1, (double)teleportPoint.getZ() + 0.5);
+                entity3.teleport(teleportPoint.getX() + 0.25, teleportPoint.getY() + 0.5, teleportPoint.getZ() + 0.25);
                 world.emitGameEvent(entity3, GameEvent.TELEPORT, teleportPoint);
             }
 
             startTeleportCooldown(world, pos, state, blockEntity);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -301,42 +303,43 @@ public class StarPortalBlockEntity extends BlockEntity {
                 break;
             }
         }
-
         return blockPos3;
     }
 
     private static BlockPos findBestPortalExitPos(ServerWorld world, BlockPos teleportPoint) {
-        BlockPos blockPos = findFullCubeNear(world, teleportPoint, 3, false);
+        BlockPos blockPos = findFullCubeNear(world, teleportPoint, 3);
         LOGGER.debug("Best exit position for portal at {} is {}", teleportPoint, blockPos);
         if (blockPos == null) {
             LOGGER.debug("Failed to find a suitable block to teleport to, spawning an island on {}", teleportPoint.down());
             createPlatform(world, teleportPoint);
-            blockPos = findFullCubeNear(world, teleportPoint, 5, false);
+            blockPos = findFullCubeNear(world, teleportPoint, 5);
         }
-
         return blockPos;
     }
 
-    private static BlockPos findFullCubeNear(BlockView world, BlockPos pos, int searchRadius, boolean force) {
+    private static BlockPos findFullCubeNear(BlockView world, BlockPos pos, int searchRadius) {
         BlockPos blockPos = null;
-        for (int i = -searchRadius; i <= searchRadius; ++i) {
-            for (int j = -searchRadius; j <= searchRadius; ++j) {
-                if (i != 0 || j != 0 || force) {
-                    for (int k = -searchRadius; k <= searchRadius; ++k) {
-                        BlockPos blockPos2 = new BlockPos(pos.getX() + i, pos.getY() + k, pos.getZ() + j);
-                        BlockState blockState = world.getBlockState(blockPos2);
-                        BlockState blockState1 = world.getBlockState(blockPos2.up(1));
-                        BlockState blockState2 = world.getBlockState(blockPos2.up(2));
-                        if (blockState.isFullCube(world, blockPos2) && isAirOrFluid(blockState1) && isAirOrFluid(blockState2) && (force || !blockState.isOf(Blocks.BEDROCK))) {
-                            blockPos = blockPos2;
-                            break;
-                        }
-                    }
+        Box box = new Box(pos, pos);
+        int i = 0;
+        do {
+            box = box.expand(i);
+            BlockPos boxPos1 = new BlockPos(box.minX, box.minY, box.minZ);
+            BlockPos boxPos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
+            Iterator<BlockPos> iterator = BlockPos.iterate(boxPos1, boxPos2).iterator();
+            do {
+                BlockPos blockPos2 = iterator.next();
+                BlockState blockState1 = world.getBlockState(blockPos2);
+                BlockState blockState2 = world.getBlockState(blockPos2.up());
+                BlockState blockState0 = world.getBlockState(blockPos2.down());
+                if (isAirOrFluid(blockState1) && isAirOrFluid(blockState2) &&
+                        blockState0.isSideSolidFullSquare(world, blockPos2.down(), Direction.UP)) {
+                    blockPos = blockPos2;
+                    break;
                 }
-            }
-        }
-
-        return  blockPos;
+            } while (iterator.hasNext());
+            i++;
+        } while (i <= searchRadius && blockPos == null);
+        return blockPos;
     }
 
     private static void createPlatform(ServerWorld world, BlockPos pos) {
@@ -357,7 +360,9 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    private static boolean isAirOrFluid(BlockState blockState) { return blockState.isAir() || blockState.getBlock() instanceof FluidBlock; }
+    public static boolean isAirOrFluid(BlockState blockState) {
+        return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
+    }
 
     @Nullable
     public  BlockPos getExitPortalPos() { return this.exitPortalPos; }
@@ -371,9 +376,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         } else return super.onSyncedBlockEvent(type, data);
     }
 
-
-    /** for rendering */
-
+    /** Rendering */
     public float getAnimationProgress(float delta) {
         return MathHelper.lerp(delta, this.prevAnimationProgress, this.animationProgress);
     }
@@ -386,7 +389,7 @@ public class StarPortalBlockEntity extends BlockEntity {
     public DyeColor getColor() { return this.cachedColor; }
 
     public boolean shouldDrawSide(Direction direction) {
-        return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
+        return Block.shouldDrawSide(this.getCachedState(), this.getWorld(), this.getPos(), direction, this.getPos().offset(direction));
     }
 
     public int getDrawnSidesCount() {
@@ -404,6 +407,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         CLOSING;
 
         AnimationStage() { }
+
     }
 
 }

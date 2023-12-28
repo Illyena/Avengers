@@ -21,11 +21,9 @@ public class AvengersEntityModelLayers {
         EntityModelLayerRegistry.registerModelLayer(CAP_SHIELD_MODEL_LAYER, CapShieldEntityModel::getTexturedModelData);
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) ->
                 registry.register(new Identifier(MOD_ID, "entity/cap_shield")));
-
         EntityModelLayerRegistry.registerModelLayer(MJOLNIR_MODEL_LAYER, MjolnirEntityModel::getTexturedModelData);
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) ->
                 registry.register(new Identifier(MOD_ID, "entity/mjolnir")));
-
         EntityModelLayerRegistry.registerModelLayer(STAR_PORTAL_MODEL_LAYER, StarPortalBlockEntityRenderer.StarPortalModel::getTexturedModelData);
     }
 

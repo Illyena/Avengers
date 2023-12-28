@@ -5,11 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "enchantment.ChannelingEnchantmentMixin",
+    "enchantment.RicochetEnchantmentMixin",
     "enchantment.RiptideEnchantmentMixin",
+    "entity.PlayerEntityMixin",
     "worldgen.EndCityGeneratorMixin"
   ],
   "client": [
-    "entity.HeldItemFeatureRendererMixin"
+    "client.renderer.HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

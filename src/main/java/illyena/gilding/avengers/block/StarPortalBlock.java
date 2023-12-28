@@ -15,7 +15,10 @@ import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeItem;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
@@ -125,7 +128,7 @@ public class StarPortalBlock  extends BlockWithEntity {
                         world.setBlockState(pos, newState);
                         stack.decrement(1);
                     }
-                    return ActionResult.success(player.world.isClient);
+                    return ActionResult.success(player.getWorld().isClient);
                 }
                 else if (blockEntity.getAnimationStage() == StarPortalBlockEntity.AnimationStage.OPENED
                          && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).contains(hitResult.getPos())) {
@@ -133,12 +136,17 @@ public class StarPortalBlock  extends BlockWithEntity {
                         if (stack.isEmpty()) {
                             StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, player, blockEntity);
                         } else {
-                            ItemStack stack2 = stack.split(1);
-                            ItemEntity itemEntity = player.dropStack(stack2);
-                            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
+                            ItemStack stack2 = stack.copy().split(1);
+                            ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack2);
+                            if (StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity)) {
+                                world.spawnEntity(itemEntity);
+                                stack.decrement(1);
+                            } else {
+                                itemEntity.discard();
+                            }
                         }
                     }
-                    return ActionResult.success(player.world.isClient);
+                    return ActionResult.success(player.getWorld().isClient);
                 }
             }
             return ActionResult.PASS;
@@ -211,7 +219,8 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
     public static boolean canOpen(BlockState state, World world, BlockPos pos, StarPortalBlockEntity blockEntity) {
-        if (blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.CLOSED) {
+        if (blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.CLOSED
+                && StarPortalBlockEntity.isAirOrFluid(world.getBlockState(pos.offset(state.get(FACING))))) {
             return true;
         } else {
             Box box = ShulkerEntity.calculateBoundingBox(state.get(FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6);
@@ -253,8 +262,6 @@ public class StarPortalBlock  extends BlockWithEntity {
         }
         super.onBreak(world, pos, state, player);
    }
-
-
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) { builder.add(FACING); }
@@ -332,6 +339,3 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
 }
-
-
-

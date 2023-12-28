@@ -1,4 +1,4 @@
-package illyena.gilding.avengers.mixin.entity;
+package illyena.gilding.avengers.mixin.client.renderer;
 
 import illyena.gilding.avengers.item.AvengersItems;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+/** Mjolnir charging animation */
 @Mixin(HeldItemFeatureRenderer.class)
 public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends EntityModel<T> & ModelWithHead & ModelWithArms> {
     @Shadow @Final private HeldItemRenderer heldItemRenderer;

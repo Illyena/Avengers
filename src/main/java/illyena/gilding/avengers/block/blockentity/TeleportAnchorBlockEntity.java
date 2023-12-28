@@ -16,6 +16,7 @@ import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.GameEventListener;
 
 public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventListener {
+    private static final float BEAM_TIME = 40.0f;
     public long age;
     private final BlockPositionSource positionSource;
 
@@ -42,10 +43,12 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
         }
     }
 
-    public boolean isRecentlyGenerated() { return this.age < 20L; }
+    public float getBeamTime() { return BEAM_TIME; }
+
+    public boolean isRecentlyGenerated() { return this.age < BEAM_TIME; }
 
     public float getRecentlyGeneratedBeamHeight(float tickDelta) {
-        return MathHelper.clamp(((float) this.age + tickDelta) / 10.0F, 0.0F, 1.0F);
+        return MathHelper.clamp(((float) this.age + tickDelta) / BEAM_TIME, 0.0F, 1.0F);
     }
 
     public BlockEntityUpdateS2CPacket toUpdatePacket() { return BlockEntityUpdateS2CPacket.create(this); }
@@ -89,7 +92,7 @@ public class TeleportAnchorBlockEntity extends BlockEntity implements GameEventL
     }
 
     public boolean shouldDrawSide(Direction direction) {
-        return Block.shouldDrawSide(this.getCachedState(), this.world, this.getPos(), direction, this.getPos().offset(direction));
+        return Block.shouldDrawSide(this.getCachedState(), this.getWorld(), this.getPos(), direction, this.getPos().offset(direction));
     }
 
     public int getDrawnSidesCount() {

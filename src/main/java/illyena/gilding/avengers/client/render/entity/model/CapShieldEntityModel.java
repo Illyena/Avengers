@@ -76,4 +76,3 @@ public class CapShieldEntityModel extends Model {
     }
 
 }
-

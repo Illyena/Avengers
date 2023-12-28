@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
-public class NotWorthy extends AbstractCriterion<NotWorthy.Conditions> {
+public class NotWorthyCriterion extends AbstractCriterion<NotWorthyCriterion.Conditions> {
     static final Identifier ID = new Identifier(MOD_ID, "not_worthy");
 
     public Identifier getId() { return ID; }
@@ -43,7 +43,6 @@ public class NotWorthy extends AbstractCriterion<NotWorthy.Conditions> {
         public static Conditions create() {
             return new Conditions(EntityPredicate.Extended.EMPTY, ItemPredicate.ANY, DistancePredicate.ANY);
         }
-        //todo
 
         public boolean matches(ServerPlayerEntity player, ItemStack itemStack, BlockPos blockPos) {
             return this.itemPredicate.test(itemStack) && this.distancePredicate.test(player.getX(), player.getY(), player.getZ(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
@@ -55,6 +54,7 @@ public class NotWorthy extends AbstractCriterion<NotWorthy.Conditions> {
             jsonObject.add("distance", this.distancePredicate.toJson());
             return jsonObject;
         }
+
     }
 
 }

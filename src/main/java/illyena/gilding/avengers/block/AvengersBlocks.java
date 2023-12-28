@@ -6,7 +6,9 @@ import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import illyena.gilding.core.item.BlockItemWithGlint;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -20,6 +22,7 @@ import static illyena.gilding.avengers.AvengersInit.*;
 import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
 
 public class AvengersBlocks {
+
     public static void registerBlocks() { LOGGER.info("Registering blocks for {} mod.", MOD_NAME); }
 
     private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
@@ -54,7 +57,7 @@ public class AvengersBlocks {
 
     //BLOCKS
     public static final Block MJOLNIR_BLOCK = registerBlockWithoutItem("mjolnir_block",
-            new MjolnirBlock(FabricBlockSettings.of(Material.METAL).strength(4f).nonOpaque().requiresTool().strength(4.0f, 9.0f)), BLOCK);
+            new MjolnirBlock(FabricBlockSettings.of(Material.METAL).strength(4.0f, 9.0f).nonOpaque().requiresTool()), BLOCK_ENTITY);
 
     public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal", createStarPortalBlock(null), Rarity.EPIC, false, BLOCK_ENTITY, null);
 

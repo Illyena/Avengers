@@ -61,7 +61,6 @@ public class MjolnirBlockEntity extends BlockEntity implements Nameable {
                 this.getWorld().setBlockState(this.getPos(), blockState.with(MjolnirBlock.BROKEN, true));
             }
         }
-
     }
 
     public int getDamage() { return this.damage; }

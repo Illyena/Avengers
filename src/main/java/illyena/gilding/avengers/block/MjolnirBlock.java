@@ -23,7 +23,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
@@ -127,7 +126,7 @@ public class MjolnirBlock extends BlockWithEntity implements LandingBlock, Limit
             }
         }
         if (MJOLNIR_LEGACY.getValue() && this.asItem() instanceof MjolnirItem mjolnirItem && !mjolnirItem.isWorthy(player) && world.isClient() && hand == player.getActiveHand()) {
-            player.sendMessage(translationKeyOf("message", "not_worthy"));
+            player.sendMessage(translationKeyOf("message", "not_worthy"), true);
         }
         return ActionResult.PASS;
     }
@@ -161,6 +160,9 @@ public class MjolnirBlock extends BlockWithEntity implements LandingBlock, Limit
         if (canFallThrough(world.getBlockState(pos.down())) && pos.getY() > world.getBottomY()) {
             this.fallingBlockEntity = FallingBlockEntity.spawnFromBlock(world, pos, state);
             this.configureFallingBlockEntity(this.fallingBlockEntity);
+        }
+        if (world.getBlockState(pos.down()).getBlock() instanceof CactusBlock) {
+            world.breakBlock(pos.down(), true);
         }
     }
 
@@ -257,21 +259,19 @@ public class MjolnirBlock extends BlockWithEntity implements LandingBlock, Limit
                     } else if (this.fallingBlockEntity.dropItem && this.fallingBlockEntity.getWorld().getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
                         this.fallingBlockEntity.discard();
                         this.fallingBlockEntity.onDestroyedOnLanding(block, blockPos);
-                        this.fallingBlockEntity.dropItem(block);
+                        this.fallingBlockEntity.dropStack(LimitedFallingBlock.asItemStack(this.fallingBlockEntity));
                     }
                 } else {
                     this.fallingBlockEntity.discard();
                     if (this.fallingBlockEntity.dropItem && world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
                         this.fallingBlockEntity.onDestroyedOnLanding(block, blockPos);
-                        this.fallingBlockEntity.dropItem(block);
+                        this.fallingBlockEntity.dropStack(LimitedFallingBlock.asItemStack(this.fallingBlockEntity));
                     }
                 }
             }
         }
     }
 
-    public boolean canFallThrough(BlockState state) {
-        return state.isAir() || state.isIn(BlockTags.FIRE) || state.getMaterial().isReplaceable();//|| state.isLiquid()
-    }
+    public boolean canFallThrough(BlockState state) { return state.getMaterial().isReplaceable(); }
 
 }

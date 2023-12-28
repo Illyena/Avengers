@@ -17,6 +17,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.CactusBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -59,7 +60,7 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     private final float attackSpeed;
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
-    public MjolnirItem(Block block, float attackDamage, float attackSpeed, ToolMaterials material, Settings settings) {
+    public MjolnirItem(Block block, float attackDamage, float attackSpeed, ToolMaterial material, Settings settings) {
         super(block, settings.maxDamageIfAbsent(material.getDurability()));
         this.material = material;
         this.effectiveBlocks = GildingBlockTagGenerator.MAGIC_MINEABLE;
@@ -87,6 +88,10 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     }
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+        if (!this.isWorthy(player) && player.getMainHandStack().getItem() instanceof MjolnirItem) {
+            this.notWorthy(player.getMainHandStack(), world, player);
+            return false;
+        }
         return state.isIn(AvengersBlockTagGenerator.NEEDS_TOOL_LEVEL_5);
     }
 
@@ -125,14 +130,15 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
+        if (!this.isWorthy(user)) {
+            this.notWorthy(itemStack, world, user);
+            return TypedActionResult.fail(itemStack);
+        }
         if (!isUsable(itemStack)) {
             return TypedActionResult.fail(itemStack);
         } else {
             user.setCurrentHand(hand);
-            if (!this.isWorthy(user)) {
-                this.notWorthy(itemStack, world, user);
-                return TypedActionResult.fail(itemStack);
-            } else if (!MJOLNIR_LEGACY.getValue() && hand.equals(Hand.OFF_HAND) && EnchantmentHelper.getRiptide(itemStack) > 0 && !(world.isRaining() || world.isThundering())) {
+            if (!MJOLNIR_LEGACY.getValue() && hand.equals(Hand.OFF_HAND) && EnchantmentHelper.getRiptide(itemStack) > 0 && !(world.isRaining() || world.isThundering())) {
                 return  TypedActionResult.fail(itemStack);
             }
             return TypedActionResult.consume(itemStack);
@@ -186,7 +192,7 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
         } else return !MJOLNIR_LEGACY.getValue() && user instanceof WolfEntity wolf && wolf.isTamed();
     }
 
-    private void notWorthy(ItemStack stack, World world, LivingEntity user) {
+    public void notWorthy(ItemStack stack, World world, LivingEntity user) {
         boolean bl = user.getMainHandStack() == stack;
         BlockPos blockPos = user.getBlockPos();
         Direction direction = bl ? user.getHorizontalFacing() : user.getHorizontalFacing().getOpposite();
@@ -199,9 +205,8 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
             default -> pos2 = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
 
-        boolean bl2 = this.toBlock(stack, world, user, pos2, 1);
-        if (!bl2) {
-            dropStack(world, pos2, stack);
+        if (!this.toBlock(stack, world, user, pos2, 1)) {
+            dropStack(world, pos2, stack.copy());
         }
         if (user instanceof PlayerEntity playerEntity && !playerEntity.isCreative()) {
             stack.decrement(1);
@@ -263,9 +268,14 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     }
 
     private boolean canPlaceAt(World world, Entity entity, BlockState blockState, BlockPos blockPos) {
-        return blockState.canPlaceAt(world, blockPos) && world.getBlockState(blockPos).getMaterial().isReplaceable() &&
+        if (blockState.canPlaceAt(world, blockPos) && world.getBlockState(blockPos).getMaterial().isReplaceable() &&
                 world.canPlace(blockState, blockPos, ShapeContext.of(entity)) &&
-                world.getBlockState(blockPos).getBlock() != blockState.getBlock();
+                world.getBlockState(blockPos).getBlock() != blockState.getBlock()) {
+            return true;
+        } else if (world.getBlockState(blockPos).getBlock() instanceof CactusBlock) {
+            return world.breakBlock(blockPos, true, entity);
+        }
+        return false;
     }
 
     /** IThrowable */

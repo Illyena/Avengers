@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
+
 @Mixin(ChannelingEnchantment.class)
 public class ChannelingEnchantmentMixin {
 
@@ -19,7 +21,7 @@ public class ChannelingEnchantmentMixin {
     }
 
     public boolean isAcceptableItem(ItemStack stack) {
-        return stack.getItem() instanceof TridentItem || stack.getItem() instanceof MjolnirItem;
+        return stack.getItem() instanceof TridentItem || (stack.getItem() instanceof MjolnirItem && !MJOLNIR_LEGACY.getValue());
     }
 
 }

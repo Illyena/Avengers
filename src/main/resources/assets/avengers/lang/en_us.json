@@ -39,5 +39,8 @@
     "advancement.avengers.patriotic_physics.title": "Patriotic Physics",
     "advancement.avengers.patriotic_physics.description": "Boomerang off several assailants",
     "advancement.avengers.second_act.title": "Second Act",
-    "advancement.avengers.second_act.description": "Each of you has failed"
+    "advancement.avengers.second_act.description": "Each of you has failed",
+
+    "painting.avengers.captain.title": "Stars and Stripes",
+    "painting.avengers.captain.author": "SpiderBrat"
 }
