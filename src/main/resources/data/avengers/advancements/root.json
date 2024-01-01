@@ -13,7 +13,7 @@
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false,
-    "background": "minecraft:textures/block/stone.png"
+    "background": "minecraft:textures/entity/end_portal.png"
   },
   "criteria": {
     "requirement": {

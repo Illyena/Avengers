@@ -20,6 +20,15 @@
     "cap" : {
       "trigger": "minecraft:thrown_item_picked_up_by_entity",
       "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "minecraft:zombie"
+            },
+            "entity": "this"
+          }
+        ],
         "player": [
           {
             "condition": "minecraft:inverted",

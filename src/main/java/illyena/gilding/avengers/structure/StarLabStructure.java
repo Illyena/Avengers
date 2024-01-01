@@ -15,6 +15,7 @@ import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureType;
 
 import java.util.Optional;
+
 /**
  * @source StructureTutorialMod <a href="http://www.github.com/TelepathicGrunt/StructureTutorialMod"></a>   @author TelepathicGrunt
  */
@@ -45,7 +46,6 @@ public class StarLabStructure  extends Structure {
         this.startHeight = startHeight;
         this.projectStartToHeightmap = projectStartToHeightmap;
         this.maxDistanceFromCenter = maxDistanceFromCenter;
-
     }
 
     @Override
@@ -60,4 +60,5 @@ public class StarLabStructure  extends Structure {
 
     @Override
     public StructureType<?> getType() { return AvengersStructures.STAR_LAB; }
+
 }

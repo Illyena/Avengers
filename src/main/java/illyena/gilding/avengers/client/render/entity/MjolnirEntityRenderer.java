@@ -43,4 +43,5 @@ public class MjolnirEntityRenderer extends EntityRenderer<MjolnirEntity> {
     public Identifier getTexture(MjolnirEntity mjolnirEntity) { return MJOLNIR_LEGACY.getValue() ? LEGACY_TEXTURE : TEXTURE; }
 
     public MjolnirEntityModel getModel() { return model; }
+
 }

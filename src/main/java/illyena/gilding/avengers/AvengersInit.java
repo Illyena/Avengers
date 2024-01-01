@@ -30,7 +30,7 @@ public class AvengersInit implements ModInitializer {
 
     public static final Mod AVENGERS = new Mod(MOD_ID, GILDING, false, AvengersConfigOptions.class);
     public static final ItemGroup AVENGERS_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier(MOD_ID, "avengers_group"),
-            FabricItemGroup.builder().displayName(translationKeyOf("item_group", "avengers_group"))
+            FabricItemGroup.builder().displayName(translationKeyOf("itemGroup", "avengers_group"))
                     .icon(() -> new ItemStack(AvengersItems.CAP_SHIELD)).build());
 
     public void onInitialize() {
@@ -43,10 +43,10 @@ public class AvengersInit implements ModInitializer {
         AvengersStructures.registerStructures();
         AvengersPaintings.callPaintings();
         AvengersAdvancements.registerAdvancements();
-
     }
 
     public static Text translationKeyOf(String type, String key) {
         return Text.translatable(type + "." + MOD_ID + "." + key);
     }
+
 }

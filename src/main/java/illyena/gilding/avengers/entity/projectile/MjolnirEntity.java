@@ -7,8 +7,6 @@ import illyena.gilding.avengers.item.custom.MjolnirItem;
 import illyena.gilding.core.entity.projectile.ILoyalty;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -80,6 +78,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.getBlockPos().getY() <= this.getWorld().getBottomY()) {
@@ -123,7 +122,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
         Entity owner = this.getOwner();
         DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT;
+        SoundEvent soundEvent = getHitSound();
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
@@ -166,39 +165,6 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
         this.playSound(soundEvent, g, 1.0f);
     }
 
-    public boolean damage(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else {
-            int i;
-            if (amount > 0) {
-                i = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, this.mjolnirStack);
-                int j = 0;
-                for (int k = 0; i > 0 && k < amount; ++k) {
-                    if (UnbreakingEnchantment.shouldPreventDamage(this.mjolnirStack, i, random)) {
-                        ++j;
-                    }
-                }
-                amount -= j;
-                if (amount <= 0) {
-                    return false;
-                }
-            }
-
-            i =  this.mjolnirStack.getDamage() + (int)amount;
-            this.mjolnirStack.setDamage(Math.min(i, this.mjolnirStack.getMaxDamage() -1));
-
-            if (!this.isRemoved()) {
-                if (source == this.getDamageSources().cactus()) {
-                    this.getWorld().breakBlock(this.getBlockPos(), true, this);
-                    this.toBlock(this.getWorld(), this.getBlockPos());
-                }
-            }
-            return true;
-        }
-
-    }
-
     protected boolean tryPickup(PlayerEntity player) {
         return super.tryPickup(player) || this.isNoClip() && this.isOwner(player) && player.getInventory().insertStack(this.asItemStack());
     }
@@ -236,19 +202,13 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
 
     public void setWait(int value) { this.wait =value; }
 
-    protected SoundEvent getHitSound() {
-        return SoundEvents.ITEM_TRIDENT_HIT_GROUND;
-    }
+    protected SoundEvent getHitSound() { return SoundEvents.ITEM_TRIDENT_HIT_GROUND; }
 
     public void onPlayerCollision(PlayerEntity player) {
         if (this.isOwner(player) || this.getOwner() == null) {
             super.onPlayerCollision(player);
         }
     }
-
-    protected float getDragInWater() { return 0.99F; }
-
-    public boolean shouldRender(double cameraX, double cameraY, double cameraZ) { return true; }
 
     @Override
     public ItemStack asItemStack() { return this.mjolnirStack.copy(); }
@@ -259,4 +219,5 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
         LOYALTY = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
+
 }

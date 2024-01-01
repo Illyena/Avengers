@@ -8,8 +8,6 @@ import illyena.gilding.core.enchantment.GildingEnchantmentHelper;
 import illyena.gilding.core.entity.projectile.ILoyalty;
 import illyena.gilding.core.entity.projectile.IRicochet;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -93,6 +91,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.inGroundTime > 4) {
@@ -119,11 +118,10 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             long l = this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(l + (long)i, 2147483647L);
         }
-        if(entity instanceof LivingEntity livingEntity) {
+        if (entity instanceof LivingEntity livingEntity) {
             i += EnchantmentHelper.getAttackDamage(this.capShieldStack, livingEntity.getGroup());
         }
         Entity owner = this.getOwner();
-
         if (isOwner(entity)
                 && this.dataTracker.get(RICOCHET) > 0
                 && this.random.nextInt(this.dataTracker.get(RICOCHET) * 2 - 1) > 0) {
@@ -132,7 +130,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
         DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
+        SoundEvent soundEvent = this.getHitSound();
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
@@ -162,7 +160,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
             IRicochet.onEntityHit(this, entity);
         }
         this.playSound(soundEvent, 1.0f, 1.0f);
-
     }
 
     @Override
@@ -170,37 +167,6 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         this.blockHit = true;
         IRicochet.onBlockHit(this, blockHitResult);
         super.onBlockHit(blockHitResult);
-    }
-
-    public boolean damage(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else {
-            int i;
-            if(amount > 0) {
-                i = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, this.capShieldStack);
-                int j = 0;
-                if (i > 0) {
-                    for (int k = 0; k < amount; ++k) {
-                        if (UnbreakingEnchantment.shouldPreventDamage(this.capShieldStack, i , random)) {
-                            ++j;
-                        }
-                    }
-                }
-                amount -= j;
-                if (amount <= 0) {
-                    return false;
-                }
-
-            }
-            i =  this.capShieldStack.getDamage() + (int)amount;
-            this.capShieldStack.setDamage(Math.min(i, this.capShieldStack.getMaxDamage() -1));
-
-            if (source == this.getDamageSources().cactus()) {
-                this.getWorld().breakBlock(this.getBlockPos(), true, this);
-            }
-            return true;
-        }
     }
 
     protected boolean tryPickup(PlayerEntity player) {
@@ -248,9 +214,10 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
 
     public void setWait(int value) { this.wait = value; }
 
+    protected SoundEvent getHitSound() { return SoundEvents.ITEM_TRIDENT_HIT; }
 
     @Override
-    public ItemStack asItemStack() { return this.capShieldStack.copy(); }
+    public ItemStack asItemStack() { return this.capShieldStack; }
 
     public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
@@ -259,5 +226,5 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         LOYALTY = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(CapShieldEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
+
 }
-//todo Sounds

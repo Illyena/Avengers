@@ -11,6 +11,8 @@ import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import static illyena.gilding.avengers.AvengersInit.translationKeyOf;
+
 public class MjolnirBlockEntity extends BlockEntity implements Nameable {
     public static final String DAMAGE = "Damage";
     public static final String ENCHANTMENTS = "Enchantments";
@@ -61,19 +63,18 @@ public class MjolnirBlockEntity extends BlockEntity implements Nameable {
                 this.getWorld().setBlockState(this.getPos(), blockState.with(MjolnirBlock.BROKEN, true));
             }
         }
-
     }
 
     public int getDamage() { return this.damage; }
 
     public Text getName() {
-        return this.customName != null ? this.customName : Text.translatable("block.avengers.mjolnir_block");
+        return this.customName != null ? this.customName : translationKeyOf("block", "mjolnir_block");
     }
 
     @Nullable
     public Text getCustomName() { return this.customName; }
 
-    public void setCustomName(Text customName) { this.customName = customName; }
+    public void setCustomName(@Nullable Text customName) { this.customName = customName; }
 
     public void setEnchantments(NbtList nbtList) { this.enchantments = nbtList; }
 

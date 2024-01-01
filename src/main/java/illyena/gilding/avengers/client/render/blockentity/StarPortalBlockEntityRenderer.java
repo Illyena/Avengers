@@ -21,6 +21,7 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<StarPortalBlockEntity> {
     private final StarPortalModel model;
@@ -56,8 +57,6 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
         this.model.lid.setPivot(0.0F, 24.0F - starPortalBlockEntity.getAnimationProgress(tickDelta) * 0.5F * 16.0F, 0.0F);
         this.model.lid.yaw = 270.0F * starPortalBlockEntity.getAnimationProgress(tickDelta) * 0.017453292F;
 
-
-
         VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntityCutoutNoCull);
         this.model.getShellParts().forEach(part -> part.render(matrixStack, vertexConsumer, i, j, 1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -68,11 +67,9 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
         this.model.head.render(matrixStack, vertexConsumerProvider.getBuffer(this.getLayer()), i, j, 1.0f, 1.0f, 1.0f, 1.0f);
         matrixStack.pop();
-
     }
 
     protected RenderLayer getLayer() { return RenderLayer.getEndPortal(); }
-
 
     @Environment(EnvType.CLIENT)
     public static final class StarPortalModel extends Model {
@@ -102,13 +99,12 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
         public ModelPart getParts() { return this.root; }
 
-        public Iterable<ModelPart> getShellParts() {
-            return ImmutableList.of(this.root.getChild("base"), this.root.getChild("lid"));
-        }
+        public Iterable<ModelPart> getShellParts() { return ImmutableList.of(this.base, this.lid); }
 
         public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
             this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         }
+
     }
 
 }

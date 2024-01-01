@@ -15,7 +15,10 @@ import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeItem;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
@@ -40,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class StarPortalBlock  extends BlockWithEntity {
     private static final Map<DyeColor, StarPortalBlock> STAR_PORTAL_BLOCKS = Maps.newIdentityHashMap();
     public static final EnumProperty<Direction> FACING = FacingBlock.FACING;
@@ -132,9 +136,14 @@ public class StarPortalBlock  extends BlockWithEntity {
                         if (stack.isEmpty()) {
                             StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, player, blockEntity);
                         } else {
-                            ItemStack stack2 = stack.split(1);
-                            ItemEntity itemEntity = player.dropStack(stack2);
-                            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity);
+                            ItemStack stack2 = stack.copy().split(1);
+                            ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack2);
+                            if (StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, itemEntity, blockEntity)) {
+                                world.spawnEntity(itemEntity);
+                                stack.decrement(1);
+                            } else {
+                                itemEntity.discard();
+                            }
                         }
                     }
                     return ActionResult.success(player.getWorld().isClient);
@@ -142,7 +151,6 @@ public class StarPortalBlock  extends BlockWithEntity {
             }
             return ActionResult.PASS;
         }
-
     }
 
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
@@ -163,7 +171,6 @@ public class StarPortalBlock  extends BlockWithEntity {
                && blockEntity.getHeadBoundingBox(state).expand(0.01).offset(pos).intersects(projectile.getBoundingBox())) {
            StarPortalBlockEntity.tryTeleportingEntity(world, pos, state, projectile, blockEntity);
         }
-
     }
 
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
@@ -194,7 +201,6 @@ public class StarPortalBlock  extends BlockWithEntity {
                 return;
             }
         }
-
     }
 
     private Direction getAttachDirection(World world , BlockPos startPos, BlockPos pos) {
@@ -213,7 +219,8 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
     public static boolean canOpen(BlockState state, World world, BlockPos pos, StarPortalBlockEntity blockEntity) {
-        if (blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.CLOSED) {
+        if (blockEntity.getAnimationStage() != StarPortalBlockEntity.AnimationStage.CLOSED
+                && StarPortalBlockEntity.isAirOrFluid(world.getBlockState(pos.offset(state.get(FACING))))) {
             return true;
         } else {
             Box box = ShulkerEntity.calculateBoundingBox(state.get(FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6);
@@ -222,9 +229,7 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getSide());
-    }
+    public BlockState getPlacementState(ItemPlacementContext ctx) { return this.getDefaultState().with(FACING, ctx.getSide()); }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -258,12 +263,8 @@ public class StarPortalBlock  extends BlockWithEntity {
         super.onBreak(world, pos, state, player);
    }
 
-
-
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) { builder.add(FACING); }
 
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
@@ -298,7 +299,6 @@ public class StarPortalBlock  extends BlockWithEntity {
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);
             }
-
         }
     }
 
@@ -339,6 +339,3 @@ public class StarPortalBlock  extends BlockWithEntity {
     }
 
 }
-
-
-

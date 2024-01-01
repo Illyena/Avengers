@@ -19,20 +19,19 @@ import java.util.*;
 
 import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 
-
-public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Conditions> {
+public class RicochetAndReturnCriterion extends AbstractCriterion<RicochetAndReturnCriterion.Conditions> {
     static final Identifier ID = new Identifier(MOD_ID, "ricochet_and_return");
 
-    public RicochetAndReturn() { }
+    public RicochetAndReturnCriterion() { }
 
     public Identifier getId() { return ID; }
 
-    public Conditions conditionsFromJson(JsonObject jsonObject, LootContextPredicate lootContextPredicate, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
-        LootContextPredicate[] lootContextPredicates = EntityPredicate.contextPredicateArrayFromJson(jsonObject, "victims", advancementEntityPredicateDeserializer);
+    public Conditions conditionsFromJson(JsonObject jsonObject, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer advancementEntityPredicateDeserializer) {
+        LootContextPredicate[] victims = EntityPredicate.contextPredicateArrayFromJson(jsonObject, "victims", advancementEntityPredicateDeserializer);
         NumberRange.IntRange intRange = NumberRange.IntRange.fromJson(jsonObject.get("unique_entities"));
         DamageSourcePredicate damageSourcePredicate = DamageSourcePredicate.fromJson(jsonObject.get("damage_source"));
         ItemPredicate itemPredicate = ItemPredicate.fromJson(jsonObject.get("projectile"));
-        return new Conditions(lootContextPredicate, itemPredicate, damageSourcePredicate, intRange, lootContextPredicates);
+        return new Conditions(playerPredicate, itemPredicate, damageSourcePredicate, intRange, victims);
     }
 
     public void trigger(ServerPlayerEntity player, ItemStack item, DamageSource damageSource, Collection<Entity> ricochetHitList) {
@@ -68,12 +67,12 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(NumberRange.IntRange entityCount) {
@@ -81,12 +80,12 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, DamageSourcePredicate.EMPTY, entityCount, victims);
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate) {
@@ -98,21 +97,21 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicate,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicate,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(DamageSourcePredicate.Builder damageSourcePredicateBuilder, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate, NumberRange.IntRange entityCount) {
@@ -124,39 +123,39 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(DamageSourcePredicate damageSourcePredicate, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicate, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicate, entityCount, victims);
         }
 
         public static Conditions create(DamageSourcePredicate.Builder damageSourcePredicateBuilder, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicateBuilder.build(), entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, ItemPredicate.ANY, damageSourcePredicateBuilder.build(), entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), DamageSourcePredicate.EMPTY,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, NumberRange.IntRange entityCount) {
@@ -168,21 +167,21 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(ItemPredicate itemPredicate, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, DamageSourcePredicate.EMPTY, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, DamageSourcePredicate.EMPTY, entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), DamageSourcePredicate.EMPTY, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), DamageSourcePredicate.EMPTY, entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate damageSourcePredicate) {
@@ -202,39 +201,39 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate damageSourcePredicate, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicate,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicate,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, DamageSourcePredicate damageSourcePredicate, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicate,  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicate,  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate.Builder damageSourcePredicateBuilder, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, DamageSourcePredicate.Builder damageSourcePredicateBuilder, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicateBuilder.build(),  NumberRange.IntRange.ANY, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate damageSourcePredicate, NumberRange.IntRange entityCount) {
@@ -254,39 +253,39 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate damageSourcePredicate, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicate, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicate, entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, DamageSourcePredicate damageSourcePredicate, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicate, entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicate, entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate itemPredicate, DamageSourcePredicate.Builder damageSourcePredicateBuilder, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicateBuilder.build(), entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicate, damageSourcePredicateBuilder.build(), entityCount, victims);
         }
 
         public static Conditions create(ItemPredicate.Builder itemPredicateBuilder, DamageSourcePredicate.Builder damageSourcePredicateBuilder, NumberRange.IntRange entityCount, EntityPredicate.Builder... victimPredicates) {
-            LootContextPredicate[] lootContextPredicates = new LootContextPredicate[victimPredicates.length];
+            LootContextPredicate[] victims = new LootContextPredicate[victimPredicates.length];
             for(int i = 0; i < victimPredicates.length; ++i) {
                 EntityPredicate.Builder builder = victimPredicates[i];
-                lootContextPredicates[i] = EntityPredicate.asLootContextPredicate(builder.build());
+                victims[i] = EntityPredicate.asLootContextPredicate(builder.build());
             }
-            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicateBuilder.build(), entityCount, lootContextPredicates);
+            return new Conditions(LootContextPredicate.EMPTY, itemPredicateBuilder.build(), damageSourcePredicateBuilder.build(), entityCount, victims);
         }
 
         public boolean matches(ServerPlayerEntity player, ItemStack itemStack, DamageSource damageSource, int entityCount, Collection<LootContext> victimContexts) {
@@ -321,6 +320,7 @@ public class RicochetAndReturn extends AbstractCriterion<RicochetAndReturn.Condi
             jsonObject.add("projectile", this.item.toJson());
             return jsonObject;
         }
+
     }
 
 }

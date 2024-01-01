@@ -1,4 +1,4 @@
-package illyena.gilding.avengers.mixin.entity;
+package illyena.gilding.avengers.mixin.client.renderer;
 
 import illyena.gilding.avengers.item.AvengersItems;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -17,11 +17,13 @@ import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+/** Mjolnir charging animation */
 @Mixin(HeldItemFeatureRenderer.class)
 public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends EntityModel<T> & ModelWithHead & ModelWithArms> {
     @Shadow @Final private HeldItemRenderer heldItemRenderer;
@@ -41,6 +43,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
         }
     }
 
+    @Unique
     private void renderMjolnirCharging(LivingEntity entity, ItemStack stack, ModelTransformationMode mode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float animationProgress) {
         HeldItemFeatureRenderer<?,?> renderer = (HeldItemFeatureRenderer<?,?>) (Object) this;
         if (!stack.isEmpty()) {

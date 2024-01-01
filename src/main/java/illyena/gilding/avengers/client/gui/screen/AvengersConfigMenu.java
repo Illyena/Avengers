@@ -1,57 +1,46 @@
 package illyena.gilding.avengers.client.gui.screen;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import illyena.gilding.compat.Mod;
 import illyena.gilding.config.gui.ConfigScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
-import static illyena.gilding.avengers.AvengersInit.MOD_ID;
+import static illyena.gilding.avengers.AvengersInit.*;
 
 @Environment(EnvType.CLIENT)
 public class AvengersConfigMenu extends ConfigScreen {
+    private static final Text TITLE = translationKeyOf("menu", "config.title");
     public static final CubeMapRenderer PANORAMA_CUBE_MAP = new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/title/background/panorama"));
     private static final Identifier TITLE_TEXTURE = new Identifier(MOD_ID, "textures/gui/title/avengers.png");
-    private final RotatingCubeMapRenderer backgroundRenderer;
 
     public AvengersConfigMenu() { this(MinecraftClient.getInstance().currentScreen); }
 
     public AvengersConfigMenu(Screen parent) {
-        super(MOD_ID, parent);
+        super(MOD_ID, parent, TITLE);
         this.backgroundRenderer = new RotatingCubeMapRenderer(PANORAMA_CUBE_MAP);
+        this.doBackgroundFade = true;
     }
 
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        float f = 1.0F;
-        this.backgroundRenderer.render(delta, MathHelper.clamp(f, 0.0F, 1.0F));
+    protected void renderText(DrawContext context, int mouseX, int mouseY, float delta, float alpha, int time) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int l = MathHelper.ceil(255.0F) << 24;
-        if ((l & -67108864) != 0) {
-            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
-            context.drawTexture(TITLE_TEXTURE, this.width / 2 - 80 , 10, 0.0f, 0.0f, 160, 60, 160, 60);
-            String string = "Minecraft " + SharedConstants.getGameVersion().getName();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+        context.drawTexture(TITLE_TEXTURE, this.width / 2 - 80, 10, 0.0f, 0.0f, 160, 60, 160, 60);
 
-            if (MinecraftClient.getModStatus().isModded()) {
-                string = string + I18n.translate("menu.modded", Mod.getModsWithSubGroups(MOD_ID).toArray());
-            }
-            context.drawTextWithShadow(this.textRenderer, string, 2, this.height - 10, 16777215 | l);
-
-            super.render(context, mouseX, mouseY, delta);
-        }
+        String string = MOD_NAME + ": " + Mod.getModVersion(MOD_ID);
+        int width = this.textRenderer.getWidth(string);
+        context.drawTextWithShadow(this.textRenderer, string, this.width - width - 2, this.height - 10, 16777215 | time);
     }
+
+    @Override
+    public RotatingCubeMapRenderer getBackgroundRenderer() { return this.backgroundRenderer; }
+
 }
