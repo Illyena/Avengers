@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 
 import static illyena.gilding.avengers.AvengersInit.*;
 
+@SuppressWarnings("unused")
 public class AvengersPaintings {
     public static void callPaintings() { LOGGER.info("Registering paintings for {} mod.", MOD_NAME); }
 

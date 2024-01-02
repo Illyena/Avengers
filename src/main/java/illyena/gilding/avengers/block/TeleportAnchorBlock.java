@@ -25,6 +25,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityProvider, FluidFlowsThrough {
     public TeleportAnchorBlock(Settings settings) {
         super(settings);
@@ -47,9 +48,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
         builder.add(WATERLOGGED, WATER_LEVEL, FLUID_FALL);
     }
 
-
     /** FluidFlowsThrough methods */
-
     public BlockState getPlacementState(ItemPlacementContext context) {
         FluidState fluidState = context.getWorld().getFluidState(context.getBlockPos());
         int waterLevel = fluidState.getLevel();
@@ -84,11 +83,8 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
     }
 
 
-    /** for BlockEntity */
-
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new TeleportAnchorBlockEntity(pos, state);
-    }
+    /** BlockEntity */
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) { return new TeleportAnchorBlockEntity(pos, state); }
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
@@ -128,7 +124,7 @@ public class TeleportAnchorBlock extends BlockWithEntity implements BlockEntityP
 
                 world.addParticle(GildingParticles.STAR_PARTICLE, d, e, f, g, h, k);
             }
-
         }
     }
+
 }

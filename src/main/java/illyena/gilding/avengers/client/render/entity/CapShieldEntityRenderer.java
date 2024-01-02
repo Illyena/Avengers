@@ -41,4 +41,5 @@ public class CapShieldEntityRenderer extends EntityRenderer<CapShieldEntity> {
     public Identifier getTexture(CapShieldEntity capShieldEntity) { return TEXTURE; }
 
     public CapShieldEntityModel getModel() { return this.model; }
+
 }

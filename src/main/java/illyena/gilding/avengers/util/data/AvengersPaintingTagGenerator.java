@@ -26,4 +26,5 @@ public class AvengersPaintingTagGenerator extends FabricTagProvider<PaintingVari
         getOrCreateTagBuilder(PaintingVariantTags.PLACEABLE).addOptionalTag(AVENGERS_PAINTINGS);
         getOrCreateTagBuilder(AVENGERS_PAINTINGS).add(AvengersPaintings.CAPTAIN);
     }
+
 }

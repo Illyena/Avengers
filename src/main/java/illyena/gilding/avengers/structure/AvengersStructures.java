@@ -19,7 +19,6 @@ public class AvengersStructures {
 
         STAR_LAB = Registry.register(Registries.STRUCTURE_TYPE, new Identifier(MOD_ID, "star_lab"), () -> StarLabStructure.CODEC);
         STAR_LAB_STRUCTURE = RegistryKey.of(RegistryKeys.STRUCTURE, new Identifier(MOD_ID, "star_lab"));
-
     }
 
 }

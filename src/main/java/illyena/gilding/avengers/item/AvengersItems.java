@@ -3,6 +3,7 @@ package illyena.gilding.avengers.item;
 import illyena.gilding.avengers.block.AvengersBlocks;
 import illyena.gilding.avengers.item.custom.CapShieldItem;
 import illyena.gilding.avengers.item.custom.MjolnirItem;
+import illyena.gilding.core.item.util.GildingToolMaterials;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.Block;
@@ -16,6 +17,7 @@ import net.minecraft.util.Rarity;
 
 import static illyena.gilding.avengers.AvengersInit.*;
 
+@SuppressWarnings("unused")
 public class AvengersItems {
 
     public static void registerItems() { LOGGER.info("Registering items for {} mod.", MOD_NAME); }
@@ -33,9 +35,9 @@ public class AvengersItems {
     }
 
     /** Items */
-
     public static final Item CAP_SHIELD = registerItem("cap_shield",
             new CapShieldItem(new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC)), AVENGERS_GROUP);
     public static final Item MJOLNIR = registerItem("mjolnir",
-            new MjolnirItem(AvengersBlocks.MJOLNIR_BLOCK, new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC)), AVENGERS_GROUP);
+            new MjolnirItem(AvengersBlocks.MJOLNIR_BLOCK, GildingToolMaterials.MAGIC, new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC)), AVENGERS_GROUP);
+
 }

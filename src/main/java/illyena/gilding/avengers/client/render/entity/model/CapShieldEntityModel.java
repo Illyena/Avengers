@@ -6,17 +6,13 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 
-import static illyena.gilding.avengers.AvengersInit.MOD_ID;
-
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class CapShieldEntityModel extends Model {
     private final ModelPart root;
     private final ModelPart shield;
     private final ModelPart straps;
-    public static final Identifier TEXTURE = new Identifier(MOD_ID, "textures/entity/cap_shield.png");
-
 
     public CapShieldEntityModel(ModelPart root) {
         super(RenderLayer::getEntitySolid);
@@ -61,13 +57,9 @@ public class CapShieldEntityModel extends Model {
         return TexturedModelData.of(modelData, 128, 128);
     }
 
-    public ModelPart getPlate() {
-        return this.shield;
-    }
+    public ModelPart getPlate() { return this.shield; }
 
-    public ModelPart getHandle() {
-        return this.straps;
-    }
+    public ModelPart getHandle() { return this.straps; }
 
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
         matrices.push();
@@ -75,5 +67,5 @@ public class CapShieldEntityModel extends Model {
         this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         matrices.pop();
     }
-}
 
+}

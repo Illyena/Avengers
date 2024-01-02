@@ -35,13 +35,43 @@ public class AvengersModelProvider extends FabricModelProvider {
         } else if (block instanceof TeleportAnchorBlock) {
             registerTeleportAnchor(modelGenerator, block);
         } else if (block instanceof MjolnirBlock) {
-            registerBreakableBlock(modelGenerator, block);
+            registerMjolnirBlock(modelGenerator, block);
         } else {
             modelGenerator.registerSimpleCubeAll(block);
         }
     }
 
     public static void addModels(Block block ) { modelList.add(block); }
+
+    public static void registerMjolnirBlock(BlockStateModelGenerator modelGenerator, Block block) {
+        Identifier blockLegacyId = ModelIds.getBlockSubModelId(block, "_legacy");
+        Identifier blockBrokenId = ModelIds.getBlockSubModelId(block, "_broken");
+        Identifier blockLegacyBrokenId = ModelIds.getBlockSubModelId(block, "_legacy_broken");
+
+        BlockStateVariantMap.DoubleProperty<Boolean, Boolean> variantMap =
+                BlockStateVariantMap.create(MjolnirBlock.LEGACY, MjolnirBlock.BROKEN)
+                        .register(false, false, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, ModelIds.getBlockModelId(block)))
+                        .register(false, true, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockBrokenId))
+                        .register(true, false, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockLegacyId))
+                        .register(true, true, BlockStateVariant.create()
+                                .put(VariantSettings.MODEL, blockLegacyBrokenId));
+
+
+        modelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block)
+                .coordinate(variantMap)
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
+
+        Model brokenModel = new Model(Optional.of(ModelIds.getBlockModelId(block)), Optional.of("_broken"), OVERLAY, TextureKey.TEXTURE);
+        brokenModel.upload(blockBrokenId, new TextureMap().put(OVERLAY, blockBrokenId.withSuffixedPath("_underlay")).put(TextureKey.TEXTURE, blockBrokenId), modelGenerator.modelCollector);
+        Model legacyBrokenModel = new Model(Optional.of(blockLegacyId), Optional.of("_legacy_broken"), TextureKey.TEXTURE);
+        legacyBrokenModel.upload(blockLegacyBrokenId, new TextureMap().put(TextureKey.TEXTURE, blockLegacyBrokenId), modelGenerator.modelCollector);
+
+        modelGenerator.excludeFromSimpleItemModelGeneration(block);
+        modelGenerator.modelCollector.accept(ModelIds.getItemModelId(block.asItem()).withSuffixedPath("_broken"), new SimpleModelSupplier(blockBrokenId));
+    }
 
     public static void registerBreakableBlock(BlockStateModelGenerator modelGenerator, Block block) {
         Identifier blockBrokenId = ModelIds.getBlockSubModelId(block, "_broken");
@@ -71,4 +101,5 @@ public class AvengersModelProvider extends FabricModelProvider {
         modelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(block, blockModelId));
         Models.CUBE_ALL.upload(ModelIds.getItemModelId(block.asItem()), new TextureMap().put(TextureKey.ALL, textureId), modelGenerator.modelCollector);
     }
+
 }

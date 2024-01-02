@@ -13,7 +13,7 @@
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false,
-    "background": "avengers:textures/block/end_portal.png"
+    "background": "minecraft:textures/entity/end_portal.png"
   },
   "criteria": {
     "requirement": {

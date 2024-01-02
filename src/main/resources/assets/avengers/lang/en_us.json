@@ -1,9 +1,13 @@
 {
-    "menu.gilding.avengers_config.button": "Avengers Config",
+    "menu.avengers.config.button": "Avengers Config",
+    "menu.avengers.config.title": "Avengers Configs",
     "option.avengers.star_lab_config": "Star Labs",
-    "tooltip.avengers.option_worldgen": "Applicable only to new world creations.",
+    "option.avengers.mjolnir_legacy_config": "Mjolnir",
+    "option.avengers.mjolnir_legacy_config.true": "LEGACY",
+    "option.avengers.mjolnir_legacy_config.false": "Minecraft",
+    "tooltip.avengers.config.button": "",
 
-    "item_group.avengers.avengers_group": "Happy Birthday!  Here's some stuff.",
+    "itemGroup.avengers.avengers_group": "Happy Birthday!  Here's some stuff.",
     "item.avengers.cap_shield": "Captain America's Shield",
     "block.avengers.mjolnir_block": "Mjolnir",
     "block.avengers.star_portal": "Portal Box",
@@ -36,5 +40,8 @@
     "advancement.avengers.patriotic_physics.title": "Patriotic Physics",
     "advancement.avengers.patriotic_physics.description": "Boomerang off several assailants",
     "advancement.avengers.second_act.title": "Second Act",
-    "advancement.avengers.second_act.description": "Each of you has failed"
+    "advancement.avengers.second_act.description": "Each of you has failed",
+
+    "painting.avengers.captain.title": "Stars and Stripes",
+    "painting.avengers.captain.author": "SpiderBrat"
 }

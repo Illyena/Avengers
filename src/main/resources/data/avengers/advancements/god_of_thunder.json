@@ -17,7 +17,7 @@
   },
   "parent": "avengers:root",
   "criteria": {
-    "struck_creeper": {
+    "flying_strike": {
       "conditions": {
         "victims": [
           [
@@ -41,12 +41,40 @@
           }
         ]
       },
-      "trigger": "avengers:killed_with_channeling"
+      "trigger": "minecraft:channeled_lightning"
+    },
+    "flying_strike_legacy": {
+      "conditions": {
+        "victims": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this"
+          }
+        ],
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{OnGround:0b}"
+            }
+          },
+          {
+            "condition": "gilding:config_properties",
+            "predicate": {
+              "config": "avengers:mjolnir_legacy_config",
+              "value": true
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:channeled_lightning"
     }
   },
   "requirements": [
     [
-      "struck_creeper"
+      "flying_strike",
+      "flying_strike_legacy"
     ]
   ],
   "rewards": {

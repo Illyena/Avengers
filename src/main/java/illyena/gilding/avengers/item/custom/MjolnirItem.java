@@ -10,13 +10,16 @@ import illyena.gilding.core.item.IThrowable;
 import illyena.gilding.core.item.IThunderous;
 import illyena.gilding.core.item.IUndestroyable;
 import illyena.gilding.core.item.util.BlockEntityItem;
-import illyena.gilding.core.item.util.GildingToolMaterials;
 import illyena.gilding.core.util.data.GildingBlockTagGenerator;
 import illyena.gilding.mixin.item.BlockItemAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.CactusBlock;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -34,10 +37,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -46,34 +46,52 @@ import net.minecraft.world.event.GameEvent;
 
 import java.util.Iterator;
 
+import static illyena.gilding.avengers.AvengersInit.MOD_ID;
 import static illyena.gilding.avengers.block.MjolnirBlock.FACING;
+import static illyena.gilding.avengers.block.MjolnirBlock.LEGACY;
+import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
 import static net.minecraft.block.Block.dropStack;
 
 public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowable, IThunderous, IUndestroyable {
-    private static final ToolMaterial material = GildingToolMaterials.MAGIC;
+    private final ToolMaterial material;
     private final TagKey<Block> effectiveBlocks;
     public final float miningSpeed;
-    private final float attackDamage = 8.0f + material.getAttackDamage();
-    private final float attackSpeed = -2.9f;
+    private final float attackDamage;
+    private final float attackSpeed;
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
-    public MjolnirItem(Block block, Settings settings) {
+    public MjolnirItem(Block block, ToolMaterial material, Settings settings) {
         super(block, settings.maxDamageIfAbsent(material.getDurability()));
+        this.material = material;
         this.effectiveBlocks = GildingBlockTagGenerator.MAGIC_MINEABLE;
         this.miningSpeed = material.getMiningSpeedMultiplier();
+        this.attackDamage = 8.0f + material.getAttackDamage();
+        this.attackSpeed = -2.9f;
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? this.attackDamage : 0.0f, EntityAttributeModifier.Operation.ADDITION));
         builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? this.attackSpeed : -3.2f, EntityAttributeModifier.Operation.ADDITION));
         this.attributeModifiers = builder.build();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            ModelPredicateProviderRegistry.register(new Identifier(MOD_ID, "legacy") , (itemStack, clientWorld, livingEntity, i) ->
+                    MJOLNIR_LEGACY.getValue() ? 1.0f : 0.0f);
+        }
     }
+
+    public ToolMaterial getMaterial() { return this.material; }
+
+    public float getAttackDamage() { return this.attackDamage; }
 
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         return slot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getAttributeModifiers(slot);
     }
 
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+        if (!this.isWorthy(player) && player.getMainHandStack().getItem() instanceof MjolnirItem) {
+            this.notWorthy(player.getMainHandStack(), world, player);
+            return false;
+        }
         return state.isIn(AvengersBlockTagGenerator.NEEDS_TOOL_LEVEL_5);
     }
 
@@ -84,7 +102,7 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     public boolean isSuitableFor(BlockState state) { return state.isIn(AvengersBlockTagGenerator.NEEDS_TOOL_LEVEL_5); }
 
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (isUsable(stack)) {
+        if (this.isUsable(stack)) {
             stack.damage(1, attacker, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
             return true;
         }
@@ -112,22 +130,23 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
+        if (!this.isWorthy(user)) {
+            this.notWorthy(itemStack, world, user);
+            return TypedActionResult.fail(itemStack);
+        }
         if (!isUsable(itemStack)) {
             return TypedActionResult.fail(itemStack);
         } else {
             user.setCurrentHand(hand);
-            if (!isWorthy(user)) {
-                this.notWorthy(itemStack, world, user);
-                return TypedActionResult.fail(itemStack);
-            } else if (hand.equals(Hand.OFF_HAND) && EnchantmentHelper.getRiptide(itemStack) > 0 && !(world.isRaining() || world.isThundering())) {
+            if (!MJOLNIR_LEGACY.getValue() && hand.equals(Hand.OFF_HAND) && EnchantmentHelper.getRiptide(itemStack) > 0 && !(world.isRaining() || world.isThundering())) {
                 return  TypedActionResult.fail(itemStack);
             }
-            return TypedActionResult.consume(itemStack);
+            return super.use(world, user, hand);
         }
     }
 
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        if (remainingUseTicks >= 0 && user instanceof PlayerEntity player && player.isSneaking()) {
+        if (remainingUseTicks >= 0 && user instanceof PlayerEntity) {
             this.callThunder(stack, world, user, remainingUseTicks);
         }
     }
@@ -140,7 +159,13 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
         }
     }
 
+    /**
+     * prevents block from being placed in Legacy
+     */
     public ActionResult useOnBlock(ItemUsageContext context) {
+        if (MJOLNIR_LEGACY.getValue()) {
+            return ActionResult.PASS;
+        }
         ItemPlacementContext ctx = new ItemPlacementContext(context);
 
         ItemStack itemStack = ctx.getStack().copy();
@@ -164,10 +189,10 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     public boolean isWorthy(LivingEntity user) {
         if ( user instanceof PlayerEntity player && (player.experienceLevel >= 30 || player.isCreative())) {
             return true;
-        } else return user instanceof WolfEntity wolf && wolf.isTamed();
+        } else return !MJOLNIR_LEGACY.getValue() && user instanceof WolfEntity wolf && wolf.isTamed();
     }
 
-    private void notWorthy(ItemStack stack, World world, LivingEntity user) {
+    public void notWorthy(ItemStack stack, World world, LivingEntity user) {
         boolean bl = user.getMainHandStack() == stack;
         BlockPos blockPos = user.getBlockPos();
         Direction direction = bl ? user.getHorizontalFacing() : user.getHorizontalFacing().getOpposite();
@@ -180,11 +205,10 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
             default -> pos2 = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
 
-        boolean bl2 = this.toBlock(stack, world, user, pos2, 1);
-        if (!bl2) {
-            dropStack(world, pos2, stack);
+        if (!this.toBlock(stack, world, user, pos2, 1)) {
+            dropStack(world, pos2, stack.copy());
         }
-        if (user instanceof PlayerEntity playerEntity && !playerEntity.getAbilities().creativeMode) {
+        if (user instanceof PlayerEntity playerEntity && !playerEntity.isCreative()) {
             stack.decrement(1);
         }
         if (user instanceof ServerPlayerEntity serverPlayerEntity) {
@@ -195,7 +219,10 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
 
     /** BlockEntityItem */
     public boolean toBlock(ItemStack stack, World world, Entity entity, BlockPos blockPos, int radius) {
-        BlockState blockState = this.getBlock().getDefaultState().with(FACING, entity.getHorizontalFacing()).with(Properties.WATERLOGGED, world.getFluidState(blockPos).getFluid() == Fluids.WATER);
+        BlockState blockState = this.getBlock().getDefaultState()
+                .with(LEGACY, MJOLNIR_LEGACY.getValue())
+                .with(FACING, entity.getHorizontalFacing())
+                .with(Properties.WATERLOGGED, world.getFluidState(blockPos).getFluid() == Fluids.WATER);
         if (this.getBlock().isEnabled(world.getEnabledFeatures())) {
             Box box = new Box(blockPos, blockPos);
             int i = 0;
@@ -243,11 +270,15 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     }
 
     private boolean canPlaceAt(World world, Entity entity, BlockState blockState, BlockPos blockPos) {
-        return blockState.canPlaceAt(world, blockPos) && world.getBlockState(blockPos).isReplaceable() &&
+        if (blockState.canPlaceAt(world, blockPos) && world.getBlockState(blockPos).isReplaceable() &&
                 world.canPlace(blockState, blockPos, ShapeContext.of(entity)) &&
-                world.getBlockState(blockPos).getBlock() != blockState.getBlock();
+                world.getBlockState(blockPos).getBlock() != blockState.getBlock()) {
+            return true;
+        } else if (world.getBlockState(blockPos).getBlock() instanceof CactusBlock) {
+            return world.breakBlock(blockPos, true, entity);
+        }
+        return false;
     }
-
 
     /** IThrowable */
     @Override
@@ -271,7 +302,10 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
 
     @Override
     public int getRiptide(ItemStack stack, World world, LivingEntity user, int remainingTicks) {
-        return user.getActiveHand().equals(Hand.OFF_HAND) && world.isRaining() ? EnchantmentHelper.getRiptide(stack) : 0 ;
+        if (MJOLNIR_LEGACY.getValue()) {
+            return user.getActiveHand().equals(Hand.OFF_HAND) ? 3 : 0;
+        } else
+            return user.getActiveHand().equals(Hand.OFF_HAND) && world.isRaining() ? EnchantmentHelper.getRiptide(stack) : 0;
     }
 
 }

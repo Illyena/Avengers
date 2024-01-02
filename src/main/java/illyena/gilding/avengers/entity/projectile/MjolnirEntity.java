@@ -1,18 +1,12 @@
 package illyena.gilding.avengers.entity.projectile;
 
-import com.google.common.collect.Lists;
-import illyena.gilding.avengers.advancement.AvengersAdvancements;
 import illyena.gilding.avengers.block.blockentity.MjolnirBlockEntity;
 import illyena.gilding.avengers.entity.AvengersEntities;
 import illyena.gilding.avengers.item.AvengersItems;
 import illyena.gilding.avengers.item.custom.MjolnirItem;
-import illyena.gilding.core.enchantment.GildingEnchantmentHelper;
 import illyena.gilding.core.entity.projectile.ILoyalty;
-import illyena.gilding.core.entity.projectile.IRicochet;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -30,30 +24,21 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.block.MjolnirBlock.FACING;
+import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
 
-public class MjolnirEntity extends PersistentProjectileEntity implements IRicochet, ILoyalty {
-    private static final TrackedData<Integer> RICOCHET;
+public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalty {
     private static final TrackedData<Integer> LOYALTY;
     private static final TrackedData<Boolean> ENCHANTED;
     private ItemStack mjolnirStack;
-
-    private int bounces;
-    private List<Entity> ricochetHitEntities = Lists.newArrayListWithCapacity(bounces);
-    private int remainingBounces;
-    private int hangTime;
-
     private boolean dealtDamage;
-    private boolean blockHit;
     private int returnTimer;
     private int wait;
 
@@ -61,25 +46,18 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         super(entityType, world);
         this.mjolnirStack = new ItemStack(AvengersItems.MJOLNIR);
         this.setDamage(this.mjolnirStack.getDamage());
-        this.bounces = GildingEnchantmentHelper.getRicochet(this.mjolnirStack) * 2;
-        this.blockHit = false;
     }
 
     public MjolnirEntity(World world, LivingEntity owner, ItemStack stack) {
         super(AvengersEntities.MJOLNIR_ENTITY_TYPE, owner, world);
         this.mjolnirStack = new ItemStack(AvengersItems.MJOLNIR);
         this.mjolnirStack = stack.copy();
-        this.bounces = GildingEnchantmentHelper.getRicochet(this.mjolnirStack) * 2;
-        this.remainingBounces = this.bounces;
-        this.blockHit = false;
-        this.dataTracker.set(RICOCHET, GildingEnchantmentHelper.getRicochet(stack));
-        this.dataTracker.set(LOYALTY, EnchantmentHelper.getLoyalty(stack));
+        this.dataTracker.set(LOYALTY, MJOLNIR_LEGACY.getValue() ? 3 : EnchantmentHelper.getLoyalty(stack));
         this.dataTracker.set(ENCHANTED, stack.hasGlint());
     }
 
     protected void initDataTracker() {
         super.initDataTracker();
-        this.dataTracker.startTracking(RICOCHET, 0);
         this.dataTracker.startTracking(LOYALTY, 0);
         this.dataTracker.startTracking(ENCHANTED, false);
     }
@@ -92,7 +70,6 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
 
         this.dealtDamage = nbt.getBoolean("DealtDamage");
         this.dataTracker.set(LOYALTY, EnchantmentHelper.getLoyalty(this.mjolnirStack));
-        this.dataTracker.set(RICOCHET, GildingEnchantmentHelper.getRicochet(this.mjolnirStack));
     }
 
     public void writeCustomDataToNbt(NbtCompound nbt) {
@@ -101,6 +78,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.getBlockPos().getY() <= this.getWorld().getBottomY()) {
@@ -113,14 +91,22 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         if (!this.getLoyalty().equals(0)) {
             ILoyalty.tick(this);
         }
-        if (!this.getRicochet().equals(0) && !ILoyalty.shouldReturn(this)) {
-            IRicochet.tick(this);
-        }
 
         super.tick();
     }
 
-    @Override
+    protected void age() {
+        int i = this.dataTracker.get(LOYALTY);
+        if (this.pickupType != PickupPermission.ALLOWED || i <= 0) {
+            super.age();
+        }
+    }
+
+    @Nullable
+    protected EntityHitResult getEntityCollision(Vec3d currentPosition, Vec3d nextPosition) {
+        return this.dealtDamage ? null : super.getEntityCollision(currentPosition, nextPosition);
+    }
+
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
 
@@ -134,23 +120,16 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
             i += EnchantmentHelper.getAttackDamage(this.mjolnirStack, livingEntity.getGroup());
         }
         Entity owner = this.getOwner();
-
-        if (isOwner(entity)
-                && this.dataTracker.get(RICOCHET) > 0
-                && this.random.nextInt(this.dataTracker.get(RICOCHET) * 2 - 1) > 0) {
-            return;
-        }
-
         DamageSource damageSource = this.getDamageSources().thrown(this, owner == null ? this : owner);
         this.dealtDamage = true;
-        SoundEvent soundEvent = SoundEvents.ITEM_TRIDENT_HIT; //todo SOUNDS
+        SoundEvent soundEvent = getHitSound();
 
         boolean isEnderman = entity.getType() == EntityType.ENDERMAN;
         if(this.isOnFire() && !isEnderman) {
             entity.setOnFireFor(5);
         }
 
-        if (entity.damage(damageSource, (float) i)) {
+        if (entity.damage(damageSource, i)) {
             if (isEnderman) {
                 return;
             }
@@ -169,9 +148,8 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
                 this.onHit(livingEntity);
             }
         }
-        if (entity instanceof LivingEntity) {
-            IRicochet.onEntityHit(this, entity);
-        }
+
+        this.setVelocity(this.getVelocity().multiply(-0.01, -0.1, -0.01));
         float g = 1.0f;
         if (this.getWorld() instanceof ServerWorld && this.getWorld().isThundering() && this.hasChanneling()) {
             BlockPos blockPos = entity.getBlockPos();
@@ -187,54 +165,8 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         this.playSound(soundEvent, g, 1.0f);
     }
 
-    @Override
-    protected void onBlockHit(BlockHitResult blockHitResult) {
-        this.blockHit = true;
-        IRicochet.onBlockHit(this, blockHitResult);
-        super.onBlockHit(blockHitResult);
-
-    }
-
-    public boolean damage(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else {
-            int i;
-            if (amount > 0) {
-                i = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, this.mjolnirStack);
-                int j = 0;
-                for (int k = 0; i > 0 && k < amount; ++k) {
-                    if (UnbreakingEnchantment.shouldPreventDamage(this.mjolnirStack, i, random)) {
-                        ++j;
-                    }
-                }
-                amount -= j;
-                if (amount <= 0) {
-                    return false;
-                }
-            }
-
-            i =  this.mjolnirStack.getDamage() + (int)amount;
-            this.mjolnirStack.setDamage(Math.min(i, this.mjolnirStack.getMaxDamage() -1));
-
-            if (!this.isRemoved()) {
-                if (source == this.getDamageSources().cactus()) {
-                    this.getWorld().breakBlock(this.getBlockPos(), true, this);
-                    this.toBlock(this.getWorld(), this.getBlockPos());
-                }
-            }
-            return true;
-        }
-
-    }
-
     protected boolean tryPickup(PlayerEntity player) {
-        if (super.tryPickup(player)) {
-            if (player instanceof ServerPlayerEntity serverPlayer && !this.ricochetHitEntities.isEmpty()) {
-                AvengersAdvancements.RICOCHET_AND_RETURN.trigger(serverPlayer, this.asItemStack(), this.getDamageSources().thrown(this, player), this.getRicochetHitEntities());
-            }
-            return true;
-        } else return false;
+        return super.tryPickup(player) || this.isNoClip() && this.isOwner(player) && player.getInventory().insertStack(this.asItemStack());
     }
 
     private void toBlock(World world, BlockPos pos) {
@@ -250,24 +182,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
         }
     }
 
-    public boolean hasChanneling() { return EnchantmentHelper.hasChanneling(this.mjolnirStack); }
-
-    public double getRicochetRange() { return 2 + this.getDataTracker().get(RICOCHET) * 3; }
-
-    public int getBounces() { return this.bounces; }
-
-    public List<Entity> getRicochetHitEntities() { return this.ricochetHitEntities; }
-
-    public int getRemainingBounces() { return this.remainingBounces; }
-
-    public void setRemainingBounces(int value) { this.remainingBounces = value; }
-
-    public boolean getBlockHit() { return this.blockHit; }
-
-    public int getHangTime() { return this.hangTime; }
-
-    public void setHangTime(int value) { this.hangTime = value; }
-
+    public boolean hasChanneling() { return MJOLNIR_LEGACY.getValue() || EnchantmentHelper.hasChanneling(this.mjolnirStack); }
 
     public int getInGroundTime() { return this.inGroundTime; }
 
@@ -279,8 +194,6 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
 
     public TrackedData<Integer> getLoyalty() { return LOYALTY; }
 
-    public TrackedData<Integer> getRicochet() { return RICOCHET; }
-
     public int getReturnTimer() { return this.returnTimer; }
 
     public void setReturnTimer(int value) { this.returnTimer = value; }
@@ -289,6 +202,13 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
 
     public void setWait(int value) { this.wait =value; }
 
+    protected SoundEvent getHitSound() { return SoundEvents.ITEM_TRIDENT_HIT_GROUND; }
+
+    public void onPlayerCollision(PlayerEntity player) {
+        if (this.isOwner(player) || this.getOwner() == null) {
+            super.onPlayerCollision(player);
+        }
+    }
 
     @Override
     public ItemStack asItemStack() { return this.mjolnirStack.copy(); }
@@ -296,8 +216,8 @@ public class MjolnirEntity extends PersistentProjectileEntity implements IRicoch
     public boolean isEnchanted() { return this.dataTracker.get(ENCHANTED); }
 
     static {
-        RICOCHET = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.INTEGER);
         LOYALTY = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.INTEGER);
         ENCHANTED = DataTracker.registerData(MjolnirEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     }
+
 }

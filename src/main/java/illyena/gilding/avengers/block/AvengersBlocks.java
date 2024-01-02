@@ -21,9 +21,12 @@ import net.minecraft.util.Rarity;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.BLOCK_ENTITY;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.DROPS_NOTHING;
 
+@SuppressWarnings("unused")
 public class AvengersBlocks {
+
     public static void registerBlocks() { LOGGER.info("Registering blocks for {} mod.", MOD_NAME); }
 
     private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
@@ -46,7 +49,6 @@ public class AvengersBlocks {
     }
 
     private static StarPortalBlock createStarPortalBlock(DyeColor color) {
-
         return new StarPortalBlock(color, FabricBlockSettings.create().mapColor(MapColor.BLACK).dynamicBounds().nonOpaque().requiresTool().strength(30.0f, 9.0f).luminance(15)
                 .suffocates((state, world, pos) -> {
                     BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -60,7 +62,7 @@ public class AvengersBlocks {
 
     //BLOCKS
     public static final Block MJOLNIR_BLOCK = registerBlockWithoutItem("mjolnir_block",
-            new MjolnirBlock(FabricBlockSettings.create().mapColor(MapColor.GRAY).strength(4.0f, 9.0f).solid().nonOpaque().requiresTool()), BLOCK_ENTITY);
+            new MjolnirBlock(FabricBlockSettings.create().mapColor(MapColor.CLEAR).strength(4.0f, 9.0f).solid().nonOpaque().requiresTool()), BLOCK_ENTITY);
 
     public static final Block STAR_PORTAL_BLOCK = registerBlockWithItem("star_portal", createStarPortalBlock(null), Rarity.EPIC, false, BLOCK_ENTITY, null);
 
