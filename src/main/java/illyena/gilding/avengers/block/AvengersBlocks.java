@@ -19,8 +19,10 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.*;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.BLOCK_ENTITY;
+import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.DROPS_NOTHING;
 
+@SuppressWarnings("unused")
 public class AvengersBlocks {
 
     public static void registerBlocks() { LOGGER.info("Registering blocks for {} mod.", MOD_NAME); }

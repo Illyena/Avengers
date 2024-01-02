@@ -1,10 +1,11 @@
 {
-    "menu.gilding.avengers_config.button": "Avengers Config",
+    "menu.avengers.config.button": "Avengers Config",
+    "menu.avengers.config.title": "Avengers Configs",
     "option.avengers.star_lab_config": "Star Labs",
     "option.avengers.mjolnir_legacy_config": "Mjolnir",
     "option.avengers.mjolnir_legacy_config.true": "LEGACY",
     "option.avengers.mjolnir_legacy_config.false": "Minecraft",
-    "tooltip.avengers.option_worldgen": "Applicable only to new world creations.",
+    "tooltip.avengers.config.button": "",
 
     "itemGroup.avengers.avengers_group": "Happy Birthday!  Here's some stuff.",
     "item.avengers.cap_shield": "Captain America's Shield",

@@ -2,7 +2,8 @@ package illyena.gilding.avengers.advancement;
 
 import net.minecraft.advancement.criterion.Criteria;
 
-import static illyena.gilding.avengers.AvengersInit.*;
+import static illyena.gilding.avengers.AvengersInit.LOGGER;
+import static illyena.gilding.avengers.AvengersInit.MOD_NAME;
 
 public class AvengersAdvancements {
     public static void registerAdvancements() { LOGGER.info("Registering advancements for {} mod.", MOD_NAME); }

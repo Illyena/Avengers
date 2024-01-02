@@ -15,6 +15,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class TeleportAnchorBlockEntityRenderer implements BlockEntityRenderer<TeleportAnchorBlockEntity> {
     private BeamColorStage beamColors;

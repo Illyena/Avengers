@@ -60,13 +60,13 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
     private final float attackSpeed;
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
-    public MjolnirItem(Block block, float attackDamage, float attackSpeed, ToolMaterial material, Settings settings) {
+    public MjolnirItem(Block block, ToolMaterial material, Settings settings) {
         super(block, settings.maxDamageIfAbsent(material.getDurability()));
         this.material = material;
         this.effectiveBlocks = GildingBlockTagGenerator.MAGIC_MINEABLE;
         this.miningSpeed = material.getMiningSpeedMultiplier();
-        this.attackDamage = attackDamage + material.getAttackDamage();
-        this.attackSpeed = attackSpeed;
+        this.attackDamage = 8.0f + material.getAttackDamage();
+        this.attackSpeed = -2.9f;
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? this.attackDamage : 0.0f, EntityAttributeModifier.Operation.ADDITION));
@@ -141,7 +141,7 @@ public class MjolnirItem extends BlockItem implements BlockEntityItem, IThrowabl
             if (!MJOLNIR_LEGACY.getValue() && hand.equals(Hand.OFF_HAND) && EnchantmentHelper.getRiptide(itemStack) > 0 && !(world.isRaining() || world.isThundering())) {
                 return  TypedActionResult.fail(itemStack);
             }
-            return TypedActionResult.consume(itemStack);
+            return super.use(world, user, hand);
         }
     }
 

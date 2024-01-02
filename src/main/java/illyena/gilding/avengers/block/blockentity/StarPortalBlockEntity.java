@@ -360,9 +360,7 @@ public class StarPortalBlockEntity extends BlockEntity {
         }
     }
 
-    public static boolean isAirOrFluid(BlockState blockState) {
-        return blockState.isAir() || blockState.getBlock() instanceof FluidBlock;
-    }
+    public static boolean isAirOrFluid(BlockState blockState) { return blockState.isAir() || blockState.getBlock() instanceof FluidBlock; }
 
     @Nullable
     public  BlockPos getExitPortalPos() { return this.exitPortalPos; }

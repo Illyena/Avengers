@@ -6,9 +6,11 @@ import illyena.gilding.core.item.IThrowable;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 
+@SuppressWarnings("unused")
 @Mixin(RicochetEnchantment.class)
 public class RicochetEnchantmentMixin {
 
+    @SuppressWarnings("MissingUnique")
     public boolean isAcceptableItem(ItemStack stack) {
         return !(stack.getItem() instanceof MjolnirItem) && stack.getItem() instanceof IThrowable;
     }

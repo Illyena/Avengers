@@ -91,6 +91,7 @@ public class CapShieldEntity extends PersistentProjectileEntity implements IRico
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.inGroundTime > 4) {

@@ -11,20 +11,21 @@ import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import static illyena.gilding.avengers.AvengersInit.MOD_ID;
-import static illyena.gilding.avengers.AvengersInit.MOD_NAME;
+import static illyena.gilding.avengers.AvengersInit.*;
 
 @Environment(EnvType.CLIENT)
 public class AvengersConfigMenu extends ConfigScreen {
+    private static final Text TITLE = translationKeyOf("menu", "config.title");
     public static final CubeMapRenderer PANORAMA_CUBE_MAP = new CubeMapRenderer(new Identifier(MOD_ID, "textures/gui/title/background/panorama"));
     private static final Identifier TITLE_TEXTURE = new Identifier(MOD_ID, "textures/gui/title/avengers.png");
 
     public AvengersConfigMenu() { this(MinecraftClient.getInstance().currentScreen); }
 
     public AvengersConfigMenu(Screen parent) {
-        super(MOD_ID, parent);
+        super(MOD_ID, parent, TITLE);
         this.backgroundRenderer = new RotatingCubeMapRenderer(PANORAMA_CUBE_MAP);
         this.doBackgroundFade = true;
     }

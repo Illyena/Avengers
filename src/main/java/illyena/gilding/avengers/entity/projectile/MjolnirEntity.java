@@ -78,6 +78,7 @@ public class MjolnirEntity extends PersistentProjectileEntity implements ILoyalt
         nbt.putBoolean("DealtDamage", this.dealtDamage);
     }
 
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Override
     public void tick() {
         if (this.getBlockPos().getY() <= this.getWorld().getBottomY()) {

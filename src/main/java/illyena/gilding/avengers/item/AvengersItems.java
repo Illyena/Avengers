@@ -14,6 +14,7 @@ import net.minecraft.util.registry.Registry;
 
 import static illyena.gilding.avengers.AvengersInit.*;
 
+@SuppressWarnings("unused")
 public class AvengersItems {
 
     public static void registerItems() { LOGGER.info("Registering items for {} mod.", MOD_NAME); }
@@ -31,6 +32,6 @@ public class AvengersItems {
     public static final Item CAP_SHIELD = registerItem("cap_shield",
             new CapShieldItem(new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
     public static final Item MJOLNIR = registerItem("mjolnir",
-            new MjolnirItem(AvengersBlocks.MJOLNIR_BLOCK, 8.0f, -2.9f, GildingToolMaterials.MAGIC, new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
+            new MjolnirItem(AvengersBlocks.MJOLNIR_BLOCK, GildingToolMaterials.MAGIC, new FabricItemSettings().maxDamage(336).fireproof().rarity(Rarity.EPIC).group(AVENGERS_GROUP)));
 
 }

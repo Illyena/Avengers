@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,9 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @Mixin(EndCityGenerator.class)
 public abstract class EndCityGeneratorMixin {
-    private static final int buildHeight = 255;
+    @Unique private static final int buildHeight = 255;
 
     @Shadow static EndCityGenerator.Piece createPiece(StructureTemplateManager manager, EndCityGenerator.Piece lastPiece, BlockPos relativePosition, String template, BlockRotation rotation, boolean ignoreAir) { return null; }
     @Shadow static EndCityGenerator.Piece addPiece(List<StructurePiece> pieces, EndCityGenerator.Piece piece) { return null; }
@@ -32,6 +34,7 @@ public abstract class EndCityGeneratorMixin {
                 .findFirst().ifPresent(fatTowerTopPiece -> createPart(manager, PLATFORM, 7, fatTowerTopPiece, null, pieces, random));
     }
 
+    @Unique
     private static final EndCityGenerator.Part PLATFORM = new EndCityGenerator.Part() {
         public boolean platformGenerated;
 

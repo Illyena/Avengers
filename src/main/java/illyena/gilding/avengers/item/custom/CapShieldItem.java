@@ -2,7 +2,6 @@ package illyena.gilding.avengers.item.custom;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import illyena.gilding.GildingInit;
 import illyena.gilding.avengers.entity.projectile.CapShieldEntity;
 import illyena.gilding.avengers.util.data.AvengersBlockTagGenerator;
 import illyena.gilding.core.item.IThrowable;
@@ -44,11 +43,11 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUndest
     private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
     public CapShieldItem(FabricItemSettings settings) {
-        super( 3, -2.0f, GildingToolMaterials.MAGIC, GildingBlockTagGenerator.MAGIC_MINEABLE, settings);
+        super( 6.0f, -2.0f, GildingToolMaterials.MAGIC, GildingBlockTagGenerator.MAGIC_MINEABLE, settings);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
         ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier",
-                isUsable(this.getDefaultStack()) ? 3.0f : 0.0f, EntityAttributeModifier.Operation.ADDITION));
+                isUsable(this.getDefaultStack()) ? 6.0f : 0.0f, EntityAttributeModifier.Operation.ADDITION));
         builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier",
                 isUsable(this.getDefaultStack()) ? -2.0f : -3.2f, EntityAttributeModifier.Operation.ADDITION));
         this.attributeModifiers = builder.build();
@@ -100,15 +99,15 @@ public class CapShieldItem extends MiningToolItem implements IThrowable, IUndest
             return TypedActionResult.fail(itemStack);
         } else {
             user.setCurrentHand(hand);
-            return TypedActionResult.consume(itemStack);
+            return super.use(world, user, hand);
         }
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(GildingInit.translationKeyOf("tooltip", "throwable"));
+        tooltip.add(IThrowable.TOOLTIP);
     }
 
-/** IThrowable */
+    /** IThrowable */
     @Override
     public PersistentProjectileEntity getProjectileEntity(World world, PlayerEntity playerEntity, ItemStack stack) {
         return new CapShieldEntity(world, playerEntity, stack);

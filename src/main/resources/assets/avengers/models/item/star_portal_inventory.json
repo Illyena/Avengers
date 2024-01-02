@@ -1,6 +1,6 @@
 {
   "credit": "Illyena",
-  "texture_size": [64, 64],
+  "texture_size": [16, 16],
   "textures": {
     "1": "#layer0",
     "2": "minecraft:entity/end_portal"

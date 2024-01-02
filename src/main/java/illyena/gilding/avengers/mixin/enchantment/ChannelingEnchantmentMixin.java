@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import static illyena.gilding.avengers.config.AvengersConfigOptions.MJOLNIR_LEGACY;
 
+@SuppressWarnings({"unused"})
 @Mixin(ChannelingEnchantment.class)
 public class ChannelingEnchantmentMixin {
 
@@ -20,6 +21,7 @@ public class ChannelingEnchantmentMixin {
         return GildingEnchantmentTarget.THROWABLE_TARGET;
     }
 
+    @SuppressWarnings("MissingUnique")
     public boolean isAcceptableItem(ItemStack stack) {
         return stack.getItem() instanceof TridentItem || (stack.getItem() instanceof MjolnirItem && !MJOLNIR_LEGACY.getValue());
     }

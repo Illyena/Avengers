@@ -21,6 +21,7 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<StarPortalBlockEntity> {
     private final StarPortalModel model;
@@ -70,7 +71,6 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
     protected RenderLayer getLayer() { return RenderLayer.getEndPortal(); }
 
-
     @Environment(EnvType.CLIENT)
     public static final class StarPortalModel extends Model {
         private final ModelPart root;
@@ -99,9 +99,7 @@ public class StarPortalBlockEntityRenderer<T extends BlockEntity> implements Blo
 
         public ModelPart getParts() { return this.root; }
 
-        public Iterable<ModelPart> getShellParts() {
-            return ImmutableList.of(this.root.getChild("base"), this.root.getChild("lid"));
-        }
+        public Iterable<ModelPart> getShellParts() { return ImmutableList.of(this.base, this.lid); }
 
         public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
             this.root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
