@@ -6,7 +6,7 @@ ASSEMBLE!
 <br>
 <h2 align="center">
 <a href="https://fabricmc.net"><img src="https://cdn.discordapp.com/attachments/705864145169416313/969720133998239794/fabric_supported.png" width="200"></a> <br>
-<a href="https://github.com/Illyena/Avengers/blob/1.20.1-dev/LICENSE.md"><img src="https:shields.io/github/license/Illyena/Avengers"></a>
+<a href="https://github.com/Illyena/Avengers/blob/1.18.2/LICENSE"><img src="https:shields.io/github/license/Illyena/Avengers"></a>
 </h2>
 
 
@@ -27,7 +27,7 @@ Please install an instance of Fabric Loader for your client (and the server if p
 This mod requires you to also install:
 
 -[Fabric API](https://modrinth.com/mod/fabric-api) <br>
--[Gilding-core](https://modrinth.com/mod/Gilding-core)
+-[Gilding-core](https://modrinth.com/mod/Gilding-core) <br>
 
 
 ### Please report any issues to the GitHub repository 
@@ -38,19 +38,27 @@ This mod requires you to also install:
 add the following to your `build.gradle` file
 ```gradle
 repositories {
-    maven { url 'https://jitpack.io' }
+    ...
+    
+	maven { url = "https://jitpack.io" }
 }
 dependencies {
-   modImplementation "com.github.Illyena:Avengers:${project.minecraft_version}v${project.avengers_version}"
+    ...
+    
+    modImplementation "com.github.Illyena:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}"
+    modImplementation "com.github.Illyena:Avengers-mc${project.minecraft_version}:${project.avengers_version}"
 }
 ```
 
 add the following to your `gradle.properties` file
 ```gradle
 #Dependencies
-    avengers_version=1.2.0
+    ...
+    
+    gilding_version=0.3.0
+    avengers_version=2.1.0
 ```
 
 
 ### License
-This mod is available under the [![GitHub](https://img.shields.io/github/license/Illyena/Avengers)](https://github.com/Illyena/Avengers/blob/1.20.1-dev/LICENSE)
+This mod is available under the [![GitHub](https://img.shields.io/github/license/Illyena/Avengers)](https://github.com/Illyena/Avengers/blob/1.18.2/LICENSE)

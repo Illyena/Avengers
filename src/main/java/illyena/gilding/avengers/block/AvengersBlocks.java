@@ -4,6 +4,7 @@ import illyena.gilding.avengers.block.blockentity.StarPortalBlockEntity;
 import illyena.gilding.avengers.util.data.AvengersLootTableProvider;
 import illyena.gilding.avengers.util.data.AvengersModelProvider;
 import illyena.gilding.core.item.BlockItemWithGlint;
+import illyena.gilding.core.util.data.LootTableTypes;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -19,15 +20,15 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import static illyena.gilding.avengers.AvengersInit.*;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.BLOCK_ENTITY;
-import static illyena.gilding.avengers.util.data.AvengersLootTableProvider.LootTableTypes.DROPS_NOTHING;
+import static illyena.gilding.core.util.data.LootTableTypes.BLOCK_ENTITY;
+import static illyena.gilding.core.util.data.LootTableTypes.DROPS_NOTHING;
 
 @SuppressWarnings("unused")
 public class AvengersBlocks {
 
     public static void registerBlocks() { LOGGER.info("Registering blocks for {} mod.", MOD_NAME); }
 
-    private static Block registerBlockWithoutItem(String name, Block block, AvengersLootTableProvider.LootTableTypes lootType) {
+    private static Block registerBlockWithoutItem(String name, Block block, LootTableTypes lootType) {
         AvengersModelProvider.addModels(block);
         AvengersLootTableProvider.addLootTable(block, lootType);
         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
@@ -37,7 +38,7 @@ public class AvengersBlocks {
         return Registry.register(Registry.BLOCK, new Identifier(MOD_ID, name), block);
     }
 
-    private static Block registerBlockWithItem(String name, Block block, Rarity rarity, boolean hasGlint, AvengersLootTableProvider.LootTableTypes lootType, @Nullable ItemGroup group) {
+    private static Block registerBlockWithItem(String name, Block block, Rarity rarity, boolean hasGlint, LootTableTypes lootType, @Nullable ItemGroup group) {
         AvengersModelProvider.addModels(block);
         AvengersLootTableProvider.addLootTable(block, lootType);
         Registry.register(Registry.ITEM, new Identifier(MOD_ID, name),

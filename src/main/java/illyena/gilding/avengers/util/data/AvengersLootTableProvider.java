@@ -2,6 +2,7 @@ package illyena.gilding.avengers.util.data;
 
 import illyena.gilding.avengers.block.MjolnirBlock;
 import illyena.gilding.avengers.block.StarPortalBlock;
+import illyena.gilding.core.util.data.LootTableTypes;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
 import net.minecraft.block.Block;
@@ -64,15 +65,6 @@ public class AvengersLootTableProvider extends SimpleFabricLootTableProvider {
                     .withOperation("ExitPortal", "BlockEntityTag.ExitPortal")
                     .withOperation("ExactTeleport", "BlockEntityTag.ExactTeleport");
         } else return CopyNbtLootFunction.builder(ContextLootNbtProvider.BLOCK_ENTITY);
-    }
-
-    public enum LootTableTypes {
-        DROPS_NOTHING,
-        BLOCK,
-        BLOCK_ENTITY;
-
-        LootTableTypes () { }
-
     }
 
 }

@@ -41,11 +41,11 @@
   "accessWidener": "avengers.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.14.19",
-    "fabric": "*",
-    "minecraft": "~1.18",
     "java": ">=17",
-    "gilding": "0.2.3"
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "~${minecraft_version}",
+    "gilding": ">=${gilding_version}"
   },
   "suggests": {
     "another-mod": "*"

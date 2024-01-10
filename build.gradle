@@ -11,15 +11,11 @@ version = "${project.mod_version}"
 group = project.maven_group
 
 repositories {
-	flatDir { dirs "C:/Users/nelhu/Projects/In Progress/Gilding/Core/build/libs"}
-
-	maven { url = "https://jitpack.io" }
-	maven { url = "https://maven.shedaniel.me/" }
 	maven { url = "https://maven.terraformersmc.com/releases/" }
+	maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -33,21 +29,32 @@ dependencies {
 	}
 
 	//Fabric ASM
-	modImplementation("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}") {
+	modRuntimeOnly("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}") {
 		exclude (group: "net.fabricmc.fabric-api")
 	}
-	include("com.github.Chocohead:Fabric-ASM:v${project.fabric_asm_version}")
+
+	//Enchantment Target Mixin
+	modRuntimeOnly("illyena.gilding:Gilding-core-Api-mc${project.minecraft_version}:${project.core_api_version}")
 
 	//Gilding API
-//	modImplementation "com.github.Illyena:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}"
-	modImplementation("illyena.gilding:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}")
+//	modImplementation ("com.github.Illyena:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}")
+	modImplementation("illyena.gilding:Gilding-core-mc${project.minecraft_version}:${project.gilding_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+
 }
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "loader_version", project.loader_version
+	inputs.property "gilding_version", project.gilding_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": project.version,
+			"minecraft_version": project.minecraft_version,
+			"loader_version": project.loader_version,
+			"gilding_version": project.gilding_version
 	}
 }
 
